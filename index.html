@@ -785,7 +785,14 @@
       align-self: stretch;
     }
 
-    /* 1. 標籤更細緻、更像資訊標示 */
+    .detail-top-row {
+      display: block;
+    }
+
+    .mobile-modal-close {
+      display: none;
+    }
+
     .detail-top-labels {
       display: flex;
       flex-wrap: wrap;
@@ -807,7 +814,6 @@
       letter-spacing: .1em;
     }
 
-    /* 2. 標題與資訊列收緊 */
     .detail-title {
       margin: 0 0 7px;
       color: #fff;
@@ -847,7 +853,6 @@
       min-width: 0;
     }
 
-    /* 3. 人氣票數層級更細緻 */
     .detail-vote-count {
       flex: 0 0 auto;
       display: flex;
@@ -875,7 +880,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* 4A. 作品自述更簡潔，保留層次但降低卡片感 */
     .detail-story {
       position: relative;
       margin-bottom: 16px;
@@ -953,7 +957,6 @@
       display: grid;
     }
 
-    /* 5. 主 CTA 投票按鈕更精緻 */
     .detail-action-row .vote-btn {
       width: 100%;
       min-height: 48px;
@@ -1107,7 +1110,7 @@
 
       .card-title {
         min-height: 38px;
-        font-size: 16px;
+        font-size: 24px;
         line-height: 1.32;
         letter-spacing: .045em;
         display: -webkit-box;
@@ -1193,12 +1196,9 @@
         padding: 10px;
       }
 
+      /* 手機版：隱藏原本照片右上角關閉鈕 */
       .modal-close {
-        top: 12px;
-        right: 12px;
-        width: 38px;
-        height: 38px;
-        font-size: 20px;
+        display: none;
       }
 
       .detail-panel {
@@ -1240,9 +1240,22 @@
         padding-top: 0;
       }
 
-      .detail-top-labels {
-        gap: 7px;
+      /* 手機版：標籤與關閉按鈕同列 */
+      .detail-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
         margin-bottom: 9px;
+      }
+
+      .detail-top-labels {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 0;
+        min-width: 0;
       }
 
       .detail-label {
@@ -1252,14 +1265,37 @@
         letter-spacing: .08em;
       }
 
+      .mobile-modal-close {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(244,223,154,.34);
+        border-radius: 3px;
+        background: rgba(255,255,255,.035);
+        color: rgba(255,255,255,.82);
+        font-size: 21px;
+        line-height: 1;
+        cursor: pointer;
+        transition: .2s ease;
+      }
+
+      .mobile-modal-close:hover {
+        color: #171209;
+        background: var(--gold);
+        border-color: rgba(244,223,154,.9);
+      }
+
       .detail-title {
         margin-bottom: 6px;
-        padding-right: 42px;
-        font-size: 25px;
+        padding-right: 0;
+        font-size: 36px;
         line-height: 1.28;
       }
 
-      /* 6. 手機版同列配置，票數四位數也不爆版 */
+      /* 手機版：資訊列同列，票數四位數也盡量穩定 */
       .detail-meta-row {
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: end;
@@ -1268,18 +1304,22 @@
         padding-bottom: 7px;
       }
 
+      /* 手機版：參賽者＋作品編號貼在一起 */
       .detail-brief {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: end;
-        gap: 4px 8px;
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: nowrap;
+        gap: 6px;
         min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
         font-size: 10.5px;
         line-height: 1.4;
         letter-spacing: .045em;
       }
 
       .detail-author-item {
+        flex: 0 1 auto;
         min-width: 0;
         overflow: hidden;
         white-space: nowrap;
@@ -1287,6 +1327,7 @@
       }
 
       .detail-number-item {
+        flex: 0 0 auto;
         white-space: nowrap;
       }
 
@@ -1471,9 +1512,13 @@
         </div>
 
         <div class="detail-info">
-          <div class="detail-top-labels">
-            <div class="detail-label group" id="modalGroup"></div>
-            <div class="detail-label theme" id="modalTheme"></div>
+          <div class="detail-top-row">
+            <div class="detail-top-labels">
+              <div class="detail-label group" id="modalGroup"></div>
+              <div class="detail-label theme" id="modalTheme"></div>
+            </div>
+
+            <button aria-label="關閉視窗" class="mobile-modal-close" id="modalCloseMobile" type="button">×</button>
           </div>
 
           <h2 class="detail-title" id="modalTitle"></h2>
@@ -1693,7 +1738,7 @@
 
             <div class="card-actions">
               <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')">
-                ${isVoted ? "已投下這一票" : isLoading ? "投票送出中…" : "投這個作品一票"}
+                ${isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "投這個作品一票"}
               </button>
               <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
             </div>
@@ -1805,7 +1850,7 @@
       button.classList.toggle("voted", isVoted);
       button.classList.toggle("loading", isLoading);
       button.textContent = isVoted
-        ? "已投下這一票"
+        ? "✓ 已投下這一票"
         : isLoading
           ? "投票送出中…"
           : "投這個作品一票";
@@ -2001,6 +2046,7 @@
     });
 
     document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("modalCloseMobile").addEventListener("click", closeModal);
 
     document.getElementById("detailModal").addEventListener("click", function(event) {
       if (event.target === this) closeModal();
