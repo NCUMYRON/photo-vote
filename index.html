@@ -267,7 +267,7 @@
       line-height: 1.4;
       font-weight: 500;
       letter-spacing: .12em;
-      min-height: 30px;
+      min-height: 12px;
       cursor: pointer;
       transition: color .2s ease;
     }
@@ -644,6 +644,7 @@
     }
     .detail-description.is-expanded {
       max-height: none;
+      overflow: visible;
     }
     .detail-description.is-expanded::after { display: none; }
     .description-toggle {
@@ -717,7 +718,7 @@
         padding: 9px 9px 10px;
         gap: 8px;
       }
-      .card-main { gap: 4px; }
+      .card-main { gap: 1px; }
       .card-title {
         min-height: 38px;
         font-size: 14px;
@@ -739,6 +740,8 @@
         grid-template-columns: 1fr;
         gap: 6px;
       }
+      .card-actions .vote-count { order: 1; }
+      .card-actions .vote-btn { order: 2; }
       .vote-btn {
         padding: 8px 5px;
         font-size: 11px;
@@ -877,7 +880,6 @@
       <div class="works-header">
         <div class="works-title">參賽作品</div>
       </div>
-      <div class="result-bar" id="resultBar">作品資料準備中…</div>
     </section>
 
     <section class="gallery skeleton-gallery" id="skeletonGallery">
@@ -1040,12 +1042,10 @@
 
     function renderGallery(sourceLabel = "") {
       const gallery = document.getElementById("gallery");
-      const resultBar = document.getElementById("resultBar");
       const loadMoreWrap = document.getElementById("loadMoreWrap");
       const loadMoreBtn = document.getElementById("loadMoreBtn");
       const filteredWorks = getFilteredSortedWorks();
       const displayedWorks = filteredWorks.slice(0, visibleCount);
-      resultBar.style.display = "none";
 
       if (!filteredWorks.length) {
         loadMoreWrap.hidden = true;
@@ -1122,22 +1122,34 @@
       toggleEl.setAttribute("aria-expanded", "false");
 
       requestAnimationFrame(() => {
-        descriptionEl.classList.add("is-collapsible");
-        const isActuallyHidden = descriptionEl.scrollHeight > descriptionEl.clientHeight + 2;
-        if (isActuallyHidden) {
-          toggleEl.hidden = false;
-        } else {
-          descriptionEl.classList.remove("is-collapsible");
-          toggleEl.hidden = true;
-        }
+        requestAnimationFrame(() => {
+          descriptionEl.classList.add("is-collapsible");
+          const isActuallyHidden = descriptionEl.scrollHeight > descriptionEl.clientHeight + 2;
+          if (isActuallyHidden) {
+            toggleEl.hidden = false;
+          } else {
+            descriptionEl.classList.remove("is-collapsible");
+            toggleEl.hidden = true;
+          }
+        });
       });
     }
     function toggleDescription() {
       const descriptionEl = document.getElementById("modalDescription");
       const toggleEl = document.getElementById("descriptionToggle");
-      const isExpanded = descriptionEl.classList.toggle("is-expanded");
-      toggleEl.textContent = isExpanded ? "收合內容" : "展開全文";
-      toggleEl.setAttribute("aria-expanded", String(isExpanded));
+      const isExpanded = descriptionEl.classList.contains("is-expanded");
+
+      if (isExpanded) {
+        descriptionEl.classList.remove("is-expanded");
+        descriptionEl.classList.add("is-collapsible");
+        toggleEl.textContent = "展開全文";
+        toggleEl.setAttribute("aria-expanded", "false");
+      } else {
+        descriptionEl.classList.remove("is-collapsible");
+        descriptionEl.classList.add("is-expanded");
+        toggleEl.textContent = "收合內容";
+        toggleEl.setAttribute("aria-expanded", "true");
+      }
     }
     function closeModal() {
       document.getElementById("detailModal").classList.remove("show");
