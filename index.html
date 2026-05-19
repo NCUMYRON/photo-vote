@@ -108,17 +108,6 @@
         linear-gradient(180deg, #050505 0%, #0e0c09 100%);
       border-top: 1px solid rgba(244,223,154,.18);
     }
-    .works-area::before {
-      content: "PHOTO VOTE · TAIWAN NEW SCENE";
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(244,223,154,.34);
-      font-size: 11px;
-      letter-spacing: .42em;
-      white-space: nowrap;
-    }
     .works-header {
       width: min(1480px, 100%);
       margin: 0 auto 16px;
@@ -262,18 +251,14 @@
     .card-body {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      min-height: 154px;
+      gap: 10px;
+      min-height: 132px;
       padding: 13px 14px 13px;
       background: linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.38));
     }
-    .card-tag {
-      align-self: flex-start;
-      padding: 3px 8px;
-      border-left: 2px solid var(--gold);
-      color: var(--gold);
-      font-size: 12px;
-      letter-spacing: .12em;
+    .card-main {
+      display: grid;
+      gap: 5px;
     }
     .card-title {
       margin: 0;
@@ -282,10 +267,13 @@
       line-height: 1.4;
       font-weight: 500;
       letter-spacing: .12em;
-      min-height: 50px;
+      min-height: 30px;
+      cursor: pointer;
+      transition: color .2s ease;
     }
+    .card-title:hover { color: var(--gold); }
     .card-author {
-      margin: 0 0 4px;
+      margin: 0;
       color: rgba(255,255,255,.54);
       font-size: 13px;
       line-height: 1.5;
@@ -293,7 +281,7 @@
     .card-actions {
       margin-top: auto;
       display: grid;
-      grid-template-columns: 1fr 72px;
+      grid-template-columns: 1fr 48px;
       gap: 10px;
     }
     .vote-btn {
@@ -314,13 +302,13 @@
       display: grid;
       place-items: center;
       border: 1px solid rgba(255,255,255,.16);
-      color: #fff;
-      background: rgba(0,0,0,.28);
+      color: rgba(255,255,255,.88);
+      background: rgba(0,0,0,.22);
       font-size: 16px;
       line-height: 1.05;
       text-align: center;
     }
-    .vote-count small { display: block; color: rgba(255,255,255,.5); font-size: 11px; }
+    .vote-count small { display: block; color: rgba(255,255,255,.46); font-size: 11px; }
     .vote-success-pop { animation: voteButtonPop .52s ease; }
     .vote-pulse { animation: voteCountPulse .72s ease; }
     @keyframes voteButtonPop { 45% { transform: scale(1.04); } }
@@ -328,17 +316,49 @@
 
     .toolbar {
       position: fixed;
-      left: 50%;
+      right: 24px;
       bottom: max(18px, env(safe-area-inset-bottom));
       z-index: 300;
-      width: min(760px, calc(100% - 32px));
-      transform: translateX(-50%);
+      transform: none;
+      transition: width .28s ease, padding .28s ease, background .28s ease, border-color .28s ease, box-shadow .28s ease;
+    }
+    .toolbar.collapsed {
+      width: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      backdrop-filter: none;
+      box-shadow: none;
+    }
+    .toolbar.expanded {
+      width: min(620px, calc(100vw - 48px));
       padding: 10px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.68);
       backdrop-filter: blur(20px);
       box-shadow: 0 16px 60px rgba(0,0,0,.56);
     }
+    .search-toggle-btn {
+      min-width: 172px;
+      height: 52px;
+      padding: 0 22px;
+      border: 1px solid rgba(244,223,154,.58);
+      background: rgba(0,0,0,.82);
+      color: var(--gold);
+      font-size: 15px;
+      letter-spacing: .16em;
+      cursor: pointer;
+      box-shadow: 0 16px 48px rgba(0,0,0,.55);
+      transition: .22s ease;
+    }
+    .search-toggle-btn:hover {
+      background: var(--gold);
+      color: #111;
+      border-color: rgba(244,223,154,.9);
+    }
+    .toolbar.expanded .search-toggle-btn { display: none; }
+    .search-panel { display: none; }
+    .toolbar.expanded .search-panel { display: block; }
     .search-box { position: relative; }
     .search-input {
       width: 100%;
@@ -377,7 +397,12 @@
       font-size: 22px;
     }
 
-    .load-more-wrap { display: flex; justify-content: center; padding: 0 24px 64px; background: #0c0c0c; }
+    .load-more-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 8px 24px 96px;
+      background: #0c0c0c;
+    }
     .load-more-wrap[hidden] { display: none; }
     .load-more-btn {
       min-width: min(420px, 100%);
@@ -445,33 +470,59 @@
     .modal.show { display: flex; }
     .modal-dialog {
       position: relative;
-      width: min(1120px, 100%);
+      width: min(1180px, 100%);
       max-height: min(92vh, 940px);
       overflow-y: auto;
-      padding: 18px;
+      padding: 26px;
       border: 1px solid rgba(244,223,154,.35);
-      background: #090909;
+      background:
+        radial-gradient(circle at 78% 18%, rgba(244,223,154,.08), transparent 28%),
+        linear-gradient(180deg, #0a0a09 0%, #070707 100%);
       box-shadow: 0 30px 120px rgba(0,0,0,.78);
     }
     .modal-close {
-      position: sticky;
-      top: 0;
-      z-index: 6;
-      margin-left: auto;
-      margin-bottom: 12px;
-      width: 44px;
-      height: 44px;
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 8;
+      width: 46px;
+      height: 46px;
       border: 1px solid rgba(255,255,255,.24);
       border-radius: 50%;
-      background: rgba(0,0,0,.45);
+      background: rgba(0,0,0,.52);
       color: #fff;
-      font-size: 22px;
+      font-size: 23px;
       cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: .22s ease;
     }
-    .detail-panel { display: grid; grid-template-columns: 1.08fr .92fr; gap: 22px; align-items: center; }
-    .detail-image { min-height: 520px; display: grid; place-items: center; background: #111; overflow: hidden; }
+    .modal-close:hover {
+      color: #111;
+      background: var(--gold);
+      border-color: rgba(244,223,154,.85);
+    }
+    .detail-panel {
+      display: grid;
+      grid-template-columns: minmax(420px, 1.05fr) minmax(360px, .95fr);
+      gap: 30px;
+      align-items: stretch;
+    }
+    .detail-image {
+      min-height: 540px;
+      display: grid;
+      place-items: center;
+      background: #111;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
     .detail-image img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    .modal-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .modal-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
     .modal-nav-btn {
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.04);
@@ -481,33 +532,135 @@
     }
     .modal-nav-btn:hover:not(:disabled) { color: #111; background: var(--gold); }
     .modal-nav-btn:disabled { opacity: .35; cursor: not-allowed; }
-    .detail-info { min-width: 0; }
-    .detail-top-labels { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 16px; }
-    .detail-label { padding: 6px 11px; border: 1px solid rgba(244,223,154,.38); color: var(--gold); font-size: 13px; }
-    .detail-title { margin: 0 0 18px; color: #fff; font-size: clamp(28px, 3vw, 44px); line-height: 1.35; font-weight: 500; }
-    .detail-list { display: grid; gap: 10px; margin-bottom: 18px; }
-    .detail-row {
-      display: grid;
-      grid-template-columns: 112px 1fr;
-      gap: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255,255,255,.12);
-      color: rgba(255,255,255,.74);
-      line-height: 1.7;
+    .detail-info {
+      min-width: 0;
+      min-height: 0;
+      padding: 72px 0 4px;
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
     }
-    .detail-row strong { color: var(--gold); font-weight: 500; }
-    .detail-description {
+    .detail-top-labels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+    .detail-label { padding: 6px 11px; border: 1px solid rgba(244,223,154,.38); color: var(--gold); font-size: 13px; }
+    .detail-title {
+      margin: 0 0 10px;
+      color: #fff;
+      font-size: clamp(30px, 3vw, 46px);
+      line-height: 1.28;
+      font-weight: 500;
+      letter-spacing: .08em;
+    }
+    .detail-brief {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
       margin-bottom: 18px;
-      padding: 16px;
+      color: rgba(255,255,255,.66);
+      font-size: 14px;
+      line-height: 1.55;
+      letter-spacing: .08em;
+    }
+    .detail-brief span { color: #fff; }
+    .detail-vote-box {
+      margin-bottom: 18px;
+    }
+    .detail-vote-count {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 2px 0 10px;
+      border-bottom: 1px solid rgba(244,223,154,.22);
+      color: rgba(255,255,255,.7);
+      font-size: 15px;
+      line-height: 1.2;
+      letter-spacing: .08em;
+      text-align: right;
+    }
+    .detail-vote-count span {
+      display: inline-block;
+      margin: 0;
+      color: var(--gold);
+      font-size: 38px;
+      line-height: 1;
+      letter-spacing: .04em;
+    }
+    .detail-action-row { display: grid; }
+    .detail-action-row .vote-btn {
+      width: 100%;
+      min-height: 50px;
+      padding-inline: 18px;
+      font-size: 14px;
+      letter-spacing: .12em;
+    }
+    .detail-bottom-action {
+      margin-top: auto;
+      padding-top: 18px;
+    }
+    .detail-story {
+      position: relative;
+      margin-bottom: 18px;
+      padding: 16px 18px 15px;
       border-left: 2px solid rgba(244,223,154,.6);
       background: rgba(255,255,255,.045);
-      color: rgba(255,255,255,.78);
-      line-height: 1.9;
     }
-    .detail-vote-box { padding: 16px; border: 1px solid rgba(244,223,154,.26); background: rgba(244,223,154,.07); }
-    .detail-vote-count { margin-bottom: 12px; color: rgba(255,255,255,.8); font-size: 18px; }
-    .detail-vote-count span { display: inline-block; margin-left: 8px; color: var(--gold); font-size: 25px; }
-    .detail-action-row { display: grid; }
+    .detail-story-label {
+      margin-bottom: 8px;
+      color: rgba(244,223,154,.82);
+      font-size: 12px;
+      letter-spacing: .22em;
+    }
+    .detail-description {
+      margin-bottom: 0;
+      padding: 0;
+      border-left: 0;
+      background: transparent;
+      color: rgba(255,255,255,.78);
+      font-size: 15px;
+      line-height: 1.62;
+      letter-spacing: .055em;
+      white-space: pre-line;
+      transition: max-height .35s ease;
+    }
+    .detail-description.is-collapsible {
+      position: relative;
+      max-height: 6.55em;
+      overflow: hidden;
+    }
+    .detail-description.is-collapsible::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2.2em;
+      background: linear-gradient(180deg, rgba(15,15,14,0), rgba(15,15,14,.98));
+      pointer-events: none;
+    }
+    .detail-description.is-expanded {
+      max-height: none;
+    }
+    .detail-description.is-expanded::after { display: none; }
+    .description-toggle {
+      display: inline-block;
+      margin-top: 8px;
+      padding-bottom: 1px;
+      border-bottom: 1px solid rgba(244,223,154,.34);
+      color: rgba(244,223,154,.8);
+      font-size: 12px;
+      letter-spacing: .18em;
+      cursor: pointer;
+      transition: color .2s ease, border-color .2s ease;
+    }
+    .description-toggle:hover {
+      color: var(--gold);
+      border-color: rgba(244,223,154,.8);
+    }
 
     .toast {
       position: fixed;
@@ -529,35 +682,176 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 1180px) { .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 1180px) {
+      .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
     @media (max-width: 860px) {
       .hero-group-tabs { gap: 8px; padding: 8px 10px; }
       .group-btn { min-width: 0; flex: 1; height: 40px; font-size: 14px; }
       .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); width: calc(100% - 28px); gap: 12px; padding: 14px 0 30px; }
       .works-area { padding-top: 38px; }
-      .detail-panel { grid-template-columns: 1fr; }
+      .modal-dialog { padding: 18px; }
+      .detail-panel { grid-template-columns: 1fr; gap: 18px; align-items: start; }
       .detail-image { min-height: auto; aspect-ratio: 4 / 3; }
+      .detail-info { min-height: 0; padding-top: 0; }
+      .detail-bottom-action { margin-top: 18px; padding-top: 0; }
+      .detail-action-row .vote-btn { width: 100%; }
     }
     @media (max-width: 560px) {
-      .gallery { grid-template-columns: 1fr; padding-bottom: 26px; }
-      .photo-wrap { aspect-ratio: 16 / 9; }
-      .card-body { min-height: auto; padding: 12px; }
-      .card-actions { grid-template-columns: 1fr; }
-      .vote-count { min-height: 40px; display: flex; justify-content: center; gap: 5px; }
-      .vote-count small { display: inline; }
-      .toolbar { bottom: max(10px, env(safe-area-inset-bottom)); width: calc(100% - 20px); }
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: calc(100% - 20px);
+        gap: 10px;
+        padding-bottom: 26px;
+      }
+      .photo-wrap { aspect-ratio: 1 / 1; }
+      .detail-hint { display: none; }
+      .work-number {
+        top: 8px;
+        left: 8px;
+        padding: 4px 7px;
+        font-size: 11px;
+      }
+      .card-body {
+        min-height: auto;
+        padding: 9px 9px 10px;
+        gap: 8px;
+      }
+      .card-main { gap: 4px; }
+      .card-title {
+        min-height: 38px;
+        font-size: 14px;
+        line-height: 1.38;
+        letter-spacing: .06em;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .card-author {
+        font-size: 11px;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card-actions {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .vote-btn {
+        padding: 8px 5px;
+        font-size: 11px;
+        letter-spacing: .04em;
+      }
+      .vote-count {
+        min-height: 32px;
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        font-size: 13px;
+      }
+      .vote-count small { display: inline; font-size: 10px; }
+      .toolbar {
+        right: 10px;
+        bottom: max(10px, env(safe-area-inset-bottom));
+      }
+      .toolbar.expanded { width: calc(100vw - 20px); }
+      .search-toggle-btn {
+        min-width: 152px;
+        height: 48px;
+        padding: 0 18px;
+        font-size: 14px;
+      }
       .search-input { height: 46px; font-size: 13px; }
       .modal { padding: 8px; }
-      .modal-dialog { height: calc(100dvh - 16px); max-height: none; overflow: hidden; padding: 10px; }
-      .modal-close { position: absolute; top: 12px; right: 12px; width: 38px; height: 38px; }
-      .detail-panel { height: 100%; display: flex; flex-direction: column; overflow: hidden; gap: 10px; }
+      .modal-dialog {
+        height: calc(100dvh - 16px);
+        max-height: none;
+        overflow: hidden;
+        padding: 10px;
+      }
+      .modal-close {
+        top: 12px;
+        right: 12px;
+        width: 38px;
+        height: 38px;
+        font-size: 20px;
+      }
+      .detail-panel {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        gap: 12px;
+      }
       .detail-media { flex: 0 0 auto; }
-      .detail-image { height: clamp(170px, 30vh, 238px); aspect-ratio: auto; }
-      .detail-info { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 2px; }
-      .detail-title { font-size: 23px; margin-bottom: 10px; padding-right: 44px; }
-      .detail-row { grid-template-columns: 82px 1fr; font-size: 13px; }
-      .detail-description { font-size: 13px; line-height: 1.65; }
-      .load-more-wrap { padding-bottom: 64px; }
+      .detail-image {
+        height: clamp(178px, 31vh, 242px);
+        aspect-ratio: auto;
+      }
+      .modal-nav { gap: 10px; margin-top: 10px; }
+      .modal-nav-btn { padding: 11px 8px; font-size: 13px; }
+      .detail-info {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 0 2px 2px;
+      }
+      .detail-bottom-action {
+        margin-top: 14px;
+        padding-top: 0;
+      }
+      .detail-top-labels { margin-bottom: 10px; gap: 8px; }
+      .detail-label { padding: 5px 10px; font-size: 12px; }
+      .detail-title {
+        font-size: 25px;
+        line-height: 1.28;
+        margin-bottom: 8px;
+        padding-right: 42px;
+      }
+      .detail-brief {
+        gap: 6px 12px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .detail-vote-box {
+        margin-bottom: 14px;
+        gap: 10px;
+      }
+      .detail-vote-count {
+        gap: 10px;
+        padding-bottom: 8px;
+        font-size: 14px;
+      }
+      .detail-vote-count span { font-size: 30px; }
+      .detail-action-row .vote-btn {
+        width: 100%;
+        min-height: 40px;
+        font-size: 12px;
+      }
+      .detail-story {
+        margin-bottom: 8px;
+        padding: 13px 14px 12px;
+      }
+      .detail-story-label {
+        margin-bottom: 7px;
+        font-size: 11px;
+      }
+      .detail-description {
+        font-size: 13px;
+        line-height: 1.56;
+        letter-spacing: .04em;
+      }
+      .detail-description.is-collapsible { max-height: 6.25em; }
+      .description-toggle {
+        margin-top: 7px;
+        font-size: 11px;
+        letter-spacing: .15em;
+      }
+      .load-more-wrap { padding: 8px 18px 86px; }
+      .toast { bottom: 82px; }
     }
   </style>
 </head>
@@ -601,11 +895,14 @@
     </div>
   </main>
 
-  <section class="toolbar">
-    <div class="search-box">
-      <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
-      <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
-      <div class="search-icon">⌕</div>
+  <section class="toolbar collapsed" id="searchToolbar">
+    <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
+    <div class="search-panel" id="searchPanel">
+      <div class="search-box">
+        <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
+        <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
+        <div class="search-icon">⌕</div>
+      </div>
     </div>
   </section>
 
@@ -626,17 +923,19 @@
             <div class="detail-label theme" id="modalTheme"></div>
           </div>
           <h2 class="detail-title" id="modalTitle"></h2>
-          <div class="detail-list">
-            <div class="detail-row"><strong>作品編號</strong><div id="modalNumber"></div></div>
-            <div class="detail-row"><strong>作品名稱</strong><div id="modalWorkName"></div></div>
-            <div class="detail-row"><strong>參賽者名稱</strong><div id="modalAuthor"></div></div>
-            <div class="detail-row"><strong>拍攝主題</strong><div id="modalPhotoTheme"></div></div>
+          <div class="detail-brief">
+            <div>參賽者｜<span id="modalBriefAuthor"></span></div>
+            <div>作品編號｜<span id="modalBriefNumber"></span></div>
           </div>
-          <div class="detail-description" id="modalDescription"></div>
           <div class="detail-vote-box">
             <div class="detail-vote-count">人氣票數 <span id="modalVotes"></span></div>
-            <div class="detail-action-row"><button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button></div>
           </div>
+          <div class="detail-story">
+            <div class="detail-story-label">作品自述</div>
+            <div class="detail-description" id="modalDescription"></div>
+            <span class="description-toggle" id="descriptionToggle" hidden>展開全文</span>
+          </div>
+          <div class="detail-action-row detail-bottom-action"><button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button></div>
         </div>
       </div>
     </div>
@@ -762,17 +1061,16 @@
             <div class="photo-wrap">
               <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async">
               <div class="work-number">${escapeHtml(work.display_number)}</div>
-              <div class="detail-hint">點我看詳情</div>
+              <div class="detail-hint">查看作品介紹</div>
             </div>
           </div>
           <div class="card-body">
-            <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
-              <div class="card-tag">${escapeHtml(work.shooting_theme)}</div>
-              <h3 class="card-title">${escapeHtml(work.work_name)}</h3>
+            <div class="card-main">
+              <h3 class="card-title photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">${escapeHtml(work.work_name)}</h3>
               <div class="card-author">參賽者｜${escapeHtml(work.participant_name)}</div>
             </div>
             <div class="card-actions">
-              <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')">${isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "❤ 投這個作品一票"}</button>
+              <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')">${isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "投這個作品一票"}</button>
               <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
             </div>
           </div>
@@ -782,7 +1080,7 @@
       const remaining = filteredWorks.length - displayedWorks.length;
       if (remaining > 0) {
         loadMoreWrap.hidden = false;
-        loadMoreBtn.textContent = `查看更多作品（還有 ${remaining} 件）`;
+        loadMoreBtn.textContent = `還有 ${remaining} 件作品等你發現`;
       } else {
         loadMoreWrap.hidden = true;
       }
@@ -806,14 +1104,40 @@
       document.getElementById("modalGroup").textContent = work.group_name;
       document.getElementById("modalTheme").textContent = work.shooting_theme;
       document.getElementById("modalTitle").textContent = work.work_name;
-      document.getElementById("modalNumber").textContent = work.display_number;
-      document.getElementById("modalWorkName").textContent = work.work_name;
-      document.getElementById("modalAuthor").textContent = work.participant_name;
-      document.getElementById("modalPhotoTheme").textContent = work.shooting_theme;
-      document.getElementById("modalDescription").textContent = work.description;
+      document.getElementById("modalBriefAuthor").textContent = work.participant_name;
+      document.getElementById("modalBriefNumber").textContent = work.display_number;
+      renderDescription(work.description || "");
       document.getElementById("modalVotes").textContent = Number(work.votes || 0);
       updateModalVoteButton(work.work_id);
       updateModalNavigation();
+    }
+    function renderDescription(description) {
+      const descriptionEl = document.getElementById("modalDescription");
+      const toggleEl = document.getElementById("descriptionToggle");
+      const normalizedDescription = String(description || "").trim();
+      descriptionEl.textContent = normalizedDescription || "此作品尚未提供自述。";
+      descriptionEl.classList.remove("is-collapsible", "is-expanded");
+      toggleEl.hidden = true;
+      toggleEl.textContent = "展開全文";
+      toggleEl.setAttribute("aria-expanded", "false");
+
+      requestAnimationFrame(() => {
+        descriptionEl.classList.add("is-collapsible");
+        const isActuallyHidden = descriptionEl.scrollHeight > descriptionEl.clientHeight + 2;
+        if (isActuallyHidden) {
+          toggleEl.hidden = false;
+        } else {
+          descriptionEl.classList.remove("is-collapsible");
+          toggleEl.hidden = true;
+        }
+      });
+    }
+    function toggleDescription() {
+      const descriptionEl = document.getElementById("modalDescription");
+      const toggleEl = document.getElementById("descriptionToggle");
+      const isExpanded = descriptionEl.classList.toggle("is-expanded");
+      toggleEl.textContent = isExpanded ? "收合內容" : "展開全文";
+      toggleEl.setAttribute("aria-expanded", String(isExpanded));
     }
     function closeModal() {
       document.getElementById("detailModal").classList.remove("show");
@@ -828,7 +1152,7 @@
       const isLoading = pendingVotes.has(workId);
       button.classList.toggle("voted", isVoted);
       button.classList.toggle("loading", isLoading);
-      button.textContent = isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "❤ 投這個作品一票";
+      button.textContent = isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "投這個作品一票";
     }
     function updateModalNavigation() {
       document.getElementById("prevWorkBtn").disabled = currentModalIndex <= 0;
@@ -851,7 +1175,7 @@
       renderGallery();
       if (currentWorkId === workId) { document.getElementById("modalVotes").textContent = target.votes; updateModalVoteButton(workId); }
       triggerVoteSuccessAnimation(workId);
-      showToast("投票成功，謝謝你的支持！");
+      showToast("已成功投票！謝謝你支持這件作品。");
       try {
         const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "vote", work_id: workId, voter_id: voterId }) });
         const data = await response.json();
@@ -910,13 +1234,38 @@
       document.getElementById("searchInput").value = "";
       updateSearchClearButton();
       renderGallery();
+      openSearchToolbar();
       document.getElementById("searchInput").focus();
     }
     function updateSearchClearButton() { document.getElementById("clearSearchBtn").classList.toggle("show", !!currentKeyword.trim()); }
 
+    const searchToolbar = document.getElementById("searchToolbar");
+    const searchToggleBtn = document.getElementById("searchToggleBtn");
+    function openSearchToolbar() {
+      searchToolbar.classList.remove("collapsed");
+      searchToolbar.classList.add("expanded");
+      searchToggleBtn.setAttribute("aria-expanded", "true");
+      requestAnimationFrame(() => document.getElementById("searchInput").focus());
+    }
+    function closeSearchToolbar() {
+      if (currentKeyword.trim()) return;
+      searchToolbar.classList.remove("expanded");
+      searchToolbar.classList.add("collapsed");
+      searchToggleBtn.setAttribute("aria-expanded", "false");
+    }
+    searchToggleBtn.addEventListener("click", openSearchToolbar);
+    document.addEventListener("click", function(event) {
+      if (!searchToolbar.contains(event.target) && !currentKeyword.trim()) closeSearchToolbar();
+    });
+    document.addEventListener("keydown", function(event) {
+      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
+      if (!modalIsOpen && event.key === "Escape") closeSearchToolbar();
+    });
+
     document.getElementById("modalClose").addEventListener("click", closeModal);
     document.getElementById("detailModal").addEventListener("click", function(event) { if (event.target === this) closeModal(); });
     document.getElementById("modalVoteBtn").addEventListener("click", function() { if (currentWorkId) voteWork(currentWorkId); });
+    document.getElementById("descriptionToggle").addEventListener("click", toggleDescription);
     document.addEventListener("keydown", function(event) {
       const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
       if (!modalIsOpen) return;
