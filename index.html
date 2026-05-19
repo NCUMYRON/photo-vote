@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>照片人氣投票｜台灣新景代</title>
+  <title>照片人氣投票｜台灣新視代</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -215,29 +215,10 @@
       transition: .28s ease;
     }
     .photo-card::before {
-      content: "";
-      position: absolute;
-      inset: 7px 8px 8px 7px;
-      border: 1px solid rgba(244,223,154,.2);
-      border-radius: 3px 6px 2px 5px;
-      transform: rotate(-.35deg);
-      opacity: .96;
-      pointer-events: none;
-      z-index: 3;
+     display: none;
     }
     .photo-card::after {
-      content: "";
-      position: absolute;
-      inset: 5px 6px 7px 8px;
-      border-top: 1px solid rgba(244,223,154,.2);
-      border-right: 1px solid rgba(244,223,154,.12);
-      border-bottom: 1px solid rgba(244,223,154,.16);
-      border-left: 1px solid rgba(244,223,154,.1);
-      border-radius: 5px 3px 6px 2px;
-      transform: rotate(.28deg);
-      opacity: .82;
-      pointer-events: none;
-      z-index: 2;
+      display: none;
     }
     .photo-card:hover {
       transform: translateY(-8px) scale(1.01);
