@@ -1,1833 +1,942 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>
-   照片人氣投票
-  </title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>照片人氣投票｜台灣新景代</title>
   <style>
-   *  {
-  box-sizing: border-box;
-}
-:root  {
-  --red: #ef7376;
-  --blue: #66b9d8;
-  --green: #68b58d;
-  --cream: #fff7e6;
-  --paper: #fffdf7;
-  --yellow: #ffd65a;
-  --ink: #272727;
-  --muted: #6b655b;
-  --soft-line: #d8d2c4;
-  --shadow: 5px 5px 0 var(--ink);
-}
-html  {
-  scroll-behavior: smooth;
-}
-body  {
-  margin: 0;
-  font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
-  background: #fafafa;
-  color: var(--ink);
-}
-body.modal-open  {
-  overflow: hidden;
-}
-button, input  {
-  font-family: inherit;
-}
-button  {
-  -webkit-tap-highlight-color: transparent;
-}
-.page  {
-  width: min(1920px, calc(100% - 28px));
-  margin: 18px auto 42px;
-  padding-bottom: 104px;
-  background: var(--cream);
-  border: 5px solid var(--ink);
-  border-radius: 34px;
-  overflow: visible;
-  box-shadow: 0 14px 0 rgba(0, 0, 0, 0.26);
-}
-/********************************************** * 主視覺區 **********************************************/
-.hero  {
-  position: relative;
-  padding: 28px 28px 112px;
-  border-bottom: 5px solid var(--ink);
-  border-radius: 28px 28px 0 0;
-  background: repeating-linear-gradient(90deg, var(--red) 0 48px, #fff4ee 48px 54px, var(--blue) 54px 102px, #fff4ee 102px 108px, var(--green) 108px 156px, #fff4ee 156px 162px);
-}
-.side-badge  {
-  position: absolute;
-  top: 20px;
-  width: 68px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  z-index: 2;
-}
-.side-badge.left  {
-  left: 20px;
-}
-.side-badge.right  {
-  right: 20px;
-}
-.side-badge span  {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  border: 4px solid var(--ink);
-  background: var(--paper);
-  display: grid;
-  place-items: center;
-  font-size: 27px;
-  font-weight: 1000;
-  box-shadow: 3px 3px 0 var(--ink);
-}
-.hero-copy  {
-  max-width: 820px;
-  margin: 0 auto;
-  text-align: center;
-}
-.eyebrow  {
-  display: inline-block;
-  padding: 7px 17px;
-  border-radius: 999px;
-  background: var(--ink);
-  color: #fff;
-  font-size: 17px;
-  font-weight: 1000;
-  letter-spacing: 1px;
-  transform: rotate(-1deg);
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
-}
-.hero h1  {
-  margin: 14px 0 8px;
-  color: #fff;
-  font-size: clamp(44px, 7.5vw, 88px);
-  line-height: 0.98;
-  font-weight: 1000;
-  letter-spacing: 2px;
-  text-shadow: 4px 4px 0 var(--ink), 8px 8px 0 rgba(0, 0, 0, 0.18);
-}
-.hero h1 small  {
-  display: block;
-  font-size: 0.48em;
-  margin-bottom: 6px;
-}
-.hero-subtitle  {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 10px 18px;
-  background: var(--paper);
-  border: 4px solid var(--ink);
-  border-radius: 999px;
-  font-size: 17px;
-  font-weight: 1000;
-  box-shadow: var(--shadow);
-}
-.intro-board  {
-  max-width: 940px;
-  margin: 22px auto 0;
-  padding: 16px;
-  background: rgba(255, 253, 247, 0.96);
-  border: 5px solid var(--ink);
-  border-radius: 26px;
-  box-shadow: 8px 8px 0 var(--ink);
-  display: grid;
-  grid-template-columns: 1.35fr 0.85fr;
-  gap: 14px;
-}
-.intro-text, .intro-rule  {
-  border: 4px solid var(--ink);
-  border-radius: 20px;
-  padding: 16px;
-  background: #fff;
-}
-.intro-text h2  {
-  margin: 0 0 8px;
-  font-size: 27px;
-  line-height: 1.35;
-  font-weight: 1000;
-}
-.intro-text p  {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.8;
-  font-weight: 700;
-}
-.intro-rule  {
-  background: var(--green);
-  color: #fff;
-}
-.intro-rule-title  {
-  display: inline-block;
-  margin-bottom: 10px;
-  padding: 6px 14px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 1000;
-}
-.intro-rule ul  {
-  margin: 0;
-  padding-left: 20px;
-  font-size: 15px;
-  line-height: 1.85;
-  font-weight: 900;
-}
-/********************************************** * 組別切換按鈕 **********************************************/
-.hero-group-tabs  {
-  position: absolute;
-  left: 50%;
-  bottom: 22px;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  z-index: 10;
-  width: min(940px, calc(100% - 56px));
-}
-.group-btn  {
-  flex: 1;
-  min-width: 0;
-  height: 76px;
-  border: 5px solid var(--ink);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 26px;
-  font-weight: 1000;
-  cursor: pointer;
-  box-shadow: 7px 7px 0 var(--ink);
-  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
-}
-.group-btn:hover  {
-  transform: translate(-3px, -3px);
-}
-.group-btn.active  {
-  background: var(--red);
-  color: #fff;
-}
-/********************************************** * 參賽作品標題 **********************************************/
-.works-area  {
-  padding: 24px 24px 0;
-  background: var(--cream);
-}
-.works-header  {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-.works-title  {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 33px;
-  font-weight: 1000;
-}
-.works-title span  {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 3px solid var(--ink);
-  background: var(--yellow);
-  box-shadow: 3px 3px 0 var(--ink);
-}
-/********************************************** * 下方固定搜尋列 **********************************************/
-.toolbar  {
-  position: fixed;
-  left: 50%;
-  bottom: max(18px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  z-index: 300;
-  width: min(860px, calc(100% - 40px));
-  padding: 14px;
-  border: 4px solid var(--ink);
-  border-radius: 999px;
-  background: rgba(255, 247, 230, 0.96);
-  backdrop-filter: blur(12px);
-  box-shadow: 7px 7px 0 var(--ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.search-box  {
-  position: relative;
-  width: 100%;
-  max-width: none;
-}
-.search-input  {
-  width: 100%;
-  height: 58px;
-  padding: 0 98px 0 20px;
-  border: 4px solid var(--ink);
-  border-radius: 999px;
-  background: #fff;
-  font-size: 16px;
-  font-weight: 800;
-  outline: none;
-  box-shadow: 4px 4px 0 var(--ink);
-}
-.search-input:focus  {
-  background: #fffdf0;
-}
-.search-clear  {
-  position: absolute;
-  right: 54px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  border: 3px solid var(--ink);
-  border-radius: 50%;
-  background: var(--yellow);
-  color: var(--ink);
-  display: none;
-  place-items: center;
-  font-size: 16px;
-  font-weight: 1000;
-  cursor: pointer;
-}
-.search-clear.show  {
-  display: grid;
-}
-.search-icon  {
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 24px;
-  font-weight: 1000;
-  pointer-events: none;
-}
-.result-bar  {
-  padding: 10px 24px 0;
-  font-size: 15px;
-  line-height: 1.7;
-  font-weight: 900;
-  color: #555;
-  background: var(--cream);
-}
-.result-bar strong  {
-  color: var(--red);
-  font-size: 18px;
-}
-.sync-status  {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: 10px;
-  padding: 4px 10px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: #fff;
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 1000;
-  vertical-align: middle;
-}
-.sync-status.hidden  {
-  display: none;
-}
-/********************************************** * Skeleton Loading **********************************************/
-.skeleton-gallery  {
-  padding-top: 18px;
-}
-.skeleton-card  {
-  border: 4px solid var(--ink);
-  border-radius: 22px;
-  background: #fff;
-  overflow: hidden;
-  box-shadow: 6px 6px 0 var(--ink);
-}
-.skeleton-image, .skeleton-line, .skeleton-button, .skeleton-count  {
-  position: relative;
-  overflow: hidden;
-  background: #eadfcb;
-}
-.skeleton-image::after, .skeleton-line::after, .skeleton-button::after, .skeleton-count::after  {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  animation: shimmer 1.35s infinite;
-}
-@keyframes shimmer  {
-  100%  {
-    transform: translateX(100%);
-  }
-}
-.skeleton-image  {
-  aspect-ratio: 16 / 10;
-  border-bottom: 4px solid var(--ink);
-}
-.skeleton-body  {
-  padding: 16px;
-}
-.skeleton-line  {
-  height: 17px;
-  border-radius: 999px;
-  margin-bottom: 11px;
-}
-.skeleton-line.short  {
-  width: 36%;
-}
-.skeleton-line.medium  {
-  width: 72%;
-}
-.skeleton-line.long  {
-  width: 92%;
-}
-.skeleton-actions  {
-  display: grid;
-  grid-template-columns: 1fr 82px;
-  gap: 10px;
-  margin-top: 16px;
-}
-.skeleton-button, .skeleton-count  {
-  height: 54px;
-  border-radius: 16px;
-}
-/********************************************** * 作品卡片 **********************************************/
-.gallery  {
-  padding: 18px 24px 20px;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 20px;
-  background: radial-gradient(circle at 10% 10%, rgba(239, 115, 118, 0.13), transparent 24%), radial-gradient(circle at 90% 18%, rgba(102, 185, 216, 0.15), transparent 28%), var(--cream);
-}
-.photo-card  {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  background: #fff;
-  border: 4px solid var(--ink);
-  border-radius: 22px;
-  overflow: hidden;
-  box-shadow: 6px 6px 0 var(--ink);
-  transition: 0.22s ease;
-}
-.photo-card:hover  {
-  transform: translate(-4px, -4px) rotate(-0.35deg);
-  box-shadow: 10px 10px 0 var(--ink);
-}
-.photo-click-area  {
-  cursor: pointer;
-}
-.photo-wrap  {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  border-bottom: 4px solid var(--ink);
-  background: #ddd;
-}
-.photo-wrap img  {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  transition: transform 0.45s ease;
-}
-.photo-card:hover .photo-wrap img  {
-  transform: scale(1.06);
-}
-.work-number  {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 7px 12px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: var(--red);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 1000;
-  box-shadow: 3px 3px 0 var(--ink);
-}
-.detail-hint  {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  padding: 7px 11px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: #fff;
-  font-size: 13px;
-  font-weight: 1000;
-  box-shadow: 3px 3px 0 var(--ink);
-}
-.card-body  {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 16px;
-}
-.card-tag  {
-  align-self: flex-start;
-  margin-bottom: 9px;
-  padding: 5px 11px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: var(--blue);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 1000;
-}
-.card-title  {
-  margin: 0;
-  font-size: 21px;
-  line-height: 1.35;
-  font-weight: 1000;
-  cursor: pointer;
-}
-.card-author  {
-  margin: 7px 0 12px;
-  font-size: 14px;
-  line-height: 1.6;
-  font-weight: 800;
-  color: #555;
-}
-.card-actions  {
-  margin-top: auto;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: stretch;
-}
-.vote-btn  {
-  border: 4px solid var(--ink);
-  border-radius: 16px;
-  background: var(--red);
-  color: #fff;
-  padding: 12px 12px;
-  font-size: 15px;
-  font-weight: 1000;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 var(--ink);
-  transition: 0.18s ease;
-}
-.vote-btn:hover  {
-  transform: translate(-2px, -2px);
-  filter: brightness(1.04);
-}
-.vote-btn.voted  {
-  background: var(--green);
-}
-.vote-btn.loading  {
-  opacity: 0.7;
-  cursor: wait;
-}
-.vote-btn.vote-success-pop  {
-  animation: voteButtonPop 0.55s ease;
-}
-@keyframes voteButtonPop  {
-  0%  {
-    transform: scale(1);
-  }
-  40%  {
-    transform: scale(1.05);
-  }
-  100%  {
-    transform: scale(1);
-  }
-}
-.vote-count  {
-  min-width: 80px;
-  display: grid;
-  place-items: center;
-  border: 4px solid var(--ink);
-  border-radius: 16px;
-  background: var(--paper);
-  font-size: 18px;
-  font-weight: 1000;
-  line-height: 1.1;
-  text-align: center;
-  box-shadow: 4px 4px 0 var(--ink);
-}
-.vote-count small  {
-  display: block;
-  font-size: 12px;
-  font-weight: 900;
-}
-.vote-count.vote-pulse  {
-  animation: voteCountPulse 0.75s ease;
-}
-@keyframes voteCountPulse  {
-  0%  {
-    transform: scale(1);
-  }
-  35%  {
-    transform: scale(1.12) rotate(-1deg);
-  }
-  100%  {
-    transform: scale(1);
-  }
-}
-/********************************************** * 載入更多 **********************************************/
-.load-more-wrap  {
-  display: flex;
-  justify-content: center;
-  padding: 2px 24px 20px;
-  background: var(--cream);
-}
-.load-more-wrap[hidden]  {
-  display: none;
-}
-.load-more-btn  {
-  min-width: min(420px, 100%);
-  border: 4px solid var(--ink);
-  border-radius: 999px;
-  padding: 17px 28px;
-  background: var(--yellow);
-  color: var(--ink);
-  font-size: 18px;
-  font-weight: 1000;
-  cursor: pointer;
-  box-shadow: 5px 5px 0 var(--ink);
-  transition: 0.18s ease;
-}
-.load-more-btn:hover  {
-  transform: translate(-3px, -3px);
-}
-/********************************************** * 空狀態 **********************************************/
-.empty-state  {
-  grid-column: 1 / -1;
-  padding: 42px 20px;
-  border: 4px solid var(--ink);
-  border-radius: 24px;
-  background: #fff;
-  text-align: center;
-  box-shadow: 6px 6px 0 var(--ink);
-}
-.empty-state h3  {
-  margin: 0 0 10px;
-  font-size: 27px;
-  font-weight: 1000;
-}
-.empty-state p  {
-  margin: 0 0 18px;
-  font-size: 16px;
-  line-height: 1.8;
-  font-weight: 800;
-  color: #555;
-}
-.empty-clear-btn  {
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: var(--yellow);
-  padding: 12px 22px;
-  font-size: 15px;
-  font-weight: 1000;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--ink);
-  transition: 0.18s ease;
-}
-.empty-clear-btn:hover  {
-  transform: translate(-2px, -2px);
-}
-/********************************************** * 作品詳細彈窗 **********************************************/
-.modal  {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.72);
-}
-.modal.show  {
-  display: flex;
-}
-.modal-dialog  {
-  position: relative;
-  width: min(1080px, 100%);
-  max-height: min(92vh, 940px);
-  overflow-y: auto;
-  padding: 22px;
-  border: 5px solid var(--ink);
-  border-radius: 30px;
-  background: repeating-linear-gradient(90deg, rgba(239, 115, 118, 0.16) 0 40px, rgba(255, 255, 255, 0.05) 40px 46px, rgba(102, 185, 216, 0.16) 46px 86px, rgba(255, 255, 255, 0.05) 86px 92px, rgba(104, 181, 141, 0.16) 92px 132px, rgba(255, 255, 255, 0.05) 132px 138px), var(--cream);
-  box-shadow: 10px 10px 0 var(--ink);
-}
-.modal-close  {
-  position: sticky;
-  top: 0;
-  margin-left: auto;
-  margin-bottom: 10px;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border: 4px solid var(--ink);
-  border-radius: 50%;
-  background: var(--red);
-  color: #fff;
-  font-size: 22px;
-  font-weight: 1000;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 var(--ink);
-  z-index: 3;
-}
-.detail-panel  {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 24px;
-  border: 4px solid var(--ink);
-  border-radius: 26px;
-  background: #fff;
-  align-items: center;
-}
-.detail-media, .detail-info  {
-  align-self: center;
-}
-.detail-media  {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-.detail-image  {
-  min-height: 440px;
-  overflow: hidden;
-  border: 4px solid var(--ink);
-  border-radius: 24px;
-  background: #f4ead8;
-  display: grid;
-  place-items: center;
-}
-.detail-image img  {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-}
-.modal-nav  {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.modal-nav-btn  {
-  border: 4px solid var(--ink);
-  border-radius: 999px;
-  background: #fff;
-  color: var(--ink);
-  padding: 14px 16px;
-  font-size: 15px;
-  font-weight: 1000;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 var(--ink);
-  transition: 0.18s ease;
-}
-.modal-nav-btn:hover:not(:disabled)  {
-  background: var(--yellow);
-  transform: translate(-2px, -2px);
-}
-.modal-nav-btn:disabled  {
-  opacity: 0.42;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-.detail-info  {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.detail-top-labels  {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
-.detail-label  {
-  display: inline-block;
-  padding: 7px 14px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 1000;
-}
-.detail-label.group  {
-  background: var(--red);
-}
-.detail-label.theme  {
-  background: var(--green);
-}
-.detail-title  {
-  margin: 0 0 18px;
-  font-size: clamp(28px, 4vw, 40px);
-  line-height: 1.3;
-  font-weight: 1000;
-}
-.detail-list  {
-  display: grid;
-  gap: 11px;
-  margin-bottom: 18px;
-}
-.detail-row  {
-  display: grid;
-  grid-template-columns: 112px 1fr;
-  gap: 12px;
-  align-items: start;
-  padding-bottom: 11px;
-  border-bottom: 2px dashed var(--soft-line);
-  font-size: 16px;
-  line-height: 1.75;
-}
-.detail-row strong  {
-  font-weight: 1000;
-}
-.detail-description  {
-  padding: 16px;
-  margin-bottom: 18px;
-  border: 3px solid var(--ink);
-  border-radius: 18px;
-  background: var(--paper);
-  font-size: 16px;
-  line-height: 1.9;
-  font-weight: 700;
-}
-.detail-vote-box  {
-  margin-top: auto;
-  padding: 16px;
-  border: 4px solid var(--ink);
-  border-radius: 20px;
-  background: #fff5d3;
-}
-.detail-vote-count  {
-  margin-bottom: 12px;
-  font-size: 19px;
-  font-weight: 1000;
-}
-.detail-vote-count span  {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 5px 12px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: var(--red);
-  color: #fff;
-  font-size: 22px;
-}
-.detail-vote-count span.vote-pulse  {
-  animation: voteCountPulse 0.75s ease;
-}
-.detail-action-row  {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-/********************************************** * 提示訊息 **********************************************/
-.toast  {
-  position: fixed;
-  left: 50%;
-  bottom: 150px;
-  z-index: 10000;
-  transform: translateX(-50%) translateY(20px);
-  opacity: 0;
-  pointer-events: none;
-  padding: 13px 20px;
-  border: 4px solid var(--ink);
-  border-radius: 999px;
-  background: var(--ink);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 1000;
-  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
-  transition: 0.25s ease;
-  max-width: calc(100% - 32px);
-  text-align: center;
-}
-.toast.show  {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-/********************************************** * 平板 **********************************************/
-@media (max-width: 980px)  {
-  .side-badge  {
-    display: none;
-  }
-  .intro-board  {
-    grid-template-columns: 1fr;
-  }
-  .gallery  {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .detail-panel  {
-    grid-template-columns: 1fr;
-  }
-  .detail-image  {
-    min-height: auto;
-    aspect-ratio: 4 / 3;
-  }
-}
-/********************************************** * 手機 **********************************************/
-@media (max-width: 680px)  {
-  .page  {
-    width: calc(100% - 16px);
-    margin: 10px auto 26px;
-    padding-bottom: 96px;
-    border-radius: 24px;
-  }
-  .hero  {
-    padding: 22px 16px 102px;
-    border-radius: 18px 18px 0 0;
-  }
-  .eyebrow  {
-    font-size: 14px;
-    padding: 7px 13px;
-  }
-  .hero h1  {
-    font-size: 44px;
-  }
-  .hero-subtitle  {
-    font-size: 14px;
-    padding: 9px 14px;
-    border-width: 3px;
-    box-shadow: 3px 3px 0 var(--ink);
-  }
-  .intro-board  {
-    margin-top: 18px;
-    padding: 12px;
-    border-radius: 22px;
-    box-shadow: 5px 5px 0 var(--ink);
-  }
-  .intro-text, .intro-rule  {
-    padding: 14px;
-  }
-  .intro-text h2  {
-    font-size: 22px;
-  }
-  .intro-text p, .intro-rule ul  {
-    font-size: 14px;
-  }
-  .hero-group-tabs  {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: auto;
-    transform: none;
-    gap: 12px;
-  }
-  .group-btn  {
-    flex: 1;
-    min-width: 0;
-    height: 60px;
-    border-width: 4px;
-    font-size: 19px;
-    box-shadow: 4px 4px 0 var(--ink);
-  }
-  .works-area  {
-    padding: 20px 16px 0;
-  }
-  .works-title  {
-    font-size: 28px;
-  }
-  .works-title span  {
-    width: 42px;
-    height: 42px;
-  }
-  .toolbar  {
-    left: 50%;
-    bottom: max(12px, env(safe-area-inset-bottom));
-    transform: translateX(-50%);
-    width: calc(100% - 24px);
-    padding: 11px;
-    border-radius: 999px;
-  }
-  .search-input  {
-    height: 52px;
-    font-size: 14px;
-    padding: 0 92px 0 18px;
-  }
-  .result-bar  {
-    padding: 10px 16px 0;
-  }
-  .sync-status  {
-    margin-left: 0;
-    margin-top: 6px;
-  }
-  .gallery  {
-    grid-template-columns: 1fr;
-    padding: 16px 16px 18px;
-    gap: 18px;
-  }
-  .skeleton-actions  {
-    grid-template-columns: 1fr;
-  }
-  .card-title  {
-    font-size: 20px;
-  }
-  .card-actions  {
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 10px;
-  }
-  .vote-btn  {
-    width: 100%;
-    min-height: 54px;
-  }
-  .vote-count  {
-    width: 100%;
-    min-width: 0;
-    min-height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: 19px;
-  }
-  .vote-count::before  {
-    content: "目前";
-    font-size: 14px;
-    font-weight: 1000;
-  }
-  .vote-count small  {
-    display: inline;
-    font-size: 14px;
-  }
-  .load-more-wrap  {
-    padding: 2px 16px 16px;
-  }
-  .load-more-btn  {
-    width: 100%;
-    min-width: 0;
-    font-size: 16px;
-    padding: 15px 18px;
-  }
-  .modal  {
-    padding: 8px;
-  }
-  .modal-dialog  {
-    width: 100%;
-    height: calc(100dvh - 16px);
-    max-height: none;
-    padding: 10px;
-    border-radius: 20px;
-    overflow: hidden;
-  }
-  .modal-close  {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    margin: 0;
-    width: 38px;
-    height: 38px;
-    border-width: 3px;
-    font-size: 18px;
-    box-shadow: 3px 3px 0 var(--ink);
-    z-index: 10;
-  }
-  .detail-panel  {
-    height: 100%;
-    padding: 10px;
-    gap: 10px;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    overflow: hidden;
-  }
-  .detail-media  {
-    flex: 0 0 auto;
-    gap: 8px;
-  }
-  .detail-image  {
-    height: clamp(175px, 28vh, 225px);
-    min-height: 0;
-    aspect-ratio: auto;
-    border-width: 3px;
-    border-radius: 16px;
-  }
-  .detail-image img  {
-    object-fit: contain;
-  }
-  .modal-nav  {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .modal-nav-btn  {
-    padding: 9px 8px;
-    border-width: 3px;
-    font-size: 13px;
-    box-shadow: 3px 3px 0 var(--ink);
-  }
-  .detail-info  {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    padding-right: 2px;
-    align-self: stretch;
-  }
-  .detail-top-labels  {
-    gap: 6px;
-    margin-bottom: 7px;
-    padding-right: 42px;
-  }
-  .detail-label  {
-    padding: 4px 9px;
-    border-width: 2px;
-    font-size: 12px;
-  }
-  .detail-title  {
-    margin: 0 0 8px;
-    font-size: 22px;
-    line-height: 1.28;
-  }
-  .detail-list  {
-    gap: 4px;
-    margin-bottom: 8px;
-  }
-  .detail-row  {
-    grid-template-columns: 76px 1fr;
-    gap: 8px;
-    padding-bottom: 4px;
-    font-size: 13px;
-    line-height: 1.45;
-  }
-  .detail-description  {
-    padding: 10px;
-    margin-bottom: 8px;
-    border-width: 2px;
-    border-radius: 12px;
-    font-size: 13px;
-    line-height: 1.55;
-  }
-  .detail-vote-box  {
-    padding: 10px;
-    border-width: 3px;
-    border-radius: 14px;
-  }
-  .detail-vote-count  {
-    margin-bottom: 8px;
-    font-size: 15px;
-  }
-  .detail-vote-count span  {
-    margin-left: 4px;
-    padding: 3px 8px;
-    border-width: 2px;
-    font-size: 17px;
-  }
-  #modalVoteBtn  {
-    min-height: 44px;
-    padding: 9px 10px;
-    border-width: 3px;
-    border-radius: 13px;
-    font-size: 14px;
-    box-shadow: 3px 3px 0 var(--ink);
-  }
-  .toast  {
-    bottom: 120px;
-  }
-}
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #030303;
+      --ink: #f7f1df;
+      --muted: rgba(247,241,223,.68);
+      --line: rgba(247,241,223,.22);
+      --gold: #f4df9a;
+      --gold-2: #caa95a;
+      --glass: rgba(10,10,10,.62);
+      --glass-2: rgba(255,255,255,.08);
+      --danger: #c84d3f;
+      --ok: #7f9f7a;
+      --blue: #638fa8;
+      --shadow: 0 24px 80px rgba(0,0,0,.58);
+      --hero-image: url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2200&q=85");
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #000;
+      font-family: "Noto Serif TC", "Songti TC", "Microsoft JhengHei", serif;
+      letter-spacing: .03em;
+    }
+    body.modal-open { overflow: hidden; }
+    button, input { font-family: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .page { min-height: 100vh; background: var(--bg); }
+
+    .hero {
+      position: relative;
+      min-height: auto;
+      overflow: hidden;
+      background: #000;
+    }
+    .hero-picture {
+      display: block;
+      width: 100%;
+      line-height: 0;
+    }
+    .hero-picture img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .hero-group-tabs {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(18px);
+      border-top: 1px solid rgba(255,255,255,.12);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .group-btn {
+      min-width: 180px;
+      height: 44px;
+      border: 1px solid rgba(244,223,154,.36);
+      border-radius: 0;
+      background: rgba(0,0,0,.28);
+      color: rgba(255,255,255,.72);
+      font-size: 15px;
+      letter-spacing: .24em;
+      cursor: pointer;
+      transition: .22s ease;
+      position: relative;
+    }
+    .group-btn::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(255,255,255,.08);
+      pointer-events: none;
+    }
+    .group-btn:hover {
+      color: var(--gold);
+      border-color: rgba(244,223,154,.7);
+      background: rgba(244,223,154,.08);
+    }
+    .group-btn.active {
+      color: #15110a;
+      background: linear-gradient(135deg, var(--gold), #fff3bd);
+      border-color: rgba(244,223,154,.9);
+      box-shadow: 0 0 28px rgba(244,223,154,.16);
+    }
+    .group-btn.active::before {
+      border-color: rgba(0,0,0,.18);
+    }
+
+    .works-area {
+      position: relative;
+      padding: 52px 24px 8px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px) 0 0 / 46px 46px,
+        radial-gradient(circle at 50% -10%, rgba(244,223,154,.13), transparent 34%),
+        linear-gradient(180deg, #050505 0%, #0e0c09 100%);
+      border-top: 1px solid rgba(244,223,154,.18);
+    }
+    .works-area::before {
+      content: "PHOTO VOTE · TAIWAN NEW SCENE";
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(244,223,154,.34);
+      font-size: 11px;
+      letter-spacing: .42em;
+      white-space: nowrap;
+    }
+    .works-header {
+      width: min(1480px, 100%);
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .works-title {
+      position: relative;
+      color: #fff;
+      font-size: clamp(25px, 3vw, 46px);
+      letter-spacing: .32em;
+      font-weight: 500;
+      text-shadow: 0 0 28px rgba(244,223,154,.16);
+    }
+    .works-title::before,
+    .works-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: min(18vw, 180px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244,223,154,.48));
+    }
+    .works-title::before { right: calc(100% + 20px); }
+    .works-title::after { left: calc(100% + 20px); transform: rotate(180deg); }
+    
+    .result-bar {
+      width: min(1480px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 14px 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-left: 3px solid rgba(244,223,154,.56);
+      background: rgba(255,255,255,.045);
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+      letter-spacing: .1em;
+      backdrop-filter: blur(10px);
+    }
+    .result-bar strong { color: var(--gold); font-weight: 600; }
+    .sync-status {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 9px;
+      border: 1px solid rgba(244,223,154,.35);
+      border-radius: 999px;
+      color: var(--gold);
+      font-size: 12px;
+    }
+
+    .gallery {
+      width: min(1480px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 16px 0 38px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+      background: transparent;
+    }
+    .photo-card, .skeleton-card {
+      position: relative;
+      min-height: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(244,223,154,.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+      box-shadow: 0 28px 90px rgba(0,0,0,.55);
+      transition: .28s ease;
+    }
+    .photo-card::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(255,255,255,.08);
+      pointer-events: none;
+      z-index: 3;
+    }
+    .photo-card::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 26px;
+      opacity: .42;
+      background: repeating-linear-gradient(90deg, rgba(244,223,154,.8) 0 6px, transparent 6px 15px);
+      pointer-events: none;
+    }
+    .photo-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      border-color: rgba(244,223,154,.62);
+      background: rgba(255,255,255,.085);
+    }
+    .photo-click-area { cursor: pointer; }
+    .photo-wrap {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: #111;
+    }
+    .photo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,.86) 100%);
+      pointer-events: none;
+    }
+    .photo-wrap img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: saturate(.72) contrast(1.08);
+      transition: .5s ease;
+    }
+    .photo-card:hover .photo-wrap img { transform: scale(1.06); filter: saturate(.95) contrast(1.08); }
+    .work-number {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      padding: 5px 10px;
+      border: 1px solid rgba(244,223,154,.55);
+      background: rgba(0,0,0,.46);
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: .08em;
+      backdrop-filter: blur(8px);
+    }
+    .detail-hint {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      z-index: 2;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      letter-spacing: .12em;
+    }
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 154px;
+      padding: 13px 14px 13px;
+      background: linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.38));
+    }
+    .card-tag {
+      align-self: flex-start;
+      padding: 3px 8px;
+      border-left: 2px solid var(--gold);
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: .12em;
+    }
+    .card-title {
+      margin: 0;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.4;
+      font-weight: 500;
+      letter-spacing: .12em;
+      min-height: 50px;
+    }
+    .card-author {
+      margin: 0 0 4px;
+      color: rgba(255,255,255,.54);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .card-actions {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 10px;
+    }
+    .vote-btn {
+      border: 1px solid rgba(244,223,154,.48);
+      border-radius: 0;
+      background: linear-gradient(135deg, rgba(244,223,154,.18), rgba(244,223,154,.05));
+      color: var(--gold);
+      padding: 9px 9px;
+      font-size: 13px;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+    .vote-btn:hover { background: var(--gold); color: #111; }
+    .vote-btn.voted { background: rgba(127,159,122,.25); color: #d8f1d2; border-color: rgba(216,241,210,.42); }
+    .vote-btn.loading { opacity: .65; cursor: wait; }
+    .vote-count {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.16);
+      color: #fff;
+      background: rgba(0,0,0,.28);
+      font-size: 16px;
+      line-height: 1.05;
+      text-align: center;
+    }
+    .vote-count small { display: block; color: rgba(255,255,255,.5); font-size: 11px; }
+    .vote-success-pop { animation: voteButtonPop .52s ease; }
+    .vote-pulse { animation: voteCountPulse .72s ease; }
+    @keyframes voteButtonPop { 45% { transform: scale(1.04); } }
+    @keyframes voteCountPulse { 35% { transform: scale(1.12); color: var(--gold); } }
+
+    .toolbar {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      z-index: 300;
+      width: min(760px, calc(100% - 32px));
+      transform: translateX(-50%);
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.68);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 16px 60px rgba(0,0,0,.56);
+    }
+    .search-box { position: relative; }
+    .search-input {
+      width: 100%;
+      height: 50px;
+      padding: 0 90px 0 18px;
+      outline: none;
+      border: 1px solid rgba(244,223,154,.34);
+      background: rgba(255,255,255,.05);
+      color: #fff;
+      font-size: 15px;
+      letter-spacing: .08em;
+    }
+    .search-input::placeholder { color: rgba(255,255,255,.42); }
+    .search-clear {
+      position: absolute;
+      right: 50px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      display: none;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50%;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+    }
+    .search-clear.show { display: grid; place-items: center; }
+    .search-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(244,223,154,.72);
+      pointer-events: none;
+      font-size: 22px;
+    }
+
+    .load-more-wrap { display: flex; justify-content: center; padding: 0 24px 64px; background: #0c0c0c; }
+    .load-more-wrap[hidden] { display: none; }
+    .load-more-btn {
+      min-width: min(420px, 100%);
+      border: 1px solid rgba(244,223,154,.48);
+      background: transparent;
+      color: var(--gold);
+      padding: 12px 22px;
+      font-size: 15px;
+      letter-spacing: .12em;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+    .load-more-btn:hover { background: var(--gold); color: #111; }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 48px 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.05);
+      text-align: center;
+    }
+    .empty-state h3 { margin: 0 0 12px; font-size: 28px; font-weight: 500; }
+    .empty-state p { margin: 0 0 18px; color: var(--muted); line-height: 1.8; }
+    .empty-clear-btn {
+      border: 1px solid rgba(244,223,154,.48);
+      background: transparent;
+      color: var(--gold);
+      padding: 12px 20px;
+      cursor: pointer;
+    }
+
+    .skeleton-gallery { display: grid; }
+    .skeleton-image, .skeleton-line, .skeleton-button, .skeleton-count {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,.08);
+    }
+    .skeleton-image::after, .skeleton-line::after, .skeleton-button::after, .skeleton-count::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(244,223,154,.15), transparent);
+      animation: shimmer 1.35s infinite;
+    }
+    @keyframes shimmer { 100% { transform: translateX(100%); } }
+    .skeleton-image { aspect-ratio: 4 / 5; }
+    .skeleton-body { padding: 16px; }
+    .skeleton-line { height: 14px; margin-bottom: 12px; }
+    .skeleton-line.short { width: 36%; } .skeleton-line.medium { width: 70%; } .skeleton-line.long { width: 92%; }
+    .skeleton-actions { display: grid; grid-template-columns: 1fr 72px; gap: 10px; margin-top: 18px; }
+    .skeleton-button, .skeleton-count { height: 46px; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0,0,0,.82);
+      backdrop-filter: blur(12px);
+    }
+    .modal.show { display: flex; }
+    .modal-dialog {
+      position: relative;
+      width: min(1120px, 100%);
+      max-height: min(92vh, 940px);
+      overflow-y: auto;
+      padding: 18px;
+      border: 1px solid rgba(244,223,154,.35);
+      background: #090909;
+      box-shadow: 0 30px 120px rgba(0,0,0,.78);
+    }
+    .modal-close {
+      position: sticky;
+      top: 0;
+      z-index: 6;
+      margin-left: auto;
+      margin-bottom: 12px;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 50%;
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .detail-panel { display: grid; grid-template-columns: 1.08fr .92fr; gap: 22px; align-items: center; }
+    .detail-image { min-height: 520px; display: grid; place-items: center; background: #111; overflow: hidden; }
+    .detail-image img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .modal-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .modal-nav-btn {
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.78);
+      padding: 12px;
+      cursor: pointer;
+    }
+    .modal-nav-btn:hover:not(:disabled) { color: #111; background: var(--gold); }
+    .modal-nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .detail-info { min-width: 0; }
+    .detail-top-labels { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 16px; }
+    .detail-label { padding: 6px 11px; border: 1px solid rgba(244,223,154,.38); color: var(--gold); font-size: 13px; }
+    .detail-title { margin: 0 0 18px; color: #fff; font-size: clamp(28px, 3vw, 44px); line-height: 1.35; font-weight: 500; }
+    .detail-list { display: grid; gap: 10px; margin-bottom: 18px; }
+    .detail-row {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.74);
+      line-height: 1.7;
+    }
+    .detail-row strong { color: var(--gold); font-weight: 500; }
+    .detail-description {
+      margin-bottom: 18px;
+      padding: 16px;
+      border-left: 2px solid rgba(244,223,154,.6);
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.78);
+      line-height: 1.9;
+    }
+    .detail-vote-box { padding: 16px; border: 1px solid rgba(244,223,154,.26); background: rgba(244,223,154,.07); }
+    .detail-vote-count { margin-bottom: 12px; color: rgba(255,255,255,.8); font-size: 18px; }
+    .detail-vote-count span { display: inline-block; margin-left: 8px; color: var(--gold); font-size: 25px; }
+    .detail-action-row { display: grid; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 104px;
+      z-index: 10000;
+      max-width: calc(100% - 32px);
+      transform: translateX(-50%) translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 13px 20px;
+      border: 1px solid rgba(244,223,154,.42);
+      background: rgba(0,0,0,.8);
+      color: #fff;
+      text-align: center;
+      letter-spacing: .08em;
+      transition: .25s ease;
+      backdrop-filter: blur(14px);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 1180px) { .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 860px) {
+      .hero-group-tabs { gap: 8px; padding: 8px 10px; }
+      .group-btn { min-width: 0; flex: 1; height: 40px; font-size: 14px; }
+      .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); width: calc(100% - 28px); gap: 12px; padding: 14px 0 30px; }
+      .works-area { padding-top: 38px; }
+      .detail-panel { grid-template-columns: 1fr; }
+      .detail-image { min-height: auto; aspect-ratio: 4 / 3; }
+    }
+    @media (max-width: 560px) {
+      .gallery { grid-template-columns: 1fr; padding-bottom: 26px; }
+      .photo-wrap { aspect-ratio: 16 / 9; }
+      .card-body { min-height: auto; padding: 12px; }
+      .card-actions { grid-template-columns: 1fr; }
+      .vote-count { min-height: 40px; display: flex; justify-content: center; gap: 5px; }
+      .vote-count small { display: inline; }
+      .toolbar { bottom: max(10px, env(safe-area-inset-bottom)); width: calc(100% - 20px); }
+      .search-input { height: 46px; font-size: 13px; }
+      .modal { padding: 8px; }
+      .modal-dialog { height: calc(100dvh - 16px); max-height: none; overflow: hidden; padding: 10px; }
+      .modal-close { position: absolute; top: 12px; right: 12px; width: 38px; height: 38px; }
+      .detail-panel { height: 100%; display: flex; flex-direction: column; overflow: hidden; gap: 10px; }
+      .detail-media { flex: 0 0 auto; }
+      .detail-image { height: clamp(170px, 30vh, 238px); aspect-ratio: auto; }
+      .detail-info { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 2px; }
+      .detail-title { font-size: 23px; margin-bottom: 10px; padding-right: 44px; }
+      .detail-row { grid-template-columns: 82px 1fr; font-size: 13px; }
+      .detail-description { font-size: 13px; line-height: 1.65; }
+      .load-more-wrap { padding-bottom: 64px; }
+    }
   </style>
- </head>
- <body>
+</head>
+<body>
   <main class="page">
-   <!-- 主視覺 -->
-   <section class="hero">
-    <div class="side-badge left">
-     <span>
-      里
-     </span>
-     <span>
-      民
-     </span>
-    </div>
-    <div class="side-badge right">
-     <span>
-      投
-     </span>
-     <span>
-      票
-     </span>
-    </div>
-    <div class="hero-copy">
-     <div class="eyebrow">
-      ● 沒有要集資的那本 ●
-     </div>
-     <h1>
-      <small>
-       新新厝邊生活
-      </small>
-      照片人氣投票
-     </h1>
-     <div class="hero-subtitle">
-      點開作品看完整故事，投下你最喜歡的一票！
-     </div>
-    </div>
-    <div class="intro-board">
-     <div class="intro-text">
-      <h2>
-       📸 一張照片，一段屬於生活的記憶
-      </h2>
-      <p>
-       本次照片投票分為「社會組」與「大專組」。 點開照片可查看完整作品內容，投下你最喜歡的一票。
-      </p>
-     </div>
-     <div class="intro-rule">
-      <div class="intro-rule-title">
-       投票方式
-      </div>
-      <ul>
-       <li>
-        切換組別瀏覽作品
-       </li>
-       <li>
-        搜尋編號、名稱或參賽者
-       </li>
-       <li>
-        點擊照片查看詳細內容
-       </li>
-       <li>
-        每件作品每日限投一票
-       </li>
-      </ul>
-     </div>
-    </div>
+    <section class="hero">
+      <!-- 主視覺之後會直接用圖片替代：
+           desktopHero：桌機版主視覺圖
+           mobileHero：手機版主視覺圖
+           建議桌機圖 1920x900 或 1920x1080，手機圖 1080x1350 或 1080x1600 -->
+      <picture class="hero-picture">
+        <source id="mobileHero" media="(max-width: 680px)" srcset="https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F229%2F351c93c03cdacd124f58a7ff.png">
+        <img id="desktopHero" src="https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F229%2Fe65e20ba66d54fd7ad1892b9.png" alt="台灣新景代 照片人氣投票">
+      </picture>
+    </section>
+
     <div class="hero-group-tabs">
-     <button class="group-btn active" data-group="social">
-      社會組
-     </button>
-     <button class="group-btn" data-group="college">
-      大專組
-     </button>
+      <button class="group-btn active" data-group="social">社會組</button>
+      <button class="group-btn" data-group="college">大專組</button>
     </div>
-   </section>
-   <!-- 參賽作品 -->
-   <section class="works-area">
-    <div class="works-header">
-     <div class="works-title">
-      <span>
-       ＋
-      </span>
-      參賽作品
-     </div>
+
+    <section class="works-area" id="works">
+      <div class="works-header">
+        <div class="works-title">參賽作品</div>
+      </div>
+      <div class="result-bar" id="resultBar">作品資料準備中…</div>
+    </section>
+
+    <section class="gallery skeleton-gallery" id="skeletonGallery">
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+    </section>
+
+    <section class="gallery" id="gallery" style="display:none;"></section>
+
+    <div class="load-more-wrap" hidden id="loadMoreWrap">
+      <button class="load-more-btn" id="loadMoreBtn" type="button"></button>
     </div>
-   </section>
-   <div class="result-bar" id="resultBar">
-    作品資料準備中…
-   </div>
-   <!-- Skeleton Loading -->
-   <section class="gallery skeleton-gallery" id="skeletonGallery">
-    <article class="skeleton-card">
-     <div class="skeleton-image">
-     </div>
-     <div class="skeleton-body">
-      <div class="skeleton-line short">
-      </div>
-      <div class="skeleton-line long">
-      </div>
-      <div class="skeleton-line medium">
-      </div>
-      <div class="skeleton-actions">
-       <div class="skeleton-button">
-       </div>
-       <div class="skeleton-count">
-       </div>
-      </div>
-     </div>
-    </article>
-    <article class="skeleton-card">
-     <div class="skeleton-image">
-     </div>
-     <div class="skeleton-body">
-      <div class="skeleton-line short">
-      </div>
-      <div class="skeleton-line long">
-      </div>
-      <div class="skeleton-line medium">
-      </div>
-      <div class="skeleton-actions">
-       <div class="skeleton-button">
-       </div>
-       <div class="skeleton-count">
-       </div>
-      </div>
-     </div>
-    </article>
-    <article class="skeleton-card">
-     <div class="skeleton-image">
-     </div>
-     <div class="skeleton-body">
-      <div class="skeleton-line short">
-      </div>
-      <div class="skeleton-line long">
-      </div>
-      <div class="skeleton-line medium">
-      </div>
-      <div class="skeleton-actions">
-       <div class="skeleton-button">
-       </div>
-       <div class="skeleton-count">
-       </div>
-      </div>
-     </div>
-    </article>
-    <article class="skeleton-card">
-     <div class="skeleton-image">
-     </div>
-     <div class="skeleton-body">
-      <div class="skeleton-line short">
-      </div>
-      <div class="skeleton-line long">
-      </div>
-      <div class="skeleton-line medium">
-      </div>
-      <div class="skeleton-actions">
-       <div class="skeleton-button">
-       </div>
-       <div class="skeleton-count">
-       </div>
-      </div>
-     </div>
-    </article>
-    <article class="skeleton-card">
-     <div class="skeleton-image">
-     </div>
-     <div class="skeleton-body">
-      <div class="skeleton-line short">
-      </div>
-      <div class="skeleton-line long">
-      </div>
-      <div class="skeleton-line medium">
-      </div>
-      <div class="skeleton-actions">
-       <div class="skeleton-button">
-       </div>
-       <div class="skeleton-count">
-       </div>
-      </div>
-     </div>
-    </article>
-    <article class="skeleton-card">
-     <div class="skeleton-image">
-     </div>
-     <div class="skeleton-body">
-      <div class="skeleton-line short">
-      </div>
-      <div class="skeleton-line long">
-      </div>
-      <div class="skeleton-line medium">
-      </div>
-      <div class="skeleton-actions">
-       <div class="skeleton-button">
-       </div>
-       <div class="skeleton-count">
-       </div>
-      </div>
-     </div>
-    </article>
-   </section>
-   <!-- 照片卡片 -->
-   <section class="gallery" id="gallery" style="display:none;">
-   </section>
-   <!-- 載入更多 -->
-   <div class="load-more-wrap" hidden="" id="loadMoreWrap">
-    <button class="load-more-btn" id="loadMoreBtn" type="button">
-    </button>
-   </div>
   </main>
-  <!-- 下方固定搜尋列 -->
+
   <section class="toolbar">
-   <div class="search-box">
-    <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text"/>
-    <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">
-     ×
-    </button>
-    <div class="search-icon">
-     ⌕
+    <div class="search-box">
+      <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
+      <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
+      <div class="search-icon">⌕</div>
     </div>
-   </div>
   </section>
-  <!-- 作品詳細彈窗 -->
+
   <div class="modal" id="detailModal">
-   <div class="modal-dialog">
-    <button aria-label="關閉視窗" class="modal-close" id="modalClose">
-     ×
-    </button>
-    <div class="detail-panel">
-     <div class="detail-media">
-      <div class="detail-image">
-       <img alt="" id="modalImage" src=""/>
-      </div>
-      <div class="modal-nav">
-       <button class="modal-nav-btn" id="prevWorkBtn" type="button">
-        ← 上一件作品
-       </button>
-       <button class="modal-nav-btn" id="nextWorkBtn" type="button">
-        下一件作品 →
-       </button>
-      </div>
-     </div>
-     <div class="detail-info">
-      <div class="detail-top-labels">
-       <div class="detail-label group" id="modalGroup">
-       </div>
-       <div class="detail-label theme" id="modalTheme">
-       </div>
-      </div>
-      <h2 class="detail-title" id="modalTitle">
-      </h2>
-      <div class="detail-list">
-       <div class="detail-row">
-        <strong>
-         作品編號
-        </strong>
-        <div id="modalNumber">
+    <div class="modal-dialog">
+      <button aria-label="關閉視窗" class="modal-close" id="modalClose">×</button>
+      <div class="detail-panel">
+        <div class="detail-media">
+          <div class="detail-image"><img alt="" id="modalImage" src="" /></div>
+          <div class="modal-nav">
+            <button class="modal-nav-btn" id="prevWorkBtn" type="button">← 上一件作品</button>
+            <button class="modal-nav-btn" id="nextWorkBtn" type="button">下一件作品 →</button>
+          </div>
         </div>
-       </div>
-       <div class="detail-row">
-        <strong>
-         作品名稱
-        </strong>
-        <div id="modalWorkName">
+        <div class="detail-info">
+          <div class="detail-top-labels">
+            <div class="detail-label group" id="modalGroup"></div>
+            <div class="detail-label theme" id="modalTheme"></div>
+          </div>
+          <h2 class="detail-title" id="modalTitle"></h2>
+          <div class="detail-list">
+            <div class="detail-row"><strong>作品編號</strong><div id="modalNumber"></div></div>
+            <div class="detail-row"><strong>作品名稱</strong><div id="modalWorkName"></div></div>
+            <div class="detail-row"><strong>參賽者名稱</strong><div id="modalAuthor"></div></div>
+            <div class="detail-row"><strong>拍攝主題</strong><div id="modalPhotoTheme"></div></div>
+          </div>
+          <div class="detail-description" id="modalDescription"></div>
+          <div class="detail-vote-box">
+            <div class="detail-vote-count">人氣票數 <span id="modalVotes"></span></div>
+            <div class="detail-action-row"><button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button></div>
+          </div>
         </div>
-       </div>
-       <div class="detail-row">
-        <strong>
-         參賽者名稱
-        </strong>
-        <div id="modalAuthor">
-        </div>
-       </div>
-       <div class="detail-row">
-        <strong>
-         拍攝主題
-        </strong>
-        <div id="modalPhotoTheme">
-        </div>
-       </div>
       </div>
-      <div class="detail-description" id="modalDescription">
-      </div>
-      <div class="detail-vote-box">
-       <div class="detail-vote-count">
-        人氣票數
-        <span id="modalVotes">
-        </span>
-       </div>
-       <div class="detail-action-row">
-        <button class="vote-btn" id="modalVoteBtn">
-         ❤ 投這個作品一票
-        </button>
-       </div>
-      </div>
-     </div>
     </div>
-   </div>
   </div>
-  <div class="toast" id="toast">
-  </div>
+
+  <div class="toast" id="toast"></div>
+
   <script>
-   /********************************************** * 1. Apps Script Web App URL **********************************************/
-const API_URL = "https://script.google.com/macros/s/AKfycbyjF8idieIUWms-JI-1sGyQe7tRzPdd5SEagG8fwZG9C-1IWQLY7wi1k6lLmVo8ftp1Xg/exec";
-/********************************************** * 2. 快取設定與全域狀態 **********************************************/
-const INITIAL_VISIBLE_COUNT = 20;
-const LOCAL_WORKS_CACHE_KEY = "photo_vote_local_works_cache_v3";
-const LOCAL_WORKS_CACHE_TTL = 5 * 60 * 1000;
-/* 5 分鐘 */
-let works = [];
-let currentGroup = "social";
-let currentKeyword = "";
-let currentWorkId = null;
-let visibleCount = INITIAL_VISIBLE_COUNT;
-let currentModalSequence = [];
-let currentModalIndex = -1;
-let remoteWorksLoaded = false;
-const votedToday = new Set();
-const pendingVotes = new Set();
-const voterId = getOrCreateVoterId();
-/********************************************** * 3. 匿名投票者 ID **********************************************/
-function getOrCreateVoterId()  {
-  const storageKey = "photo_vote_voter_id";
-  let id = localStorage.getItem(storageKey);
-  if (!id)  {
-    if (window.crypto && crypto.randomUUID)  {
-      id = crypto.randomUUID();
-    }
-    else  {
-      id = "voter_" + Date.now() + "_" + Math.random().toString(36).slice(2, 12);
-    }
-    localStorage.setItem(storageKey, id);
-  }
-  return id;
-}
-/********************************************** * 4. 快速載入作品資料 **********************************************/
-async function loadWorks()  {
-  const hasLocalWorks = restoreWorksFromLocalCache();
-  if (hasLocalWorks)  {
-    showGalleryImmediately();
-    renderGallery("快取資料");
-  }
-  /* 不阻塞作品顯示，背景同步今日已投票狀態 */
-  fetchVotedTodayInBackground();
-  try  {
-    const url = `${API_URL}?action=getWorksFast` + `&t=${Date.now()}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    if (!data.ok)  {
-      throw new Error(data.message || "作品資料載入失敗");
-    }
-    works = Array.isArray(data.works) ? data.works : [];
-    remoteWorksLoaded = true;
-    saveWorksToLocalCache(works);
-    showGalleryImmediately();
-    renderGallery();
-  }
-  catch (error)  {
-    if (!hasLocalWorks)  {
-      showWorksLoadError(error.message || "請稍後再試");
-    }
-    else  {
-      showToast("已先顯示作品，最新資料同步稍後再試");
-    }
-  }
-}
-async function fetchVotedTodayInBackground()  {
-  try  {
-    const url = `${API_URL}?action=getVotedToday` + `&voter_id=${encodeURIComponent(voterId)}` + `&t=${Date.now()}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    if (!data.ok)  {
-      return;
-    }
-    votedToday.clear();
-    (data.voted_today || []).forEach(workId => votedToday.add(workId));
-    renderGallery(remoteWorksLoaded ? "" : "快取資料");
-    if (currentWorkId)  {
-      updateModalVoteButton(currentWorkId);
-    }
-  }
-  catch (error)  {
-    /* 背景同步失敗不影響作品瀏覽 */
-  }
-}
-function restoreWorksFromLocalCache()  {
-  try  {
-    const raw = localStorage.getItem(LOCAL_WORKS_CACHE_KEY);
-    if (!raw) return false;
-    const payload = JSON.parse(raw);
-    const savedAt = Number(payload.saved_at || 0);
-    const isExpired = Date.now() - savedAt > LOCAL_WORKS_CACHE_TTL;
-    if (isExpired || !Array.isArray(payload.works))  {
-      return false;
-    }
-    works = payload.works;
-    return works.length > 0;
-  }
-  catch (error)  {
-    return false;
-  }
-}
-function saveWorksToLocalCache(latestWorks)  {
-  try  {
-    localStorage.setItem(LOCAL_WORKS_CACHE_KEY, JSON.stringify({ saved_at: Date.now(), works: latestWorks }));
-  }
-  catch (error)  {
-    /* localStorage 不可用時忽略，不影響功能 */
-  }
-}
-function showGalleryImmediately()  {
-  document.getElementById("skeletonGallery").style.display = "none";
-  document.getElementById("gallery").style.display = "grid";
-}
-function showWorksLoadError(message)  {
-  const skeleton = document.getElementById("skeletonGallery");
-  skeleton.innerHTML = ` <div class="empty-state"> <h3>作品載入失敗</h3> <p>${escapeHtml(message)}</p> </div> `;
-  showToast("作品載入失敗，請稍後再試");
-}
-/********************************************** * 5. 篩選、搜尋、固定編號排序 **********************************************/
-function getFilteredSortedWorks()  {
-  let result = works.filter(work => work.group_key === currentGroup);
-  if (currentKeyword.trim())  {
-    const keyword = currentKeyword.trim().toLowerCase();
-    result = result.filter(work =>  {
-      const searchableText = [ work.display_number, work.work_name, work.participant_name, work.shooting_theme ].join(" ").toLowerCase();
-      return searchableText.includes(keyword);
-    });
-  }
-  result.sort((a, b) => String(a.display_number || "").localeCompare(String(b.display_number || ""), "zh-Hant", { numeric: true }));
-  return result;
-}
-/********************************************** * 6. 渲染卡片 **********************************************/
-function renderGallery(sourceLabel = "")  {
-  const gallery = document.getElementById("gallery");
-  const resultBar = document.getElementById("resultBar");
-  const loadMoreWrap = document.getElementById("loadMoreWrap");
-  const loadMoreBtn = document.getElementById("loadMoreBtn");
-  const filteredWorks = getFilteredSortedWorks();
-  const displayedWorks = filteredWorks.slice(0, visibleCount);
-  const groupText = currentGroup === "social" ? "社會組" : "大專組";
-  const syncBadge = sourceLabel ? `<span class="sync-status">⚡ 已先顯示${sourceLabel}</span>` : "";
-  if (currentKeyword.trim())  {
-    resultBar.innerHTML = `目前顯示 <strong>${groupText}</strong> 中，符合「${escapeHtml(currentKeyword)}」的 ` + `<strong>${filteredWorks.length}</strong> 件作品，已展開 ` + `<strong>${displayedWorks.length}</strong> 件 ${syncBadge}`;
-  }
-  else  {
-    resultBar.innerHTML = `目前顯示 <strong>${groupText}</strong> 共 ` + `<strong>${filteredWorks.length}</strong> 件作品，已展開 ` + `<strong>${displayedWorks.length}</strong> 件 ${syncBadge}`;
-  }
-  if (!filteredWorks.length)  {
-    loadMoreWrap.hidden = true;
-    gallery.innerHTML = ` <div class="empty-state"> <h3>找不到符合條件的作品</h3> <p>請換個關鍵字，或一鍵清除搜尋後重新瀏覽。</p> <button class="empty-clear-btn" type="button" onclick="clearSearch()"> 清除搜尋，查看全部作品 </button> </div> `;
-    return;
-  }
-  gallery.innerHTML = displayedWorks.map(work =>  {
-    const isVoted = votedToday.has(work.work_id);
-    const isLoading = pendingVotes.has(work.work_id);
-    return ` <article class="photo-card" data-work-id="${escapeHtml(work.work_id)}"> <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')"> <div class="photo-wrap"> <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async" > <div class="work-number">${escapeHtml(work.display_number)}</div> <div class="detail-hint">點我看詳情</div> </div> </div> <div class="card-body"> <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')"> <div class="card-tag">${escapeHtml(work.shooting_theme)}</div> <h3 class="card-title">${escapeHtml(work.work_name)}</h3> <div class="card-author">參賽者｜${escapeHtml(work.participant_name)}</div> </div> <div class="card-actions"> <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')" > ${ isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "❤ 投這個作品一票" } </button> <div class="vote-count"> ${Number(work.votes || 0)} <small>票</small> </div> </div> </div> </article> `;
-  }).join("");
-  const remaining = filteredWorks.length - displayedWorks.length;
-  if (remaining > 0)  {
-    loadMoreWrap.hidden = false;
-    loadMoreBtn.textContent = `查看更多作品（還有 ${remaining} 件）`;
-  }
-  else  {
-    loadMoreWrap.hidden = true;
-  }
-}
-/********************************************** * 7. 載入更多 **********************************************/
-document.getElementById("loadMoreBtn").addEventListener("click", function()  {
-  visibleCount += INITIAL_VISIBLE_COUNT;
-  renderGallery();
-});
-/********************************************** * 8. 開啟作品詳細彈窗 **********************************************/
-function openModal(workId)  {
-  const work = works.find(item => item.work_id === workId);
-  if (!work) return;
-  currentModalSequence = getFilteredSortedWorks();
-  currentModalIndex = currentModalSequence.findIndex(item => item.work_id === workId);
-  renderModalByWork(work);
-  document.getElementById("detailModal").classList.add("show");
-  document.body.classList.add("modal-open");
-}
-function renderModalByWork(work)  {
-  currentWorkId = work.work_id;
-  document.getElementById("modalImage").src = work.image_url;
-  document.getElementById("modalImage").alt = work.work_name;
-  document.getElementById("modalGroup").textContent = work.group_name;
-  document.getElementById("modalTheme").textContent = work.shooting_theme;
-  document.getElementById("modalTitle").textContent = work.work_name;
-  document.getElementById("modalNumber").textContent = work.display_number;
-  document.getElementById("modalWorkName").textContent = work.work_name;
-  document.getElementById("modalAuthor").textContent = work.participant_name;
-  document.getElementById("modalPhotoTheme").textContent = work.shooting_theme;
-  document.getElementById("modalDescription").textContent = work.description;
-  document.getElementById("modalVotes").textContent = Number(work.votes || 0);
-  updateModalVoteButton(work.work_id);
-  updateModalNavigation();
-}
-function closeModal()  {
-  document.getElementById("detailModal").classList.remove("show");
-  document.body.classList.remove("modal-open");
-  currentWorkId = null;
-  currentModalSequence = [];
-  currentModalIndex = -1;
-}
-function updateModalVoteButton(workId)  {
-  const button = document.getElementById("modalVoteBtn");
-  const isVoted = votedToday.has(workId);
-  const isLoading = pendingVotes.has(workId);
-  button.classList.toggle("voted", isVoted);
-  button.classList.toggle("loading", isLoading);
-  button.textContent = isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "❤ 投這個作品一票";
-}
-function updateModalNavigation()  {
-  const prevBtn = document.getElementById("prevWorkBtn");
-  const nextBtn = document.getElementById("nextWorkBtn");
-  prevBtn.disabled = currentModalIndex <= 0;
-  nextBtn.disabled = currentModalIndex >= currentModalSequence.length - 1;
-}
-function showPreviousWork()  {
-  if (currentModalIndex <= 0) return;
-  currentModalIndex -= 1;
-  renderModalByWork(currentModalSequence[currentModalIndex]);
-}
-function showNextWork()  {
-  if (currentModalIndex >= currentModalSequence.length - 1) return;
-  currentModalIndex += 1;
-  renderModalByWork(currentModalSequence[currentModalIndex]);
-}
-document.getElementById("prevWorkBtn").addEventListener("click", showPreviousWork);
-document.getElementById("nextWorkBtn").addEventListener("click", showNextWork);
-/********************************************** * 9. 投票：樂觀更新 **********************************************/
-async function voteWork(workId)  {
-  if (votedToday.has(workId))  {
-    showToast("你今天已經投過這件作品囉！");
-    return;
-  }
-  if (pendingVotes.has(workId))  {
-    return;
-  }
-  const target = works.find(item => item.work_id === workId);
-  if (!target)  {
-    showToast("找不到這件作品，請重新整理後再試。");
-    return;
-  }
-  const previousVotes = Number(target.votes || 0);
-  /* 1. 樂觀更新：畫面先立即反應 */
-  pendingVotes.add(workId);
-  votedToday.add(workId);
-  target.votes = previousVotes + 1;
-  renderGallery();
-  if (currentWorkId === workId)  {
-    document.getElementById("modalVotes").textContent = target.votes;
-    updateModalVoteButton(workId);
-  }
-  triggerVoteSuccessAnimation(workId);
-  showToast("投票成功，謝謝你的支持！");
-  /* 2. 背景送出真實投票 */
-  try  {
-    const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "vote", work_id: workId, voter_id: voterId }) });
-    const data = await response.json();
-    if (!data.ok)  {
-      if (data.code === "DUPLICATE_TODAY")  {
-        target.votes = previousVotes;
-        showToast("你今天已經投過這件作品囉！");
+    const API_URL = "https://script.google.com/macros/s/AKfycbyjF8idieIUWms-JI-1sGyQe7tRzPdd5SEagG8fwZG9C-1IWQLY7wi1k6lLmVo8ftp1Xg/exec";
+    const INITIAL_VISIBLE_COUNT = 20;
+    const LOCAL_WORKS_CACHE_KEY = "photo_vote_local_works_cache_v4_cinematic";
+    const LOCAL_WORKS_CACHE_TTL = 5 * 60 * 1000;
+    let works = [];
+    let currentGroup = "social";
+    let currentKeyword = "";
+    let currentWorkId = null;
+    let visibleCount = INITIAL_VISIBLE_COUNT;
+    let currentModalSequence = [];
+    let currentModalIndex = -1;
+    let remoteWorksLoaded = false;
+    const votedToday = new Set();
+    const pendingVotes = new Set();
+    const voterId = getOrCreateVoterId();
+
+    function getOrCreateVoterId() {
+      const storageKey = "photo_vote_voter_id";
+      let id = localStorage.getItem(storageKey);
+      if (!id) {
+        id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : "voter_" + Date.now() + "_" + Math.random().toString(36).slice(2, 12);
+        localStorage.setItem(storageKey, id);
       }
-      else  {
+      return id;
+    }
+
+    async function loadWorks() {
+      const hasLocalWorks = restoreWorksFromLocalCache();
+      if (hasLocalWorks) {
+        showGalleryImmediately();
+        renderGallery("快取資料");
+      }
+      fetchVotedTodayInBackground();
+      try {
+        const url = `${API_URL}?action=getWorksFast&t=${Date.now()}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (!data.ok) throw new Error(data.message || "作品資料載入失敗");
+        works = Array.isArray(data.works) ? data.works : [];
+        remoteWorksLoaded = true;
+        saveWorksToLocalCache(works);
+        showGalleryImmediately();
+        renderGallery();
+      } catch (error) {
+        if (!hasLocalWorks) showWorksLoadError(error.message || "請稍後再試");
+        else showToast("已先顯示作品，最新資料同步稍後再試");
+      }
+    }
+
+    async function fetchVotedTodayInBackground() {
+      try {
+        const url = `${API_URL}?action=getVotedToday&voter_id=${encodeURIComponent(voterId)}&t=${Date.now()}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (!data.ok) return;
+        votedToday.clear();
+        (data.voted_today || []).forEach(workId => votedToday.add(workId));
+        renderGallery(remoteWorksLoaded ? "" : "快取資料");
+        if (currentWorkId) updateModalVoteButton(currentWorkId);
+      } catch (error) {}
+    }
+
+    function restoreWorksFromLocalCache() {
+      try {
+        const raw = localStorage.getItem(LOCAL_WORKS_CACHE_KEY);
+        if (!raw) return false;
+        const payload = JSON.parse(raw);
+        if (Date.now() - Number(payload.saved_at || 0) > LOCAL_WORKS_CACHE_TTL || !Array.isArray(payload.works)) return false;
+        works = payload.works;
+        return works.length > 0;
+      } catch (error) { return false; }
+    }
+    function saveWorksToLocalCache(latestWorks) {
+      try { localStorage.setItem(LOCAL_WORKS_CACHE_KEY, JSON.stringify({ saved_at: Date.now(), works: latestWorks })); } catch (error) {}
+    }
+    function showGalleryImmediately() {
+      document.getElementById("skeletonGallery").style.display = "none";
+      document.getElementById("gallery").style.display = "grid";
+    }
+    function showWorksLoadError(message) {
+      document.getElementById("skeletonGallery").innerHTML = `<div class="empty-state"><h3>作品載入失敗</h3><p>${escapeHtml(message)}</p></div>`;
+      showToast("作品載入失敗，請稍後再試");
+    }
+
+    function getFilteredSortedWorks() {
+      let result = works.filter(work => work.group_key === currentGroup);
+      if (currentKeyword.trim()) {
+        const keyword = currentKeyword.trim().toLowerCase();
+        result = result.filter(work => [work.display_number, work.work_name, work.participant_name, work.shooting_theme].join(" ").toLowerCase().includes(keyword));
+      }
+      result.sort((a, b) => String(a.display_number || "").localeCompare(String(b.display_number || ""), "zh-Hant", { numeric: true }));
+      return result;
+    }
+
+    function renderGallery(sourceLabel = "") {
+      const gallery = document.getElementById("gallery");
+      const resultBar = document.getElementById("resultBar");
+      const loadMoreWrap = document.getElementById("loadMoreWrap");
+      const loadMoreBtn = document.getElementById("loadMoreBtn");
+      const filteredWorks = getFilteredSortedWorks();
+      const displayedWorks = filteredWorks.slice(0, visibleCount);
+      resultBar.style.display = "none";
+
+      if (!filteredWorks.length) {
+        loadMoreWrap.hidden = true;
+        gallery.innerHTML = `<div class="empty-state"><h3>找不到符合條件的作品</h3><p>請換個關鍵字，或一鍵清除搜尋後重新瀏覽。</p><button class="empty-clear-btn" type="button" onclick="clearSearch()">清除搜尋，查看全部作品</button></div>`;
+        return;
+      }
+
+      gallery.innerHTML = displayedWorks.map(work => {
+        const isVoted = votedToday.has(work.work_id);
+        const isLoading = pendingVotes.has(work.work_id);
+        return `<article class="photo-card" data-work-id="${escapeHtml(work.work_id)}">
+          <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
+            <div class="photo-wrap">
+              <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async">
+              <div class="work-number">${escapeHtml(work.display_number)}</div>
+              <div class="detail-hint">點我看詳情</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
+              <div class="card-tag">${escapeHtml(work.shooting_theme)}</div>
+              <h3 class="card-title">${escapeHtml(work.work_name)}</h3>
+              <div class="card-author">參賽者｜${escapeHtml(work.participant_name)}</div>
+            </div>
+            <div class="card-actions">
+              <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')">${isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "❤ 投這個作品一票"}</button>
+              <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+
+      const remaining = filteredWorks.length - displayedWorks.length;
+      if (remaining > 0) {
+        loadMoreWrap.hidden = false;
+        loadMoreBtn.textContent = `查看更多作品（還有 ${remaining} 件）`;
+      } else {
+        loadMoreWrap.hidden = true;
+      }
+    }
+
+    document.getElementById("loadMoreBtn").addEventListener("click", () => { visibleCount += INITIAL_VISIBLE_COUNT; renderGallery(); });
+
+    function openModal(workId) {
+      const work = works.find(item => item.work_id === workId);
+      if (!work) return;
+      currentModalSequence = getFilteredSortedWorks();
+      currentModalIndex = currentModalSequence.findIndex(item => item.work_id === workId);
+      renderModalByWork(work);
+      document.getElementById("detailModal").classList.add("show");
+      document.body.classList.add("modal-open");
+    }
+    function renderModalByWork(work) {
+      currentWorkId = work.work_id;
+      document.getElementById("modalImage").src = work.image_url;
+      document.getElementById("modalImage").alt = work.work_name;
+      document.getElementById("modalGroup").textContent = work.group_name;
+      document.getElementById("modalTheme").textContent = work.shooting_theme;
+      document.getElementById("modalTitle").textContent = work.work_name;
+      document.getElementById("modalNumber").textContent = work.display_number;
+      document.getElementById("modalWorkName").textContent = work.work_name;
+      document.getElementById("modalAuthor").textContent = work.participant_name;
+      document.getElementById("modalPhotoTheme").textContent = work.shooting_theme;
+      document.getElementById("modalDescription").textContent = work.description;
+      document.getElementById("modalVotes").textContent = Number(work.votes || 0);
+      updateModalVoteButton(work.work_id);
+      updateModalNavigation();
+    }
+    function closeModal() {
+      document.getElementById("detailModal").classList.remove("show");
+      document.body.classList.remove("modal-open");
+      currentWorkId = null;
+      currentModalSequence = [];
+      currentModalIndex = -1;
+    }
+    function updateModalVoteButton(workId) {
+      const button = document.getElementById("modalVoteBtn");
+      const isVoted = votedToday.has(workId);
+      const isLoading = pendingVotes.has(workId);
+      button.classList.toggle("voted", isVoted);
+      button.classList.toggle("loading", isLoading);
+      button.textContent = isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "❤ 投這個作品一票";
+    }
+    function updateModalNavigation() {
+      document.getElementById("prevWorkBtn").disabled = currentModalIndex <= 0;
+      document.getElementById("nextWorkBtn").disabled = currentModalIndex >= currentModalSequence.length - 1;
+    }
+    function showPreviousWork() { if (currentModalIndex > 0) renderModalByWork(currentModalSequence[--currentModalIndex]); }
+    function showNextWork() { if (currentModalIndex < currentModalSequence.length - 1) renderModalByWork(currentModalSequence[++currentModalIndex]); }
+    document.getElementById("prevWorkBtn").addEventListener("click", showPreviousWork);
+    document.getElementById("nextWorkBtn").addEventListener("click", showNextWork);
+
+    async function voteWork(workId) {
+      if (votedToday.has(workId)) { showToast("你今天已經投過這件作品囉！"); return; }
+      if (pendingVotes.has(workId)) return;
+      const target = works.find(item => item.work_id === workId);
+      if (!target) { showToast("找不到這件作品，請重新整理後再試。"); return; }
+      const previousVotes = Number(target.votes || 0);
+      pendingVotes.add(workId);
+      votedToday.add(workId);
+      target.votes = previousVotes + 1;
+      renderGallery();
+      if (currentWorkId === workId) { document.getElementById("modalVotes").textContent = target.votes; updateModalVoteButton(workId); }
+      triggerVoteSuccessAnimation(workId);
+      showToast("投票成功，謝謝你的支持！");
+      try {
+        const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "vote", work_id: workId, voter_id: voterId }) });
+        const data = await response.json();
+        if (!data.ok) {
+          if (data.code === "DUPLICATE_TODAY") { target.votes = previousVotes; showToast("你今天已經投過這件作品囉！"); }
+          else { target.votes = previousVotes; votedToday.delete(workId); throw new Error(data.message || "投票失敗"); }
+        } else {
+          target.votes = Number(data.votes || target.votes || 0);
+          saveWorksToLocalCache(works);
+        }
+      } catch (error) {
         target.votes = previousVotes;
         votedToday.delete(workId);
-        throw new Error(data.message || "投票失敗");
+        showToast(error.message || "投票失敗，請稍後再試");
+      } finally {
+        pendingVotes.delete(workId);
+        renderGallery();
+        if (currentWorkId === workId) { document.getElementById("modalVotes").textContent = Number(target.votes || 0); updateModalVoteButton(workId); }
       }
     }
-    else  {
-      target.votes = Number(data.votes || target.votes || 0);
-      saveWorksToLocalCache(works);
+    function triggerVoteSuccessAnimation(workId) {
+      const card = document.querySelector(`[data-work-id="${cssEscape(workId)}"]`);
+      if (card) {
+        const count = card.querySelector(".vote-count");
+        const button = card.querySelector(".vote-btn");
+        if (count) { count.classList.add("vote-pulse"); setTimeout(() => count.classList.remove("vote-pulse"), 800); }
+        if (button) { button.classList.add("vote-success-pop"); setTimeout(() => button.classList.remove("vote-success-pop"), 600); }
+      }
+      if (currentWorkId === workId) {
+        const modalCount = document.getElementById("modalVotes");
+        modalCount.classList.add("vote-pulse");
+        setTimeout(() => modalCount.classList.remove("vote-pulse"), 800);
+      }
     }
-  }
-  catch (error)  {
-    target.votes = previousVotes;
-    votedToday.delete(workId);
-    showToast(error.message || "投票失敗，請稍後再試");
-  }
-  finally  {
-    pendingVotes.delete(workId);
-    renderGallery();
-    if (currentWorkId === workId)  {
-      document.getElementById("modalVotes").textContent = Number(target.votes || 0);
-      updateModalVoteButton(workId);
+
+    function setGroup(group) {
+      currentGroup = group;
+      currentKeyword = "";
+      visibleCount = INITIAL_VISIBLE_COUNT;
+      document.getElementById("searchInput").value = "";
+      updateSearchClearButton();
+      document.querySelectorAll(".group-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.group === group));
+      renderGallery();
     }
-  }
-}
-function triggerVoteSuccessAnimation(workId)  {
-  const card = document.querySelector(`[data-work-id="${cssEscape(workId)}"]`);
-  if (card)  {
-    const count = card.querySelector(".vote-count");
-    const button = card.querySelector(".vote-btn");
-    if (count)  {
-      count.classList.add("vote-pulse");
-      setTimeout(() => count.classList.remove("vote-pulse"), 800);
+    document.querySelectorAll(".group-btn").forEach(button => button.addEventListener("click", () => setGroup(button.dataset.group)));
+    document.getElementById("searchInput").addEventListener("input", function() {
+      currentKeyword = this.value;
+      visibleCount = INITIAL_VISIBLE_COUNT;
+      updateSearchClearButton();
+      renderGallery();
+    });
+    document.getElementById("clearSearchBtn").addEventListener("click", clearSearch);
+    function clearSearch() {
+      currentKeyword = "";
+      visibleCount = INITIAL_VISIBLE_COUNT;
+      document.getElementById("searchInput").value = "";
+      updateSearchClearButton();
+      renderGallery();
+      document.getElementById("searchInput").focus();
     }
-    if (button)  {
-      button.classList.add("vote-success-pop");
-      setTimeout(() => button.classList.remove("vote-success-pop"), 600);
+    function updateSearchClearButton() { document.getElementById("clearSearchBtn").classList.toggle("show", !!currentKeyword.trim()); }
+
+    document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("detailModal").addEventListener("click", function(event) { if (event.target === this) closeModal(); });
+    document.getElementById("modalVoteBtn").addEventListener("click", function() { if (currentWorkId) voteWork(currentWorkId); });
+    document.addEventListener("keydown", function(event) {
+      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
+      if (!modalIsOpen) return;
+      if (event.key === "Escape") closeModal();
+      if (event.key === "ArrowLeft") showPreviousWork();
+      if (event.key === "ArrowRight") showNextWork();
+    });
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
     }
-  }
-  if (currentWorkId === workId)  {
-    const modalCount = document.getElementById("modalVotes");
-    modalCount.classList.add("vote-pulse");
-    setTimeout(() => modalCount.classList.remove("vote-pulse"), 800);
-  }
-}
-/********************************************** * 10. 組別與搜尋事件 **********************************************/
-function setGroup(group)  {
-  currentGroup = group;
-  currentKeyword = "";
-  visibleCount = INITIAL_VISIBLE_COUNT;
-  document.getElementById("searchInput").value = "";
-  updateSearchClearButton();
-  document.querySelectorAll(".group-btn").forEach(btn =>  {
-    btn.classList.toggle("active", btn.dataset.group === group);
-  });
-  renderGallery();
-}
-document.querySelectorAll(".group-btn").forEach(button =>  {
-  button.addEventListener("click", () =>  {
-    setGroup(button.dataset.group);
-  });
-});
-document.getElementById("searchInput").addEventListener("input", function()  {
-  currentKeyword = this.value;
-  visibleCount = INITIAL_VISIBLE_COUNT;
-  updateSearchClearButton();
-  renderGallery();
-});
-document.getElementById("clearSearchBtn").addEventListener("click", clearSearch);
-function clearSearch()  {
-  currentKeyword = "";
-  visibleCount = INITIAL_VISIBLE_COUNT;
-  document.getElementById("searchInput").value = "";
-  updateSearchClearButton();
-  renderGallery();
-  document.getElementById("searchInput").focus();
-}
-function updateSearchClearButton()  {
-  const button = document.getElementById("clearSearchBtn");
-  button.classList.toggle("show", !!currentKeyword.trim());
-}
-/********************************************** * 11. Modal 事件 **********************************************/
-document.getElementById("modalClose").addEventListener("click", closeModal);
-document.getElementById("detailModal").addEventListener("click", function(event)  {
-  if (event.target === this)  {
-    closeModal();
-  }
-});
-document.getElementById("modalVoteBtn").addEventListener("click", function()  {
-  if (currentWorkId)  {
-    voteWork(currentWorkId);
-  }
-});
-document.addEventListener("keydown", function(event)  {
-  const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
-  if (!modalIsOpen) return;
-  if (event.key === "Escape")  {
-    closeModal();
-  }
-  if (event.key === "ArrowLeft")  {
-    showPreviousWork();
-  }
-  if (event.key === "ArrowRight")  {
-    showNextWork();
-  }
-});
-/********************************************** * 12. 提示訊息 **********************************************/
-function showToast(message)  {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-  clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() =>  {
-    toast.classList.remove("show");
-  }, 2400);
-}
-/********************************************** * 13. 基礎字串安全處理 **********************************************/
-function escapeHtml(value)  {
-  return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-}
-function escapeJs(value)  {
-  return String(value ?? "").replaceAll("\\", "\\\\").replaceAll("'", "\\'");
-}
-function cssEscape(value)  {
-  if (window.CSS && CSS.escape)  {
-    return CSS.escape(value);
-  }
-  return String(value).replace(/["\\]/g, "\\$&");
-}
-/********************************************** * 14. 啟動 **********************************************/
-loadWorks();
+    function escapeHtml(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+    function escapeJs(value) { return String(value ?? "").replaceAll("\\", "\\\\").replaceAll("'", "\\'"); }
+    function cssEscape(value) { return (window.CSS && CSS.escape) ? CSS.escape(value) : String(value).replace(/["\\]/g, "\\$&"); }
+
+    loadWorks();
   </script>
- </body>
+</body>
 </html>
