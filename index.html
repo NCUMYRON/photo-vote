@@ -23,15 +23,7 @@
       --bg: #030303;
       --ink: #f7f1df;
       --muted: rgba(247,241,223,.68);
-      --line: rgba(247,241,223,.22);
       --gold: #f4df9a;
-      --gold-2: #caa95a;
-      --glass: rgba(10,10,10,.62);
-      --glass-2: rgba(255,255,255,.08);
-      --danger: #c84d3f;
-      --ok: #7f9f7a;
-      --blue: #638fa8;
-      --shadow: 0 24px 80px rgba(0,0,0,.58);
       --btn-radius: 3px;
       --body-font: "Noto Serif TC", "Songti TC", "Microsoft JhengHei", serif;
       --hand-font: "ChenYuluoyan", "Noto Serif TC", "Songti TC", serif;
@@ -57,43 +49,15 @@
       font-weight: 400;
     }
 
-    .works-title,
-    .group-btn,
-    .work-number,
-    .detail-story-label,
-    .search-toggle-btn,
-    .load-more-btn,
-    .modal-nav-btn,
-    .vote-btn {
-      font-family: var(--body-font);
-      font-weight: 500;
-    }
-
     button { -webkit-tap-highlight-color: transparent; }
 
-    .page {
-      min-height: 100vh;
-      background: var(--bg);
-    }
+    .page { min-height: 100vh; background: var(--bg); }
 
-    .hero {
-      position: relative;
-      min-height: auto;
-      overflow: hidden;
-      background: #000;
-    }
+    .hero { overflow: hidden; background: #000; }
 
-    .hero-picture {
-      display: block;
-      width: 100%;
-      line-height: 0;
-    }
+    .hero-picture { display: block; width: 100%; line-height: 0; }
 
-    .hero-picture img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+    .hero-picture img { width: 100%; height: auto; display: block; }
 
     .hero-group-tabs {
       position: sticky;
@@ -145,13 +109,9 @@
       box-shadow: 0 0 28px rgba(244,223,154,.16);
     }
 
-    .group-btn.active::before {
-      border-color: rgba(0,0,0,.18);
-    }
-
     .works-area {
       position: relative;
-      padding: 52px 24px 8px;
+      padding: 52px 24px 18px;
       background:
         linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px) 0 0 / 46px 46px,
         radial-gradient(circle at 50% -10%, rgba(244,223,154,.13), transparent 34%),
@@ -164,7 +124,6 @@
       margin: 0 auto 16px;
       display: flex;
       justify-content: center;
-      align-items: center;
       text-align: center;
     }
 
@@ -187,13 +146,104 @@
       background: linear-gradient(90deg, transparent, rgba(244,223,154,.48));
     }
 
-    .works-title::before {
-      right: calc(100% + 20px);
+    .works-title::before { right: calc(100% + 20px); }
+    .works-title::after { left: calc(100% + 20px); transform: rotate(180deg); }
+
+    .works-search-zone {
+      width: min(680px, 100%);
+      height: 54px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(244,223,154,.5);
+      border-radius: var(--btn-radius);
+      background: rgba(0,0,0,.45);
+      box-shadow: 0 12px 30px rgba(0,0,0,.28);
+      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
     }
 
-    .works-title::after {
-      left: calc(100% + 20px);
-      transform: rotate(180deg);
+    .works-search-zone:hover,
+    .works-search-zone.expanded {
+      border-color: rgba(244,223,154,.82);
+      background: rgba(244,223,154,.08);
+      box-shadow: 0 14px 34px rgba(244,223,154,.1);
+    }
+
+    .search-toggle-btn {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--gold);
+      font-size: 15px;
+      letter-spacing: .16em;
+      cursor: pointer;
+      transition: opacity .24s ease, transform .24s ease;
+    }
+
+    .works-search-zone.expanded .search-toggle-btn {
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+    }
+
+    .search-box {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity .28s ease, transform .28s ease;
+    }
+
+    .works-search-zone.expanded .search-box {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 100%;
+      padding: 0 94px 0 18px;
+      outline: none;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      font-size: 15px;
+      letter-spacing: .08em;
+    }
+
+    .search-input::placeholder { color: rgba(255,255,255,.42); }
+
+    .search-clear {
+      position: absolute;
+      right: 50px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      display: none;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50%;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .search-clear.show { display: grid; place-items: center; }
+
+    .search-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(244,223,154,.72);
+      pointer-events: none;
+      font-size: 22px;
     }
 
     .gallery {
@@ -203,7 +253,6 @@
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 16px;
-      background: transparent;
     }
 
     .photo-card,
@@ -220,20 +269,13 @@
       transition: .28s ease;
     }
 
-    .photo-card::before,
-    .photo-card::after {
-      display: none;
-    }
-
     .photo-card:hover {
       transform: translateY(-8px) scale(1.01);
       border-color: rgba(244,223,154,.3);
       background: rgba(255,255,255,.085);
     }
 
-    .photo-click-area {
-      cursor: pointer;
-    }
+    .photo-click-area { cursor: pointer; }
 
     .photo-wrap {
       position: relative;
@@ -317,10 +359,7 @@
       pointer-events: none;
     }
 
-    .card-main {
-      display: grid;
-      gap: 5px;
-    }
+    .card-main { display: grid; gap: 5px; }
 
     .card-title {
       position: relative;
@@ -328,7 +367,6 @@
       color: #fff;
       font-size: 20px;
       line-height: 1.35;
-      font-weight: 400;
       letter-spacing: .06em;
       min-height: 12px;
       cursor: pointer;
@@ -345,10 +383,7 @@
       opacity: .7;
     }
 
-    .card-title:hover {
-      color: var(--gold);
-      transform: translateX(1px);
-    }
+    .card-title:hover { color: var(--gold); transform: translateX(1px); }
 
     .card-author {
       margin: 0;
@@ -374,21 +409,13 @@
       font-size: 13px;
       letter-spacing: .08em;
       cursor: pointer;
-      transition:
-        background .22s ease,
-        border-color .22s ease,
-        color .22s ease,
-        transform .22s ease,
-        box-shadow .22s ease;
+      transition: .22s ease;
     }
 
     .vote-btn:hover {
       background: linear-gradient(135deg, #f5e3a8, #e8cc80);
       color: #171209;
       border-color: rgba(244,223,154,.95);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.3),
-        0 10px 26px rgba(244,223,154,.14);
       transform: translateY(-1px);
     }
 
@@ -399,10 +426,7 @@
       box-shadow: none;
     }
 
-    .vote-btn.loading {
-      opacity: .65;
-      cursor: wait;
-    }
+    .vote-btn.loading { opacity: .65; cursor: wait; }
 
     .vote-count {
       display: grid;
@@ -421,140 +445,11 @@
       font-size: 11px;
     }
 
-    .vote-success-pop {
-      animation: voteButtonPop .52s ease;
-    }
+    .vote-success-pop { animation: voteButtonPop .52s ease; }
+    .vote-pulse { animation: voteCountPulse .72s ease; }
 
-    .vote-pulse {
-      animation: voteCountPulse .72s ease;
-    }
-
-    @keyframes voteButtonPop {
-      45% { transform: scale(1.04); }
-    }
-
-    @keyframes voteCountPulse {
-      35% {
-        transform: scale(1.12);
-        color: var(--gold);
-      }
-    }
-
-    .toolbar {
-      position: fixed;
-      right: 24px;
-      bottom: max(18px, env(safe-area-inset-bottom));
-      z-index: 300;
-      transform: none;
-      transition:
-        width .28s ease,
-        padding .28s ease,
-        background .28s ease,
-        border-color .28s ease,
-        box-shadow .28s ease;
-    }
-
-    .toolbar.collapsed {
-      width: auto;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      backdrop-filter: none;
-      box-shadow: none;
-    }
-
-    .toolbar.expanded {
-      width: min(620px, calc(100vw - 48px));
-      padding: 10px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.68);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 16px 60px rgba(0,0,0,.56);
-    }
-
-    .search-toggle-btn {
-      min-width: 172px;
-      height: 52px;
-      padding: 0 22px;
-      border: 1px solid rgba(244,223,154,.58);
-      border-radius: var(--btn-radius);
-      background: rgba(0,0,0,.82);
-      color: var(--gold);
-      font-size: 15px;
-      letter-spacing: .16em;
-      cursor: pointer;
-      box-shadow: 0 16px 48px rgba(0,0,0,.55);
-      transition: .22s ease;
-    }
-
-    .search-toggle-btn:hover {
-      background: var(--gold);
-      color: #111;
-      border-color: rgba(244,223,154,.9);
-    }
-
-    .toolbar.expanded .search-toggle-btn {
-      display: none;
-    }
-
-    .search-panel {
-      display: none;
-    }
-
-    .toolbar.expanded .search-panel {
-      display: block;
-    }
-
-    .search-box {
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      height: 50px;
-      padding: 0 90px 0 18px;
-      outline: none;
-      border: 1px solid rgba(244,223,154,.34);
-      border-radius: var(--btn-radius);
-      background: rgba(255,255,255,.05);
-      color: #fff;
-      font-size: 15px;
-      letter-spacing: .08em;
-    }
-
-    .search-input::placeholder {
-      color: rgba(255,255,255,.42);
-    }
-
-    .search-clear {
-      position: absolute;
-      right: 50px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 28px;
-      height: 28px;
-      display: none;
-      border: 1px solid rgba(255,255,255,.25);
-      border-radius: 50%;
-      background: transparent;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .search-clear.show {
-      display: grid;
-      place-items: center;
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(244,223,154,.72);
-      pointer-events: none;
-      font-size: 22px;
-    }
+    @keyframes voteButtonPop { 45% { transform: scale(1.04); } }
+    @keyframes voteCountPulse { 35% { transform: scale(1.12); color: var(--gold); } }
 
     .load-more-wrap {
       display: flex;
@@ -563,9 +458,7 @@
       background: #0c0c0c;
     }
 
-    .load-more-wrap[hidden] {
-      display: none;
-    }
+    .load-more-wrap[hidden] { display: none; }
 
     .load-more-btn {
       min-width: min(420px, 100%);
@@ -580,10 +473,7 @@
       transition: .2s ease;
     }
 
-    .load-more-btn:hover {
-      background: var(--gold);
-      color: #111;
-    }
+    .load-more-btn:hover { background: var(--gold); color: #111; }
 
     .empty-state {
       grid-column: 1 / -1;
@@ -593,17 +483,8 @@
       text-align: center;
     }
 
-    .empty-state h3 {
-      margin: 0 0 12px;
-      font-size: 28px;
-      font-weight: 500;
-    }
-
-    .empty-state p {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.8;
-    }
+    .empty-state h3 { margin: 0 0 12px; font-size: 28px; font-weight: 500; }
+    .empty-state p { margin: 0 0 18px; color: var(--muted); line-height: 1.8; }
 
     .empty-clear-btn {
       border: 1px solid rgba(244,223,154,.48);
@@ -614,9 +495,7 @@
       cursor: pointer;
     }
 
-    .skeleton-gallery {
-      display: grid;
-    }
+    .skeleton-gallery { display: grid; }
 
     .skeleton-image,
     .skeleton-line,
@@ -639,25 +518,11 @@
       animation: shimmer 1.35s infinite;
     }
 
-    @keyframes shimmer {
-      100% {
-        transform: translateX(100%);
-      }
-    }
+    @keyframes shimmer { 100% { transform: translateX(100%); } }
 
-    .skeleton-image {
-      aspect-ratio: 4 / 5;
-    }
-
-    .skeleton-body {
-      padding: 16px;
-    }
-
-    .skeleton-line {
-      height: 14px;
-      margin-bottom: 12px;
-    }
-
+    .skeleton-image { aspect-ratio: 4 / 5; }
+    .skeleton-body { padding: 16px; }
+    .skeleton-line { height: 14px; margin-bottom: 12px; }
     .skeleton-line.short { width: 36%; }
     .skeleton-line.medium { width: 70%; }
     .skeleton-line.long { width: 92%; }
@@ -670,9 +535,7 @@
     }
 
     .skeleton-button,
-    .skeleton-count {
-      height: 46px;
-    }
+    .skeleton-count { height: 46px; }
 
     .modal {
       position: fixed;
@@ -686,9 +549,7 @@
       backdrop-filter: blur(12px);
     }
 
-    .modal.show {
-      display: flex;
-    }
+    .modal.show { display: flex; }
 
     .modal-dialog {
       position: relative;
@@ -701,29 +562,6 @@
         radial-gradient(circle at 78% 18%, rgba(244,223,154,.08), transparent 28%),
         linear-gradient(180deg, #0a0a09 0%, #070707 100%);
       box-shadow: 0 30px 120px rgba(0,0,0,.78);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      z-index: 8;
-      width: 46px;
-      height: 46px;
-      border: 1px solid rgba(255,255,255,.24);
-      border-radius: 50%;
-      background: rgba(0,0,0,.52);
-      color: #fff;
-      font-size: 23px;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: .22s ease;
-    }
-
-    .modal-close:hover {
-      color: #111;
-      background: var(--gold);
-      border-color: rgba(244,223,154,.85);
     }
 
     .detail-panel {
@@ -740,7 +578,6 @@
       background: #111;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,.08);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
     }
 
     .detail-image img {
@@ -771,26 +608,165 @@
       background: var(--gold);
     }
 
-    .modal-nav-btn:disabled {
-      opacity: .35;
-      cursor: not-allowed;
-    }
+    .modal-nav-btn:disabled { opacity: .35; cursor: not-allowed; }
 
     .detail-info {
       min-width: 0;
       min-height: 0;
-      padding: 72px 0 4px;
+      padding: 0 0 4px;
       display: flex;
       flex-direction: column;
       align-self: stretch;
     }
 
-    .detail-top-row {
-      display: block;
+    .detail-tool-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .mobile-modal-close {
+    .modal-info-close {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(244,223,154,.34);
+      border-radius: 50%;
+      background: rgba(255,255,255,.035);
+      color: rgba(255,255,255,.86);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      transition: .22s ease;
+    }
+
+    .modal-info-close:hover {
+      color: #171209;
+      background: var(--gold);
+      border-color: rgba(244,223,154,.9);
+    }
+
+    .modal-search-zone {
+  flex: 1 1 auto;
+  max-width: 360px;
+  height: 38px;
+  position: relative;
+  overflow: visible;
+  z-index: 30;
+  border: 1px solid rgba(244,223,154,.32);
+  border-radius: 3px;
+  background: rgba(255,255,255,.035);
+  transition:
+    max-width .34s ease,
+    background .24s ease,
+    border-color .24s ease,
+    box-shadow .24s ease;
+}
+
+    .modal-search-zone.expanded {
+      max-width: 100%;
+      border-color: rgba(244,223,154,.54);
+      background: rgba(244,223,154,.06);
+      box-shadow: 0 10px 26px rgba(0,0,0,.22);
+    }
+
+    .modal-search-toggle {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+      color: rgba(244,223,154,.88);
+      font-size: 12px;
+      letter-spacing: .12em;
+      cursor: pointer;
+      transition: opacity .24s ease, transform .24s ease;
+    }
+
+    .modal-search-zone.expanded .modal-search-toggle {
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+    }
+
+    .modal-search-box {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity .28s ease, transform .28s ease;
+    }
+
+    .modal-search-zone.expanded .modal-search-box {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .modal-search-input {
+      width: 100%;
+      height: 100%;
+      padding: 0 42px 0 14px;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: #fff;
+      font-size: 13px;
+      letter-spacing: .06em;
+    }
+
+    .modal-search-submit {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border: 0;
+  background: transparent;
+  color: rgba(244,223,154,.86);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+    .modal-search-results {
       display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 8px);
+      z-index: 20;
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid rgba(244,223,154,.18);
+      background: rgba(0,0,0,.88);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-search-results.show { display: block; }
+
+    .modal-search-result {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .modal-search-result:hover {
+      color: var(--gold);
+      background: rgba(244,223,154,.08);
+    }
+
+    .modal-search-result strong {
+      color: #fff;
+      font-weight: 500;
     }
 
     .detail-top-labels {
@@ -819,7 +795,6 @@
       color: #fff;
       font-size: clamp(30px, 3vw, 46px);
       line-height: 1.28;
-      font-weight: 400;
       letter-spacing: .055em;
     }
 
@@ -845,13 +820,7 @@
       letter-spacing: .08em;
     }
 
-    .detail-brief span {
-      color: rgba(255,255,255,.95);
-    }
-
-    .detail-item {
-      min-width: 0;
-    }
+    .detail-brief span { color: rgba(255,255,255,.95); }
 
     .detail-vote-count {
       flex: 0 0 auto;
@@ -860,23 +829,18 @@
       justify-content: flex-end;
       gap: 9px;
       min-width: 118px;
-      margin: 0;
       color: rgba(255,255,255,.52);
       font-size: 13px;
-      font-weight: 500;
       line-height: 1;
-      letter-spacing: .08em;
       white-space: nowrap;
       text-align: right;
     }
 
     .detail-vote-count span {
-      display: inline-block;
       color: var(--gold);
       font-size: 40px;
       font-weight: 600;
       line-height: .88;
-      letter-spacing: .035em;
       font-variant-numeric: tabular-nums;
     }
 
@@ -896,10 +860,6 @@
     }
 
     .detail-description {
-      margin-bottom: 0;
-      padding: 0;
-      border-left: 0;
-      background: transparent;
       color: rgba(255,255,255,.78);
       font-size: 15px;
       line-height: 1.72;
@@ -927,14 +887,8 @@
       pointer-events: none;
     }
 
-    .detail-description.is-expanded {
-      max-height: none;
-      overflow: visible;
-    }
-
-    .detail-description.is-expanded::after {
-      display: none;
-    }
+    .detail-description.is-expanded { max-height: none; overflow: visible; }
+    .detail-description.is-expanded::after { display: none; }
 
     .description-toggle {
       display: inline-block;
@@ -945,40 +899,17 @@
       font-size: 12px;
       letter-spacing: .18em;
       cursor: pointer;
-      transition: color .2s ease, border-color .2s ease;
     }
 
-    .description-toggle:hover {
-      color: var(--gold);
-      border-color: rgba(244,223,154,.8);
-    }
-
-    .detail-action-row {
-      display: grid;
-    }
+    .detail-action-row { display: grid; }
 
     .detail-action-row .vote-btn {
       width: 100%;
       min-height: 48px;
       padding-inline: 18px;
       border-color: rgba(244,223,154,.54);
-      background:
-        linear-gradient(135deg, rgba(244,223,154,.2), rgba(244,223,154,.065));
-      color: var(--gold);
       font-size: 14px;
       letter-spacing: .12em;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.08),
-        0 10px 28px rgba(0,0,0,.28);
-    }
-
-    .detail-action-row .vote-btn:hover {
-      background: linear-gradient(135deg, #f6e4aa, #e8cb7f);
-      color: #171209;
-      border-color: rgba(244,223,154,.96);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.35),
-        0 14px 34px rgba(244,223,154,.16);
     }
 
     .detail-bottom-action {
@@ -989,7 +920,7 @@
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 104px;
+      bottom: 32px;
       z-index: 10000;
       max-width: calc(100% - 32px);
       transform: translateX(-50%) translateY(18px);
@@ -1011,66 +942,47 @@
     }
 
     @media (max-width: 1180px) {
-      .gallery {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
+      .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
 
     @media (max-width: 860px) {
-      .hero-group-tabs {
-        gap: 8px;
-        padding: 8px 10px;
-      }
-
-      .group-btn {
-        min-width: 0;
-        flex: 1;
-        height: 40px;
-        font-size: 14px;
-      }
-
-      .gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        width: calc(100% - 28px);
-        gap: 12px;
-        padding: 14px 0 30px;
-      }
-
-      .works-area {
-        padding-top: 38px;
-      }
-
-      .modal-dialog {
-        padding: 18px;
-      }
-
-      .detail-panel {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        align-items: start;
-      }
-
-      .detail-image {
-        min-height: auto;
-        aspect-ratio: 4 / 3;
-      }
-
-      .detail-info {
-        min-height: 0;
-        padding-top: 0;
-      }
-
-      .detail-bottom-action {
-        margin-top: 18px;
-        padding-top: 0;
-      }
-
-      .detail-action-row .vote-btn {
-        width: 100%;
-      }
+      .hero-group-tabs { gap: 8px; padding: 8px 10px; }
+      .group-btn { min-width: 0; flex: 1; height: 40px; font-size: 14px; }
+      .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); width: calc(100% - 28px); gap: 12px; padding: 14px 0 30px; }
+      .works-area { padding-top: 38px; }
+      .modal-dialog { padding: 18px; }
+      .detail-panel { grid-template-columns: 1fr; gap: 18px; align-items: start; }
+      .detail-image { min-height: auto; aspect-ratio: 4 / 3; }
+      .detail-info { min-height: 0; padding-top: 0; }
+      .detail-bottom-action { margin-top: 18px; padding-top: 0; }
     }
 
     @media (max-width: 560px) {
+      .works-area { padding: 34px 14px 16px; }
+      .works-title { font-size: 28px; }
+
+      .works-title::before,
+      .works-title::after { width: 52px; }
+
+      .works-title::before { right: calc(100% + 12px); }
+      .works-title::after { left: calc(100% + 12px); }
+
+      .works-search-zone {
+        width: min(320px, 100%);
+        height: 46px;
+      }
+
+      .search-toggle-btn { font-size: 14px; }
+
+      .search-input {
+        padding: 0 82px 0 14px;
+        font-size: 13px;
+        letter-spacing: .05em;
+      }
+
+      .search-clear { right: 44px; width: 26px; height: 26px; }
+      .search-icon { right: 14px; font-size: 20px; }
+
       .gallery {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         width: calc(100% - 20px);
@@ -1078,18 +990,10 @@
         padding-bottom: 26px;
       }
 
-      .photo-wrap {
-        aspect-ratio: 1 / 1;
-      }
+      .photo-wrap { aspect-ratio: 1 / 1; }
+      .detail-hint { display: none; }
 
-      .detail-hint {
-        display: none;
-      }
-
-      .work-number {
-        padding: 4px 8px;
-        font-size: 10px;
-      }
+      .work-number { padding: 4px 8px; font-size: 10px; }
 
       .card-body {
         min-height: auto;
@@ -1104,13 +1008,9 @@
         width: min(54px, 48%);
       }
 
-      .card-main {
-        gap: 4px;
-      }
-
       .card-title {
         min-height: 38px;
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.32;
         letter-spacing: .045em;
         display: -webkit-box;
@@ -1119,37 +1019,18 @@
         overflow: hidden;
       }
 
-      .card-title::after {
-        width: 30px;
-        margin-top: 4px;
-      }
+      .card-title::after { width: 30px; margin-top: 4px; }
 
       .card-author {
         font-size: 11px;
-        line-height: 1.4;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
 
-      .card-actions {
-        grid-template-columns: 1fr;
-        gap: 6px;
-      }
-
-      .card-actions .vote-count {
-        order: 1;
-      }
-
-      .card-actions .vote-btn {
-        order: 2;
-      }
-
-      .vote-btn {
-        padding: 8px 5px;
-        font-size: 11px;
-        letter-spacing: .04em;
-      }
+      .card-actions { grid-template-columns: 1fr; gap: 6px; }
+      .card-actions .vote-count { order: 1; }
+      .card-actions .vote-btn { order: 2; }
 
       .vote-count {
         min-height: 32px;
@@ -1159,46 +1040,15 @@
         font-size: 13px;
       }
 
-      .vote-count small {
-        display: inline;
-        font-size: 10px;
-      }
+      .vote-count small { display: inline; font-size: 10px; }
 
-      .toolbar {
-        right: 10px;
-        bottom: max(10px, env(safe-area-inset-bottom));
-      }
-
-      .toolbar.expanded {
-        width: calc(100vw - 20px);
-      }
-
-      .search-toggle-btn {
-        min-width: 152px;
-        height: 48px;
-        padding: 0 18px;
-        font-size: 14px;
-      }
-
-      .search-input {
-        height: 46px;
-        font-size: 13px;
-      }
-
-      .modal {
-        padding: 8px;
-      }
+      .modal { padding: 8px; }
 
       .modal-dialog {
         height: calc(100dvh - 16px);
         max-height: none;
         overflow: hidden;
         padding: 10px;
-      }
-
-      /* 手機版：隱藏原本照片右上角關閉鈕 */
-      .modal-close {
-        display: none;
       }
 
       .detail-panel {
@@ -1209,19 +1059,14 @@
         gap: 12px;
       }
 
-      .detail-media {
-        flex: 0 0 auto;
-      }
+      .detail-media { flex: 0 0 auto; }
 
       .detail-image {
         height: clamp(178px, 31vh, 242px);
         aspect-ratio: auto;
       }
 
-      .modal-nav {
-        gap: 10px;
-        margin-top: 10px;
-      }
+      .modal-nav { gap: 10px; margin-top: 10px; }
 
       .modal-nav-btn {
         padding: 11px 8px;
@@ -1235,27 +1080,43 @@
         padding: 0 2px 2px;
       }
 
-      .detail-bottom-action {
-        margin-top: 14px;
-        padding-top: 0;
+      .detail-tool-row {
+        gap: 8px;
+        margin-bottom: 10px;
       }
 
-      /* 手機版：標籤與關閉按鈕同列 */
-      .detail-top-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 9px;
+      .modal-info-close {
+        width: 34px;
+        height: 34px;
+        font-size: 21px;
+      }
+
+      .modal-search-zone {
+        max-width: 168px;
+        height: 34px;
+      }
+
+      .modal-search-zone.expanded {
+        max-width: 100%;
+      }
+
+      .modal-search-toggle {
+        font-size: 11px;
+        letter-spacing: .08em;
+      }
+
+      .modal-search-input {
+        font-size: 12px;
+        letter-spacing: .04em;
+      }
+
+      .modal-search-results {
+        max-height: 150px;
       }
 
       .detail-top-labels {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
         gap: 7px;
-        margin-bottom: 0;
-        min-width: 0;
+        margin-bottom: 9px;
       }
 
       .detail-label {
@@ -1265,37 +1126,14 @@
         letter-spacing: .08em;
       }
 
-      .mobile-modal-close {
-        flex: 0 0 auto;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border: 1px solid rgba(244,223,154,.34);
-        border-radius: 3px;
-        background: rgba(255,255,255,.035);
-        color: rgba(255,255,255,.82);
-        font-size: 21px;
-        line-height: 1;
-        cursor: pointer;
-        transition: .2s ease;
-      }
-
-      .mobile-modal-close:hover {
-        color: #171209;
-        background: var(--gold);
-        border-color: rgba(244,223,154,.9);
-      }
-
       .detail-title {
         margin-bottom: 6px;
         padding-right: 0;
-        font-size: 24px;
-        line-height: 1.28;
+        font-size: 30px;
+        line-height: 1.25;
+        letter-spacing: .05em;
       }
 
-      /* 手機版：資訊列同列，票數四位數也盡量穩定 */
       .detail-meta-row {
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: end;
@@ -1304,7 +1142,6 @@
         padding-bottom: 7px;
       }
 
-      /* 手機版：參賽者＋作品編號貼在一起 */
       .detail-brief {
         display: flex;
         align-items: flex-end;
@@ -1341,7 +1178,6 @@
       .detail-vote-count span {
         font-size: clamp(24px, 7vw, 30px);
         line-height: .88;
-        letter-spacing: .02em;
       }
 
       .detail-story {
@@ -1359,13 +1195,9 @@
         font-size: 13px;
         line-height: 1.68;
         letter-spacing: .04em;
-        text-align: justify;
-        text-justify: inter-ideograph;
       }
 
-      .detail-description.is-collapsible {
-        max-height: 6.8em;
-      }
+      .detail-description.is-collapsible { max-height: 6.8em; }
 
       .description-toggle {
         margin-top: 7px;
@@ -1379,13 +1211,8 @@
         font-size: 12px;
       }
 
-      .load-more-wrap {
-        padding: 8px 18px 86px;
-      }
-
-      .toast {
-        bottom: 82px;
-      }
+      .load-more-wrap { padding: 8px 18px 86px; }
+      .toast { bottom: 24px; }
     }
   </style>
 </head>
@@ -1408,73 +1235,26 @@
       <div class="works-header">
         <div class="works-title">參賽作品</div>
       </div>
+
+      <div class="works-search-zone" id="worksSearchZone">
+        <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false">
+          <span class="search-btn-text">⌕ 搜尋作品</span>
+        </button>
+
+        <div class="search-box">
+          <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
+          <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
+          <div class="search-icon">⌕</div>
+        </div>
+      </div>
     </section>
 
     <section class="gallery skeleton-gallery" id="skeletonGallery">
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
+      <article class="skeleton-card"><div class="skeleton-image"></div><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-actions"><div class="skeleton-button"></div><div class="skeleton-count"></div></div></div></article>
     </section>
 
     <section class="gallery" id="gallery" style="display:none;"></section>
@@ -1484,21 +1264,8 @@
     </div>
   </main>
 
-  <section class="toolbar collapsed" id="searchToolbar">
-    <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
-    <div class="search-panel" id="searchPanel">
-      <div class="search-box">
-        <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
-        <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
-        <div class="search-icon">⌕</div>
-      </div>
-    </div>
-  </section>
-
   <div class="modal" id="detailModal">
     <div class="modal-dialog">
-      <button aria-label="關閉視窗" class="modal-close" id="modalClose">×</button>
-
       <div class="detail-panel">
         <div class="detail-media">
           <div class="detail-image">
@@ -1512,13 +1279,23 @@
         </div>
 
         <div class="detail-info">
-          <div class="detail-top-row">
-            <div class="detail-top-labels">
-              <div class="detail-label group" id="modalGroup"></div>
-              <div class="detail-label theme" id="modalTheme"></div>
+          <div class="detail-tool-row">
+            <div class="modal-search-zone" id="modalSearchZone">
+              <button class="modal-search-toggle" id="modalSearchToggle" type="button">⌕ 搜尋其他作品</button>
+
+              <div class="modal-search-box">
+                <input class="modal-search-input" id="modalSearchInput" placeholder="搜尋作品編號、作品名稱、參賽者" type="text">
+                <button class="modal-search-submit" id="modalSearchSubmit" type="button" aria-label="搜尋">⌕</button>
+                <div class="modal-search-results" id="modalSearchResults"></div>
+              </div>
             </div>
 
-            <button aria-label="關閉視窗" class="mobile-modal-close" id="modalCloseMobile" type="button">×</button>
+            <button aria-label="關閉視窗" class="modal-info-close" id="modalClose" type="button">×</button>
+          </div>
+
+          <div class="detail-top-labels">
+            <div class="detail-label group" id="modalGroup"></div>
+            <div class="detail-label theme" id="modalTheme"></div>
           </div>
 
           <h2 class="detail-title" id="modalTitle"></h2>
@@ -1528,10 +1305,7 @@
               <div class="detail-item detail-author-item">參賽者｜<span id="modalBriefAuthor"></span></div>
               <div class="detail-item detail-number-item">作品編號｜<span id="modalBriefNumber"></span></div>
             </div>
-
-            <div class="detail-vote-count">
-              人氣票數 <span id="modalVotes"></span>
-            </div>
+            <div class="detail-vote-count">人氣票數 <span id="modalVotes"></span></div>
           </div>
 
           <div class="detail-story">
@@ -1541,7 +1315,7 @@
           </div>
 
           <div class="detail-action-row detail-bottom-action">
-            <button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button>
+            <button class="vote-btn" id="modalVoteBtn">投這個作品一票</button>
           </div>
         </div>
       </div>
@@ -1572,21 +1346,15 @@
     function getOrCreateVoterId() {
       const storageKey = "photo_vote_voter_id";
       let id = localStorage.getItem(storageKey);
-
       if (!id) {
-        id = (window.crypto && crypto.randomUUID)
-          ? crypto.randomUUID()
-          : "voter_" + Date.now() + "_" + Math.random().toString(36).slice(2, 12);
-
+        id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : "voter_" + Date.now() + "_" + Math.random().toString(36).slice(2, 12);
         localStorage.setItem(storageKey, id);
       }
-
       return id;
     }
 
     async function loadWorks() {
       const hasLocalWorks = restoreWorksFromLocalCache();
-
       if (hasLocalWorks) {
         showGalleryImmediately();
         renderGallery("快取資料");
@@ -1633,13 +1401,9 @@
       try {
         const raw = localStorage.getItem(LOCAL_WORKS_CACHE_KEY);
         if (!raw) return false;
-
         const payload = JSON.parse(raw);
 
-        if (
-          Date.now() - Number(payload.saved_at || 0) > LOCAL_WORKS_CACHE_TTL ||
-          !Array.isArray(payload.works)
-        ) return false;
+        if (Date.now() - Number(payload.saved_at || 0) > LOCAL_WORKS_CACHE_TTL || !Array.isArray(payload.works)) return false;
 
         works = payload.works;
         return works.length > 0;
@@ -1650,10 +1414,7 @@
 
     function saveWorksToLocalCache(latestWorks) {
       try {
-        localStorage.setItem(
-          LOCAL_WORKS_CACHE_KEY,
-          JSON.stringify({ saved_at: Date.now(), works: latestWorks })
-        );
+        localStorage.setItem(LOCAL_WORKS_CACHE_KEY, JSON.stringify({ saved_at: Date.now(), works: latestWorks }));
       } catch (error) {}
     }
 
@@ -1663,9 +1424,7 @@
     }
 
     function showWorksLoadError(message) {
-      document.getElementById("skeletonGallery").innerHTML =
-        `<div class="empty-state"><h3>作品載入失敗</h3><p>${escapeHtml(message)}</p></div>`;
-
+      document.getElementById("skeletonGallery").innerHTML = `<div class="empty-state"><h3>作品載入失敗</h3><p>${escapeHtml(message)}</p></div>`;
       showToast("作品載入失敗，請稍後再試");
     }
 
@@ -1674,29 +1433,22 @@
 
       if (currentKeyword.trim()) {
         const keyword = currentKeyword.trim().toLowerCase();
-
         result = result.filter(work =>
-          [
-            work.display_number,
-            work.work_name,
-            work.participant_name,
-            work.shooting_theme
-          ].join(" ").toLowerCase().includes(keyword)
+          [work.display_number, work.work_name, work.participant_name, work.shooting_theme]
+            .join(" ")
+            .toLowerCase()
+            .includes(keyword)
         );
       }
 
       result.sort((a, b) =>
-        String(a.display_number || "").localeCompare(
-          String(b.display_number || ""),
-          "zh-Hant",
-          { numeric: true }
-        )
+        String(a.display_number || "").localeCompare(String(b.display_number || ""), "zh-Hant", { numeric: true })
       );
 
       return result;
     }
 
-    function renderGallery(sourceLabel = "") {
+    function renderGallery() {
       const gallery = document.getElementById("gallery");
       const loadMoreWrap = document.getElementById("loadMoreWrap");
       const loadMoreBtn = document.getElementById("loadMoreBtn");
@@ -1705,8 +1457,8 @@
 
       if (!filteredWorks.length) {
         loadMoreWrap.hidden = true;
-        gallery.innerHTML =
-          `<div class="empty-state">
+        gallery.innerHTML = `
+          <div class="empty-state">
             <h3>找不到符合條件的作品</h3>
             <p>請換個關鍵字，或一鍵清除搜尋後重新瀏覽。</p>
             <button class="empty-clear-btn" type="button" onclick="clearSearch()">清除搜尋，查看全部作品</button>
@@ -1718,36 +1470,34 @@
         const isVoted = votedToday.has(work.work_id);
         const isLoading = pendingVotes.has(work.work_id);
 
-        return `<article class="photo-card" data-work-id="${escapeHtml(work.work_id)}">
-          <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
-            <div class="photo-wrap">
-              <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async">
-              <div class="detail-hint">查看作品介紹</div>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div class="work-number">${escapeHtml(work.display_number)}</div>
-
-            <div class="card-main">
-              <h3 class="card-title photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
-                ${escapeHtml(work.work_name)}
-              </h3>
-              <div class="card-author">參賽者｜${escapeHtml(work.participant_name)}</div>
+        return `
+          <article class="photo-card" data-work-id="${escapeHtml(work.work_id)}">
+            <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
+              <div class="photo-wrap">
+                <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async">
+                <div class="detail-hint">查看作品介紹</div>
+              </div>
             </div>
 
-            <div class="card-actions">
-              <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')">
-                ${isVoted ? "✓ 已投下這一票" : isLoading ? "投票送出中…" : "投這個作品一票"}
-              </button>
-              <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
+            <div class="card-body">
+              <div class="work-number">${escapeHtml(work.display_number)}</div>
+
+              <div class="card-main">
+                <h3 class="card-title photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">${escapeHtml(work.work_name)}</h3>
+                <div class="card-author">參賽者｜${escapeHtml(work.participant_name)}</div>
+              </div>
+
+              <div class="card-actions">
+                <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')">
+                  ${isVoted ? "已投下這一票" : isLoading ? "投票送出中…" : "投這個作品一票"}
+                </button>
+                <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
+              </div>
             </div>
-          </div>
-        </article>`;
+          </article>`;
       }).join("");
 
       const remaining = filteredWorks.length - displayedWorks.length;
-
       if (remaining > 0) {
         loadMoreWrap.hidden = false;
         loadMoreBtn.textContent = `還有 ${remaining} 件作品等你發現`;
@@ -1806,9 +1556,8 @@
           descriptionEl.classList.add("is-collapsible");
           const isActuallyHidden = descriptionEl.scrollHeight > descriptionEl.clientHeight + 2;
 
-          if (isActuallyHidden) {
-            toggleEl.hidden = false;
-          } else {
+          if (isActuallyHidden) toggleEl.hidden = false;
+          else {
             descriptionEl.classList.remove("is-collapsible");
             toggleEl.hidden = true;
           }
@@ -1849,11 +1598,7 @@
 
       button.classList.toggle("voted", isVoted);
       button.classList.toggle("loading", isLoading);
-      button.textContent = isVoted
-        ? "✓ 已投下這一票"
-        : isLoading
-          ? "投票送出中…"
-          : "投這個作品一票";
+      button.textContent = isVoted ? "已投下這一票" : isLoading ? "投票送出中…" : "投這個作品一票";
     }
 
     function updateModalNavigation() {
@@ -1862,15 +1607,11 @@
     }
 
     function showPreviousWork() {
-      if (currentModalIndex > 0) {
-        renderModalByWork(currentModalSequence[--currentModalIndex]);
-      }
+      if (currentModalIndex > 0) renderModalByWork(currentModalSequence[--currentModalIndex]);
     }
 
     function showNextWork() {
-      if (currentModalIndex < currentModalSequence.length - 1) {
-        renderModalByWork(currentModalSequence[++currentModalIndex]);
-      }
+      if (currentModalIndex < currentModalSequence.length - 1) renderModalByWork(currentModalSequence[++currentModalIndex]);
     }
 
     document.getElementById("prevWorkBtn").addEventListener("click", showPreviousWork);
@@ -1885,7 +1626,6 @@
       if (pendingVotes.has(workId)) return;
 
       const target = works.find(item => item.work_id === workId);
-
       if (!target) {
         showToast("找不到這件作品，請重新整理後再試。");
         return;
@@ -1911,11 +1651,7 @@
         const response = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "vote",
-            work_id: workId,
-            voter_id: voterId
-          })
+          body: JSON.stringify({ action: "vote", work_id: workId, voter_id: voterId })
         });
 
         const data = await response.json();
@@ -1992,6 +1728,23 @@
       button.addEventListener("click", () => setGroup(button.dataset.group))
     );
 
+    const worksSearchZone = document.getElementById("worksSearchZone");
+    const searchToggleBtn = document.getElementById("searchToggleBtn");
+
+    function openSearchPanel() {
+      worksSearchZone.classList.add("expanded");
+      searchToggleBtn.setAttribute("aria-expanded", "true");
+      requestAnimationFrame(() => document.getElementById("searchInput").focus());
+    }
+
+    function closeSearchPanel() {
+      if (currentKeyword.trim()) return;
+      worksSearchZone.classList.remove("expanded");
+      searchToggleBtn.setAttribute("aria-expanded", "false");
+    }
+
+    searchToggleBtn.addEventListener("click", openSearchPanel);
+
     document.getElementById("searchInput").addEventListener("input", function() {
       currentKeyword = this.value;
       visibleCount = INITIAL_VISIBLE_COUNT;
@@ -2007,7 +1760,7 @@
       document.getElementById("searchInput").value = "";
       updateSearchClearButton();
       renderGallery();
-      openSearchToolbar();
+      openSearchPanel();
       document.getElementById("searchInput").focus();
     }
 
@@ -2015,38 +1768,76 @@
       document.getElementById("clearSearchBtn").classList.toggle("show", !!currentKeyword.trim());
     }
 
-    const searchToolbar = document.getElementById("searchToolbar");
-    const searchToggleBtn = document.getElementById("searchToggleBtn");
+    const modalSearchZone = document.getElementById("modalSearchZone");
+const modalSearchToggle = document.getElementById("modalSearchToggle");
+const modalSearchInput = document.getElementById("modalSearchInput");
+const modalSearchSubmit = document.getElementById("modalSearchSubmit");
+const modalSearchResults = document.getElementById("modalSearchResults");
 
-    function openSearchToolbar() {
-      searchToolbar.classList.remove("collapsed");
-      searchToolbar.classList.add("expanded");
-      searchToggleBtn.setAttribute("aria-expanded", "true");
-      requestAnimationFrame(() => document.getElementById("searchInput").focus());
-    }
+modalSearchToggle.addEventListener("click", function() {
+  modalSearchZone.classList.add("expanded");
+  requestAnimationFrame(() => modalSearchInput.focus());
+});
 
-    function closeSearchToolbar() {
-      if (currentKeyword.trim()) return;
-      searchToolbar.classList.remove("expanded");
-      searchToolbar.classList.add("collapsed");
-      searchToggleBtn.setAttribute("aria-expanded", "false");
-    }
+modalSearchInput.addEventListener("input", renderModalSearchResults);
 
-    searchToggleBtn.addEventListener("click", openSearchToolbar);
+modalSearchSubmit.addEventListener("click", function() {
+  renderModalSearchResults();
+  modalSearchInput.focus();
+});
+    function renderModalSearchResults() {
+      const keyword = modalSearchInput.value.trim().toLowerCase();
 
-    document.addEventListener("click", function(event) {
-      if (!searchToolbar.contains(event.target) && !currentKeyword.trim()) {
-        closeSearchToolbar();
+      if (!keyword) {
+        modalSearchResults.innerHTML = "";
+        modalSearchResults.classList.remove("show");
+        return;
       }
-    });
 
-    document.addEventListener("keydown", function(event) {
-      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
-      if (!modalIsOpen && event.key === "Escape") closeSearchToolbar();
-    });
+      const results = works
+        .filter(work => work.group_key === currentGroup)
+        .filter(work => {
+          return [
+            work.display_number,
+            work.work_name,
+            work.participant_name,
+            work.shooting_theme
+          ].join(" ").toLowerCase().includes(keyword);
+        })
+        .slice(0, 8);
+
+      if (!results.length) {
+        modalSearchResults.innerHTML = `<div class="modal-search-result">找不到符合的作品</div>`;
+        modalSearchResults.classList.add("show");
+        return;
+      }
+
+      modalSearchResults.innerHTML = results.map(work => `
+        <div class="modal-search-result" onclick="switchModalWork('${escapeJs(work.work_id)}')">
+          <strong>${escapeHtml(work.display_number)}</strong>　
+          ${escapeHtml(work.work_name)}｜${escapeHtml(work.participant_name)}
+        </div>
+      `).join("");
+
+      modalSearchResults.classList.add("show");
+    }
+
+    function switchModalWork(workId) {
+      const work = works.find(item => item.work_id === workId);
+      if (!work) return;
+
+      currentModalSequence = getFilteredSortedWorks();
+      currentModalIndex = currentModalSequence.findIndex(item => item.work_id === workId);
+
+      renderModalByWork(work);
+
+      modalSearchInput.value = "";
+      modalSearchResults.innerHTML = "";
+      modalSearchResults.classList.remove("show");
+      modalSearchZone.classList.remove("expanded");
+    }
 
     document.getElementById("modalClose").addEventListener("click", closeModal);
-    document.getElementById("modalCloseMobile").addEventListener("click", closeModal);
 
     document.getElementById("detailModal").addEventListener("click", function(event) {
       if (event.target === this) closeModal();
@@ -2060,18 +1851,22 @@
 
     document.addEventListener("keydown", function(event) {
       const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
-      if (!modalIsOpen) return;
 
-      if (event.key === "Escape") closeModal();
-      if (event.key === "ArrowLeft") showPreviousWork();
-      if (event.key === "ArrowRight") showNextWork();
+      if (modalIsOpen) {
+        if (event.key === "Escape") closeModal();
+        if (event.key === "ArrowLeft") showPreviousWork();
+        if (event.key === "ArrowRight") showNextWork();
+      } else {
+        if (event.key === "Escape" && worksSearchZone.classList.contains("expanded") && !currentKeyword.trim()) {
+          closeSearchPanel();
+        }
+      }
     });
 
     function showToast(message) {
       const toast = document.getElementById("toast");
       toast.textContent = message;
       toast.classList.add("show");
-
       clearTimeout(window.toastTimer);
       window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
     }
