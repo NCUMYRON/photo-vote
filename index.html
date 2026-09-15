@@ -53,8 +53,8 @@
 
     .card-title,
     .detail-title {
-      font-family: var(--hand-font);
-      font-weight: 400;
+      font-family: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
+      font-weight: 500;
     }
 
     .works-title,
@@ -419,6 +419,37 @@
         transform: scale(1.12);
         color: var(--gold);
       }
+    }
+
+    .share-btn {
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: var(--btn-radius);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.82);
+      padding: 9px 9px;
+      font-size: 12px;
+      letter-spacing: .06em;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .share-btn:hover {
+      color: #111;
+      background: var(--gold);
+      border-color: rgba(244,223,154,.9);
+    }
+
+    .card-share-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .detail-share-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     .toolbar {
@@ -1132,6 +1163,13 @@
         letter-spacing: .04em;
       }
 
+      .card-share-row { gap: 6px; }
+
+      .share-btn {
+        padding: 8px 4px;
+        font-size: 10px;
+      }
+
       .vote-count {
         min-height: 32px;
         display: flex;
@@ -1515,6 +1553,9 @@
           </div>
 
           <div class="detail-action-row detail-bottom-action">
+            <div class="detail-share-row">
+              <button class="share-btn" id="modalCopyBtn" type="button">🔗 複製作品連結</button>
+            </div>
             <button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button>
           </div>
         </div>
@@ -1541,6 +1582,7 @@
     let remoteWorksLoaded = false;
     let dailyVoteRefreshInProgress = false;
     let dailyVoteRefreshTimer = null;
+    let initialDeepLinkOpened = false;
 
     const votedToday = new Set();
     const pendingVotes = new Set();
@@ -1567,6 +1609,7 @@
       if (hasLocalWorks) {
         showGalleryImmediately();
         renderGallery("快取資料");
+        openWorkFromUrl();
       }
 
       fetchVotedTodayInBackground();
@@ -1583,6 +1626,7 @@
         saveWorksToLocalCache(works);
         showGalleryImmediately();
         renderGallery();
+        openWorkFromUrl();
       } catch (error) {
         if (!hasLocalWorks) showWorksLoadError(error.message || "請稍後再試");
         else showToast("已先顯示作品，最新資料同步稍後再試");
@@ -1844,6 +1888,9 @@
               </button>
               <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
             </div>
+            <div class="card-share-row">
+              <button class="share-btn" type="button" onclick="copyWorkLink('${escapeJs(work.work_id)}')">🔗 複製連結</button>
+            </div>
           </div>
         </article>`;
       }).join("");
@@ -1863,8 +1910,65 @@
       renderGallery();
     });
 
-    function openModal(workId) {
-      const work = works.find(item => item.work_id === workId);
+    function getWorkShareUrl(workId) {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
+      url.searchParams.set("work", String(workId));
+      return url.toString();
+    }
+
+    function syncWorkUrl(workId, replace = false) {
+      const url = new URL(window.location.href);
+      if (workId) url.searchParams.set("work", String(workId));
+      else url.searchParams.delete("work");
+      const method = replace ? "replaceState" : "pushState";
+      history[method]({ workId: workId || null }, "", url);
+    }
+
+    async function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    async function copyWorkLink(workId) {
+      try {
+        await copyText(getWorkShareUrl(workId));
+        showToast("作品連結已複製！");
+      } catch (error) {
+        showToast("無法自動複製，請複製瀏覽器網址列。 ");
+      }
+    }
+
+    function openWorkFromUrl() {
+      const workId = new URLSearchParams(window.location.search).get("work");
+      if (!workId || initialDeepLinkOpened || !works.length) return;
+      const work = works.find(item => String(item.work_id) === String(workId));
+      if (!work) return;
+      initialDeepLinkOpened = true;
+      if (work.group) {
+        currentGroup = work.group;
+        document.querySelectorAll(".group-btn").forEach(btn =>
+          btn.classList.toggle("active", btn.dataset.group === currentGroup)
+        );
+        renderGallery();
+      }
+      openModal(work.work_id, { syncUrl: false });
+    }
+
+    function openModal(workId, options = {}) {
+      const work = works.find(item => String(item.work_id) === String(workId));
       if (!work) return;
 
       currentModalSequence = getFilteredSortedWorks();
@@ -1873,10 +1977,14 @@
       renderModalByWork(work);
       document.getElementById("detailModal").classList.add("show");
       document.body.classList.add("modal-open");
+      if (options.syncUrl !== false) syncWorkUrl(work.work_id);
     }
 
     function renderModalByWork(work) {
       currentWorkId = work.work_id;
+      if (document.getElementById("detailModal").classList.contains("show")) {
+        syncWorkUrl(work.work_id, true);
+      }
 
       document.getElementById("modalImage").src = work.image_url;
       document.getElementById("modalImage").alt = work.work_name;
@@ -1942,6 +2050,7 @@
       currentWorkId = null;
       currentModalSequence = [];
       currentModalIndex = -1;
+      syncWorkUrl(null, true);
     }
 
     function updateModalVoteButton(workId) {
@@ -2122,6 +2231,10 @@
       if (currentWorkId) voteWork(currentWorkId);
     });
 
+    document.getElementById("modalCopyBtn").addEventListener("click", function() {
+      if (currentWorkId) copyWorkLink(currentWorkId);
+    });
+
     document.getElementById("descriptionToggle").addEventListener("click", toggleDescription);
 
     document.addEventListener("keydown", function(event) {
@@ -2162,6 +2275,18 @@
         ? CSS.escape(value)
         : String(value).replace(/["\\]/g, "\\$&");
     }
+
+    window.addEventListener("popstate", function() {
+      const workId = new URLSearchParams(window.location.search).get("work");
+      if (workId) {
+        const work = works.find(item => String(item.work_id) === String(workId));
+        if (work) openModal(work.work_id, { syncUrl: false });
+      } else if (document.getElementById("detailModal").classList.contains("show")) {
+        document.getElementById("detailModal").classList.remove("show");
+        document.body.classList.remove("modal-open");
+        currentWorkId = null;
+      }
+    });
 
     loadWorks();
     scheduleNextDailyVoteRefresh();
