@@ -1,542 +1,2170 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>脂肪肝測驗小學堂</title>
+  <title>照片人氣投票｜台灣新視代</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    .flq-quiz,
-    .flq-quiz * {
-      box-sizing: border-box;
+    @font-face {
+      font-family: "ChenYuluoyan";
+      src: url("./fonts/ChenYuluoyan-2.0-Thin.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
     }
+
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #030303;
+      --ink: #f7f1df;
+      --muted: rgba(247,241,223,.68);
+      --line: rgba(247,241,223,.22);
+      --gold: #f4df9a;
+      --gold-2: #caa95a;
+      --glass: rgba(10,10,10,.62);
+      --glass-2: rgba(255,255,255,.08);
+      --danger: #c84d3f;
+      --ok: #7f9f7a;
+      --blue: #638fa8;
+      --shadow: 0 24px 80px rgba(0,0,0,.58);
+      --btn-radius: 3px;
+      --body-font: "Noto Serif TC", "Songti TC", "Microsoft JhengHei", serif;
+      --hand-font: "ChenYuluoyan", "Noto Serif TC", "Songti TC", serif;
+    }
+
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
+      color: var(--ink);
+      background: #000;
+      font-family: var(--body-font);
+      letter-spacing: .03em;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    button, input { font-family: inherit; }
+
+    .card-title,
+    .detail-title {
+      font-family: var(--hand-font);
+      font-weight: 400;
+    }
+
+    .works-title,
+    .group-btn,
+    .work-number,
+    .detail-story-label,
+    .search-toggle-btn,
+    .load-more-btn,
+    .modal-nav-btn,
+    .vote-btn {
+      font-family: var(--body-font);
+      font-weight: 500;
+    }
+
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .page {
+      min-height: 100vh;
+      background: var(--bg);
+    }
+
+    .hero-group-tabs {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(18px);
+      border-top: 1px solid rgba(255,255,255,.12);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+
+    .group-btn {
+      min-width: 180px;
+      height: 44px;
+      border: 1px solid rgba(244,223,154,.36);
+      border-radius: var(--btn-radius);
+      background: rgba(0,0,0,.28);
+      color: rgba(255,255,255,.72);
+      font-size: 15px;
+      letter-spacing: .16em;
+      cursor: pointer;
+      transition: .22s ease;
+      position: relative;
+    }
+
+    .group-btn::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 1px;
+      pointer-events: none;
+    }
+
+    .group-btn:hover {
+      color: var(--gold);
+      border-color: rgba(244,223,154,.7);
+      background: rgba(244,223,154,.08);
+    }
+
+    .group-btn.active {
+      color: #15110a;
+      background: linear-gradient(135deg, var(--gold), #fff3bd);
+      border-color: rgba(244,223,154,.9);
+      box-shadow: 0 0 28px rgba(244,223,154,.16);
+    }
+
+    .group-btn.active::before {
+      border-color: rgba(0,0,0,.18);
+    }
+
+    .works-area {
+      position: relative;
+      padding: 52px 24px 8px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px) 0 0 / 46px 46px,
+        radial-gradient(circle at 50% -10%, rgba(244,223,154,.13), transparent 34%),
+        linear-gradient(180deg, #050505 0%, #0e0c09 100%);
+      border-top: 1px solid rgba(244,223,154,.18);
+    }
+
+    .works-header {
+      width: min(1480px, 100%);
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .works-title {
+      position: relative;
+      color: #fff;
+      font-size: clamp(25px, 3vw, 46px);
+      letter-spacing: .22em;
+      font-weight: 400;
+      text-shadow: 0 0 28px rgba(244,223,154,.16);
+    }
+
+    .works-title::before,
+    .works-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: min(18vw, 180px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244,223,154,.48));
+    }
+
+    .works-title::before {
+      right: calc(100% + 20px);
+    }
+
+    .works-title::after {
+      left: calc(100% + 20px);
+      transform: rotate(180deg);
+    }
+
+    .gallery {
+      width: min(1480px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 16px 0 38px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
       background: transparent;
     }
 
-    .flq-quiz {
-      width: 100%;
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: clamp(8px, 2vw, 14px);
-      font-family: Arial, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-      color: #00b84f;
+    .photo-card,
+    .skeleton-card {
+      position: relative;
+      min-height: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(244,223,154,.16);
+      border-radius: 2px 5px 3px 4px;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(244,223,154,.09), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+      box-shadow: 0 28px 90px rgba(0,0,0,.55);
+      transition: .28s ease;
     }
 
-    .flq-card {
-      width: 100%;
-      border: clamp(5px, 0.8vw, 8px) solid #00b84f;
-      border-radius: clamp(12px, 1.4vw, 18px);
-      padding: clamp(24px, 4vw, 48px);
-      background: #f7f4e8;
-    }
-
-    .flq-title {
-      margin: 0 0 8px;
-      font-size: clamp(28px, 3.6vw, 44px);
-      font-weight: 900;
-      color: #00b84f;
-      line-height: 1.2;
-    }
-
-    .flq-subtitle {
-      margin: 0 0 clamp(20px, 3vw, 32px);
-      font-size: clamp(14px, 1.4vw, 17px);
-      font-weight: 700;
-      color: #25b95d;
-      line-height: 1.5;
-    }
-
-    .flq-progress {
-      margin-bottom: clamp(12px, 1.6vw, 18px);
-      font-size: clamp(14px, 1.3vw, 16px);
-      font-weight: 800;
-      color: #00b84f;
-      opacity: 0.85;
-    }
-
-    .flq-question {
-      margin: 0 0 clamp(18px, 2vw, 24px);
-      font-size: clamp(21px, 2.4vw, 30px);
-      font-weight: 900;
-      line-height: 1.45;
-      color: #00b84f;
-    }
-
-    .flq-options {
-      display: grid;
-      gap: clamp(10px, 1.3vw, 14px);
-    }
-
-    .flq-option {
-      width: 100%;
-      min-height: clamp(78px, 10vh, 112px);
-      padding: clamp(16px, 2vw, 24px);
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      text-align: left;
-      background: #dff5da;
-      border: 3px solid transparent;
-      border-radius: clamp(6px, 0.8vw, 10px);
-      color: #00a948;
-      font-size: clamp(17px, 1.7vw, 21px);
-      font-weight: 800;
-      line-height: 1.5;
-      font-family: inherit;
-      cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
-      appearance: none;
-    }
-
-    @media (hover: hover) {
-      .flq-option:hover {
-        border-color: #00b84f;
-        transform: translateY(-1px);
-      }
-    }
-
-    .flq-option:focus-visible,
-    .flq-submit:focus-visible {
-      outline: 3px solid rgba(0, 184, 79, 0.35);
-      outline-offset: 3px;
-    }
-
-    .flq-option.is-selected {
-      border-color: #00b84f;
-      background: #c9f3bd;
-    }
-
-    .flq-option.is-correct {
-      border-color: #00b84f;
-      background: #c9f3bd;
-    }
-
-    .flq-option.is-wrong {
-      border-color: #ff5b5b;
-      background: #ffe1df;
-      color: #d60000;
-    }
-
-    .flq-option:disabled {
-      cursor: default;
-      opacity: 1;
-    }
-
-    .flq-submit {
-      width: 100%;
-      min-height: clamp(52px, 6vh, 62px);
-      margin-top: clamp(14px, 1.8vw, 20px);
-      border: none;
-      border-radius: 999px;
-      background: #dfff7a;
-      color: #00b84f;
-      font-size: clamp(20px, 2vw, 24px);
-      font-weight: 900;
-      font-family: inherit;
-      cursor: pointer;
-      transition: filter 0.2s ease, transform 0.2s ease;
-      appearance: none;
-    }
-
-    @media (hover: hover) {
-      .flq-submit:hover {
-        filter: brightness(0.98);
-        transform: translateY(-1px);
-      }
-    }
-
-    .flq-message {
+    .photo-card::before,
+    .photo-card::after {
       display: none;
-      margin-top: clamp(16px, 2vw, 22px);
-      padding: clamp(16px, 2vw, 22px);
-      border-radius: 12px;
-      background: #ffffff;
-      border: 2px solid #c9f3bd;
-      color: #177d42;
-      font-size: clamp(15px, 1.45vw, 17px);
-      font-weight: 700;
-      line-height: 1.65;
     }
 
-    .flq-message.is-show {
+    .photo-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      border-color: rgba(244,223,154,.3);
+      background: rgba(255,255,255,.085);
+    }
+
+    .photo-click-area {
+      cursor: pointer;
+    }
+
+    .photo-wrap {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: #111;
+    }
+
+    .photo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,.86) 100%);
+      pointer-events: none;
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: saturate(.72) contrast(1.08);
+      transition: .5s ease;
+    }
+
+    .photo-card:hover .photo-wrap img {
+      transform: scale(1.06);
+      filter: saturate(.95) contrast(1.08);
+    }
+
+    .work-number {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 4px 10px;
+      border: 1px solid rgba(244,223,154,.48);
+      background: rgba(244,223,154,.08);
+      color: var(--gold);
+      font-size: 12px;
+      line-height: 1;
+      letter-spacing: .08em;
+    }
+
+    .detail-hint {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      z-index: 2;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      letter-spacing: .12em;
+    }
+
+    .card-body {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 132px;
+      padding: 15px 14px 13px;
+      background:
+        linear-gradient(90deg, rgba(244,223,154,.12) 0 1px, transparent 1px),
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42));
+      background-position: 14px 0, 0 0;
+      background-size: calc(100% - 28px) 1px, 100% 100%;
+      background-repeat: no-repeat;
+    }
+
+    .card-body::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 0;
+      width: min(76px, 42%);
+      height: 1px;
+      background: rgba(244,223,154,.55);
+      transform: rotate(-1.2deg);
+      transform-origin: left center;
+      box-shadow: 0 0 14px rgba(244,223,154,.16);
+      pointer-events: none;
+    }
+
+    .card-main {
+      display: grid;
+      gap: 5px;
+    }
+
+    .card-title {
+      position: relative;
+      margin: 0;
+      color: #fff;
+      font-size: 20px;
+      line-height: 1.35;
+      font-weight: 400;
+      letter-spacing: .06em;
+      min-height: 12px;
+      cursor: pointer;
+      transition: color .2s ease, transform .2s ease;
+    }
+
+    .card-title::after {
+      content: "";
+      display: block;
+      width: 42px;
+      height: 1px;
+      margin-top: 6px;
+      background: linear-gradient(90deg, rgba(244,223,154,.8), transparent);
+      opacity: .7;
+    }
+
+    .card-title:hover {
+      color: var(--gold);
+      transform: translateX(1px);
+    }
+
+    .card-author {
+      margin: 0;
+      color: rgba(255,255,255,.6);
+      font-size: 13px;
+      line-height: 1.5;
+      letter-spacing: .08em;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 10px;
+    }
+
+    .vote-btn {
+      border: 1px solid rgba(244,223,154,.48);
+      border-radius: var(--btn-radius);
+      background: linear-gradient(135deg, rgba(244,223,154,.18), rgba(244,223,154,.05));
+      color: var(--gold);
+      padding: 9px 9px;
+      font-size: 13px;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition:
+        background .22s ease,
+        border-color .22s ease,
+        color .22s ease,
+        transform .22s ease,
+        box-shadow .22s ease;
+    }
+
+    .vote-btn:hover {
+      background: linear-gradient(135deg, #f5e3a8, #e8cc80);
+      color: #171209;
+      border-color: rgba(244,223,154,.95);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.3),
+        0 10px 26px rgba(244,223,154,.14);
+      transform: translateY(-1px);
+    }
+
+    .vote-btn.voted {
+      background: rgba(127,159,122,.25);
+      color: #d8f1d2;
+      border-color: rgba(216,241,210,.42);
+      box-shadow: none;
+    }
+
+    .vote-btn.loading {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    .vote-count {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.88);
+      background: rgba(0,0,0,.22);
+      font-size: 16px;
+      line-height: 1.05;
+      text-align: center;
+    }
+
+    .vote-count small {
+      display: block;
+      color: rgba(255,255,255,.46);
+      font-size: 11px;
+    }
+
+    .vote-success-pop {
+      animation: voteButtonPop .52s ease;
+    }
+
+    .vote-pulse {
+      animation: voteCountPulse .72s ease;
+    }
+
+    @keyframes voteButtonPop {
+      45% { transform: scale(1.04); }
+    }
+
+    @keyframes voteCountPulse {
+      35% {
+        transform: scale(1.12);
+        color: var(--gold);
+      }
+    }
+
+    .toolbar {
+      position: fixed;
+      right: 24px;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      z-index: 300;
+      transform: none;
+      transition:
+        width .28s ease,
+        padding .28s ease,
+        background .28s ease,
+        border-color .28s ease,
+        box-shadow .28s ease;
+    }
+
+    .toolbar.collapsed {
+      width: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      backdrop-filter: none;
+      box-shadow: none;
+    }
+
+    .toolbar.expanded {
+      width: min(620px, calc(100vw - 48px));
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.68);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 16px 60px rgba(0,0,0,.56);
+    }
+
+    .search-toggle-btn {
+      min-width: 172px;
+      height: 52px;
+      padding: 0 22px;
+      border: 1px solid rgba(244,223,154,.58);
+      border-radius: var(--btn-radius);
+      background: rgba(0,0,0,.82);
+      color: var(--gold);
+      font-size: 15px;
+      letter-spacing: .16em;
+      cursor: pointer;
+      box-shadow: 0 16px 48px rgba(0,0,0,.55);
+      transition: .22s ease;
+    }
+
+    .search-toggle-btn:hover {
+      background: var(--gold);
+      color: #111;
+      border-color: rgba(244,223,154,.9);
+    }
+
+    .toolbar.expanded .search-toggle-btn {
+      display: none;
+    }
+
+    .search-panel {
+      display: none;
+    }
+
+    .toolbar.expanded .search-panel {
       display: block;
     }
 
-    .flq-answer-label {
-      margin-bottom: 6px;
-      font-size: clamp(17px, 1.6vw, 19px);
-      font-weight: 900;
-      color: #00b84f;
-      line-height: 1.5;
+    .search-box {
+      position: relative;
     }
 
-    .flq-footer {
-      margin-top: 14px;
+    .search-input {
+      width: 100%;
+      height: 50px;
+      padding: 0 90px 0 18px;
+      outline: none;
+      border: 1px solid rgba(244,223,154,.34);
+      border-radius: var(--btn-radius);
+      background: rgba(255,255,255,.05);
+      color: #fff;
+      font-size: 15px;
+      letter-spacing: .08em;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255,255,255,.42);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 50px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      display: none;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50%;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .search-clear.show {
+      display: grid;
+      place-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(244,223,154,.72);
+      pointer-events: none;
+      font-size: 22px;
+    }
+
+    .load-more-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 8px 24px 96px;
+      background: #0c0c0c;
+    }
+
+    .load-more-wrap[hidden] {
+      display: none;
+    }
+
+    .load-more-btn {
+      min-width: min(420px, 100%);
+      border: 1px solid rgba(244,223,154,.48);
+      border-radius: var(--btn-radius);
+      background: transparent;
+      color: var(--gold);
+      padding: 12px 22px;
+      font-size: 15px;
+      letter-spacing: .12em;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .load-more-btn:hover {
+      background: var(--gold);
+      color: #111;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 48px 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.05);
       text-align: center;
-      font-size: clamp(11px, 1vw, 12px);
-      font-weight: 700;
-      color: #35c56a;
-      line-height: 1.5;
     }
 
-    .flq-result {
-      padding: clamp(22px, 3vw, 32px);
-      border-radius: 14px;
-      background: #dff5da;
-      color: #00a948;
-      font-weight: 900;
-      line-height: 1.6;
+    .empty-state h3 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      font-weight: 500;
     }
 
-    .flq-result-score {
+    .empty-state p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .empty-clear-btn {
+      border: 1px solid rgba(244,223,154,.48);
+      border-radius: var(--btn-radius);
+      background: transparent;
+      color: var(--gold);
+      padding: 12px 20px;
+      cursor: pointer;
+    }
+
+    .skeleton-gallery {
+      display: grid;
+    }
+
+    .skeleton-image,
+    .skeleton-line,
+    .skeleton-button,
+    .skeleton-count {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,.08);
+    }
+
+    .skeleton-image::after,
+    .skeleton-line::after,
+    .skeleton-button::after,
+    .skeleton-count::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(244,223,154,.15), transparent);
+      animation: shimmer 1.35s infinite;
+    }
+
+    @keyframes shimmer {
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .skeleton-image {
+      aspect-ratio: 4 / 5;
+    }
+
+    .skeleton-body {
+      padding: 16px;
+    }
+
+    .skeleton-line {
+      height: 14px;
       margin-bottom: 12px;
-      font-size: clamp(32px, 4vw, 42px);
+    }
+
+    .skeleton-line.short { width: 36%; }
+    .skeleton-line.medium { width: 70%; }
+    .skeleton-line.long { width: 92%; }
+
+    .skeleton-actions {
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .skeleton-button,
+    .skeleton-count {
+      height: 46px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0,0,0,.82);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-dialog {
+      position: relative;
+      width: min(1180px, 100%);
+      max-height: min(92vh, 940px);
+      overflow-y: auto;
+      padding: 26px;
+      border: 1px solid rgba(244,223,154,.35);
+      background:
+        radial-gradient(circle at 78% 18%, rgba(244,223,154,.08), transparent 28%),
+        linear-gradient(180deg, #0a0a09 0%, #070707 100%);
+      box-shadow: 0 30px 120px rgba(0,0,0,.78);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 8;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 50%;
+      background: rgba(0,0,0,.52);
+      color: #fff;
+      font-size: 23px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: .22s ease;
+    }
+
+    .modal-close:hover {
+      color: #111;
+      background: var(--gold);
+      border-color: rgba(244,223,154,.85);
+    }
+
+    .detail-panel {
+      display: grid;
+      grid-template-columns: minmax(420px, 1.05fr) minmax(360px, .95fr);
+      gap: 30px;
+      align-items: stretch;
+    }
+
+    .detail-image {
+      min-height: 540px;
+      display: grid;
+      place-items: center;
+      background: #111;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+
+    .detail-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .modal-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .modal-nav-btn {
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: var(--btn-radius);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.78);
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .modal-nav-btn:hover:not(:disabled) {
+      color: #111;
+      background: var(--gold);
+    }
+
+    .modal-nav-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    .detail-info {
+      min-width: 0;
+      min-height: 0;
+      padding: 72px 0 4px;
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
+    }
+
+    .detail-top-row {
+      display: block;
+    }
+
+    .mobile-modal-close {
+      display: none;
+    }
+
+    .detail-top-labels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 11px;
+    }
+
+    .detail-label {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border: 1px solid rgba(244,223,154,.28);
+      border-radius: 2px;
+      background: rgba(244,223,154,.035);
+      color: rgba(244,223,154,.9);
+      font-size: 12px;
       line-height: 1.2;
+      letter-spacing: .1em;
     }
 
-    .flq-result-text {
-      font-size: clamp(18px, 2vw, 22px);
+    .detail-title {
+      margin: 0 0 7px;
+      color: #fff;
+      font-size: clamp(30px, 3vw, 46px);
+      line-height: 1.28;
+      font-weight: 400;
+      letter-spacing: .055em;
     }
 
-    @media (max-width: 600px) {
-      .flq-quiz {
+    .detail-meta-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(244,223,154,.2);
+    }
+
+    .detail-brief {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      min-width: 0;
+      margin: 0;
+      color: rgba(255,255,255,.62);
+      font-size: 14px;
+      line-height: 1.48;
+      letter-spacing: .08em;
+    }
+
+    .detail-brief span {
+      color: rgba(255,255,255,.95);
+    }
+
+    .detail-item {
+      min-width: 0;
+    }
+
+    .detail-vote-count {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 9px;
+      min-width: 118px;
+      margin: 0;
+      color: rgba(255,255,255,.52);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: .08em;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .detail-vote-count span {
+      display: inline-block;
+      color: var(--gold);
+      font-size: 40px;
+      font-weight: 600;
+      line-height: .88;
+      letter-spacing: .035em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .detail-story {
+      position: relative;
+      margin-bottom: 16px;
+      padding: 14px 16px 13px;
+      border-left: 2px solid rgba(244,223,154,.48);
+      background: rgba(255,255,255,.025);
+    }
+
+    .detail-story-label {
+      margin-bottom: 8px;
+      color: rgba(244,223,154,.8);
+      font-size: 12px;
+      letter-spacing: .22em;
+    }
+
+    .detail-description {
+      margin-bottom: 0;
+      padding: 0;
+      border-left: 0;
+      background: transparent;
+      color: rgba(255,255,255,.78);
+      font-size: 15px;
+      line-height: 1.72;
+      letter-spacing: .055em;
+      white-space: pre-line;
+      text-align: justify;
+      text-justify: inter-ideograph;
+      transition: max-height .35s ease;
+    }
+
+    .detail-description.is-collapsible {
+      position: relative;
+      max-height: 6.95em;
+      overflow: hidden;
+    }
+
+    .detail-description.is-collapsible::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2.2em;
+      background: linear-gradient(180deg, rgba(11,11,10,0), rgba(11,11,10,.98));
+      pointer-events: none;
+    }
+
+    .detail-description.is-expanded {
+      max-height: none;
+      overflow: visible;
+    }
+
+    .detail-description.is-expanded::after {
+      display: none;
+    }
+
+    .description-toggle {
+      display: inline-block;
+      margin-top: 8px;
+      padding-bottom: 1px;
+      border-bottom: 1px solid rgba(244,223,154,.34);
+      color: rgba(244,223,154,.8);
+      font-size: 12px;
+      letter-spacing: .18em;
+      cursor: pointer;
+      transition: color .2s ease, border-color .2s ease;
+    }
+
+    .description-toggle:hover {
+      color: var(--gold);
+      border-color: rgba(244,223,154,.8);
+    }
+
+    .detail-action-row {
+      display: grid;
+    }
+
+    .detail-action-row .vote-btn {
+      width: 100%;
+      min-height: 48px;
+      padding-inline: 18px;
+      border-color: rgba(244,223,154,.54);
+      background:
+        linear-gradient(135deg, rgba(244,223,154,.2), rgba(244,223,154,.065));
+      color: var(--gold);
+      font-size: 14px;
+      letter-spacing: .12em;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 10px 28px rgba(0,0,0,.28);
+    }
+
+    .detail-action-row .vote-btn:hover {
+      background: linear-gradient(135deg, #f6e4aa, #e8cb7f);
+      color: #171209;
+      border-color: rgba(244,223,154,.96);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        0 14px 34px rgba(244,223,154,.16);
+    }
+
+    .detail-bottom-action {
+      margin-top: auto;
+      padding-top: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 104px;
+      z-index: 10000;
+      max-width: calc(100% - 32px);
+      transform: translateX(-50%) translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 13px 20px;
+      border: 1px solid rgba(244,223,154,.42);
+      background: rgba(0,0,0,.8);
+      color: #fff;
+      text-align: center;
+      letter-spacing: .08em;
+      transition: .25s ease;
+      backdrop-filter: blur(14px);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1180px) {
+      .gallery {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .hero-group-tabs {
+        gap: 8px;
+        padding: 8px 10px;
+      }
+
+      .group-btn {
+        min-width: 0;
+        flex: 1;
+        height: 40px;
+        font-size: 14px;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: calc(100% - 28px);
+        gap: 12px;
+        padding: 14px 0 30px;
+      }
+
+      .works-area {
+        padding-top: 38px;
+      }
+
+      .modal-dialog {
+        padding: 18px;
+      }
+
+      .detail-panel {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        align-items: start;
+      }
+
+      .detail-image {
+        min-height: auto;
+        aspect-ratio: 4 / 3;
+      }
+
+      .detail-info {
+        min-height: 0;
+        padding-top: 0;
+      }
+
+      .detail-bottom-action {
+        margin-top: 18px;
+        padding-top: 0;
+      }
+
+      .detail-action-row .vote-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: calc(100% - 20px);
+        gap: 10px;
+        padding-bottom: 26px;
+      }
+
+      .photo-wrap {
+        aspect-ratio: 1 / 1;
+      }
+
+      .detail-hint {
+        display: none;
+      }
+
+      .work-number {
+        padding: 4px 8px;
+        font-size: 10px;
+      }
+
+      .card-body {
+        min-height: auto;
+        padding: 11px 9px 10px;
+        gap: 8px;
+        background-position: 9px 0, 0 0;
+        background-size: calc(100% - 18px) 1px, 100% 100%;
+      }
+
+      .card-body::before {
+        left: 9px;
+        width: min(54px, 48%);
+      }
+
+      .card-main {
+        gap: 4px;
+      }
+
+      .card-title {
+        min-height: 38px;
+        font-size: 18px;
+        line-height: 1.32;
+        letter-spacing: .045em;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .card-title::after {
+        width: 30px;
+        margin-top: 4px;
+      }
+
+      .card-author {
+        font-size: 11px;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .card-actions {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .card-actions .vote-count {
+        order: 1;
+      }
+
+      .card-actions .vote-btn {
+        order: 2;
+      }
+
+      .vote-btn {
+        padding: 8px 5px;
+        font-size: 11px;
+        letter-spacing: .04em;
+      }
+
+      .vote-count {
+        min-height: 32px;
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        font-size: 13px;
+      }
+
+      .vote-count small {
+        display: inline;
+        font-size: 10px;
+      }
+
+      .toolbar {
+        right: 10px;
+        bottom: max(10px, env(safe-area-inset-bottom));
+      }
+
+      .toolbar.expanded {
+        width: calc(100vw - 20px);
+      }
+
+      .search-toggle-btn {
+        min-width: 152px;
+        height: 48px;
+        padding: 0 18px;
+        font-size: 14px;
+      }
+
+      .search-input {
+        height: 46px;
+        font-size: 13px;
+      }
+
+      .modal {
         padding: 8px;
       }
 
-      .flq-card {
-        padding: 24px 18px 22px;
-        border-width: 5px;
-        border-radius: 12px;
+      .modal-dialog {
+        height: calc(100dvh - 16px);
+        max-height: none;
+        overflow: hidden;
+        padding: 10px;
       }
 
-      .flq-title {
-        font-size: 28px;
+      /* 手機版：隱藏原本照片右上角關閉鈕 */
+      .modal-close {
+        display: none;
       }
 
-      .flq-subtitle {
-        font-size: 14px;
-        margin-bottom: 22px;
+      .detail-panel {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        gap: 12px;
       }
 
-      .flq-progress {
-        font-size: 14px;
-        margin-bottom: 12px;
+      .detail-media {
+        flex: 0 0 auto;
       }
 
-      .flq-question {
+      .detail-image {
+        height: clamp(178px, 31vh, 242px);
+        aspect-ratio: auto;
+      }
+
+      .modal-nav {
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .modal-nav-btn {
+        padding: 11px 8px;
+        font-size: 13px;
+      }
+
+      .detail-info {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 0 2px 2px;
+      }
+
+      .detail-bottom-action {
+        margin-top: 14px;
+        padding-top: 0;
+      }
+
+      /* 手機版：標籤與關閉按鈕同列 */
+      .detail-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 9px;
+      }
+
+      .detail-top-labels {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 0;
+        min-width: 0;
+      }
+
+      .detail-label {
+        min-height: 25px;
+        padding: 4px 9px;
+        font-size: 11px;
+        letter-spacing: .08em;
+      }
+
+      .mobile-modal-close {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(244,223,154,.34);
+        border-radius: 3px;
+        background: rgba(255,255,255,.035);
+        color: rgba(255,255,255,.82);
         font-size: 21px;
-        line-height: 1.45;
-        margin-bottom: 18px;
+        line-height: 1;
+        cursor: pointer;
+        transition: .2s ease;
       }
 
-      .flq-option {
-        min-height: auto;
-        padding: 17px 14px;
-        font-size: 16.5px;
-        line-height: 1.5;
-        border-width: 2px;
+      .mobile-modal-close:hover {
+        color: #171209;
+        background: var(--gold);
+        border-color: rgba(244,223,154,.9);
       }
 
-      .flq-submit {
-        min-height: 52px;
-        font-size: 19px;
+      .detail-title {
+        margin-bottom: 6px;
+        padding-right: 0;
+        font-size: 24px;
+        line-height: 1.28;
       }
 
-      .flq-message {
-        font-size: 15.5px;
-        line-height: 1.6;
-        padding: 16px;
-      }
-    }
-
-    @media (max-width: 390px) {
-      .flq-card {
-        padding: 22px 14px 20px;
+      /* 手機版：資訊列同列，票數四位數也盡量穩定 */
+      .detail-meta-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 8px;
+        margin-bottom: 11px;
+        padding-bottom: 7px;
       }
 
-      .flq-title {
-        font-size: 25px;
+      /* 手機版：參賽者＋作品編號貼在一起 */
+      .detail-brief {
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: nowrap;
+        gap: 6px;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 10.5px;
+        line-height: 1.4;
+        letter-spacing: .045em;
       }
 
-      .flq-question {
-        font-size: 19px;
+      .detail-author-item {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
 
-      .flq-option {
-        font-size: 15.5px;
-        padding: 15px 12px;
+      .detail-number-item {
+        flex: 0 0 auto;
+        white-space: nowrap;
       }
 
-      .flq-submit {
-        font-size: 18px;
+      .detail-vote-count {
+        min-width: 92px;
+        gap: 5px;
+        font-size: 10.5px;
+        letter-spacing: .045em;
+      }
+
+      .detail-vote-count span {
+        font-size: clamp(24px, 7vw, 30px);
+        line-height: .88;
+        letter-spacing: .02em;
+      }
+
+      .detail-story {
+        margin-bottom: 8px;
+        padding: 12px 13px 11px;
+        background: rgba(255,255,255,.022);
+      }
+
+      .detail-story-label {
+        margin-bottom: 7px;
+        font-size: 11px;
+      }
+
+      .detail-description {
+        font-size: 13px;
+        line-height: 1.68;
+        letter-spacing: .04em;
+        text-align: justify;
+        text-justify: inter-ideograph;
+      }
+
+      .detail-description.is-collapsible {
+        max-height: 6.8em;
+      }
+
+      .description-toggle {
+        margin-top: 7px;
+        font-size: 11px;
+        letter-spacing: .15em;
+      }
+
+      .detail-action-row .vote-btn {
+        width: 100%;
+        min-height: 40px;
+        font-size: 12px;
+      }
+
+      .load-more-wrap {
+        padding: 8px 18px 86px;
+      }
+
+      .toast {
+        bottom: 82px;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="flq-quiz" id="fattyLiverQuiz">
-    <section class="flq-card" aria-labelledby="flqTitle">
-      <h1 class="flq-title" id="flqTitle">脂肪肝測驗小學堂</h1>
-      <p class="flq-subtitle">測測看，你對脂肪肝了解多少？</p>
+  <main class="page">
+    <div class="hero-group-tabs">
+      <button class="group-btn active" data-group="social">社會組</button>
+      <button class="group-btn" data-group="college">大專組</button>
+    </div>
 
-      <div class="flq-progress" id="flqProgress"></div>
-      <h2 class="flq-question" id="flqQuestion"></h2>
-
-      <div class="flq-options" id="flqOptions"></div>
-
-      <button class="flq-submit" id="flqSubmit" type="button">送出答案</button>
-
-      <div class="flq-message" id="flqMessage" aria-live="polite"></div>
-
-      <div class="flq-footer">完成測驗後即可查看分數與解析</div>
+    <section class="works-area" id="works">
+      <div class="works-header">
+        <div class="works-title">參賽作品</div>
+      </div>
     </section>
+
+    <section class="gallery skeleton-gallery" id="skeletonGallery">
+      <article class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line medium"></div>
+          <div class="skeleton-actions">
+            <div class="skeleton-button"></div>
+            <div class="skeleton-count"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line medium"></div>
+          <div class="skeleton-actions">
+            <div class="skeleton-button"></div>
+            <div class="skeleton-count"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line medium"></div>
+          <div class="skeleton-actions">
+            <div class="skeleton-button"></div>
+            <div class="skeleton-count"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line medium"></div>
+          <div class="skeleton-actions">
+            <div class="skeleton-button"></div>
+            <div class="skeleton-count"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line medium"></div>
+          <div class="skeleton-actions">
+            <div class="skeleton-button"></div>
+            <div class="skeleton-count"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="gallery" id="gallery" style="display:none;"></section>
+
+    <div class="load-more-wrap" hidden id="loadMoreWrap">
+      <button class="load-more-btn" id="loadMoreBtn" type="button"></button>
+    </div>
+  </main>
+
+  <section class="toolbar collapsed" id="searchToolbar">
+    <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
+    <div class="search-panel" id="searchPanel">
+      <div class="search-box">
+        <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
+        <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
+        <div class="search-icon">⌕</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal" id="detailModal">
+    <div class="modal-dialog">
+      <button aria-label="關閉視窗" class="modal-close" id="modalClose">×</button>
+
+      <div class="detail-panel">
+        <div class="detail-media">
+          <div class="detail-image">
+            <img alt="" id="modalImage" src="" />
+          </div>
+
+          <div class="modal-nav">
+            <button class="modal-nav-btn" id="prevWorkBtn" type="button">← 上一件作品</button>
+            <button class="modal-nav-btn" id="nextWorkBtn" type="button">下一件作品 →</button>
+          </div>
+        </div>
+
+        <div class="detail-info">
+          <div class="detail-top-row">
+            <div class="detail-top-labels">
+              <div class="detail-label group" id="modalGroup"></div>
+              <div class="detail-label theme" id="modalTheme"></div>
+            </div>
+
+            <button aria-label="關閉視窗" class="mobile-modal-close" id="modalCloseMobile" type="button">×</button>
+          </div>
+
+          <h2 class="detail-title" id="modalTitle"></h2>
+
+          <div class="detail-meta-row">
+            <div class="detail-brief">
+              <div class="detail-item detail-author-item">參賽者｜<span id="modalBriefAuthor"></span></div>
+              <div class="detail-item detail-number-item">作品編號｜<span id="modalBriefNumber"></span></div>
+            </div>
+
+            <div class="detail-vote-count">
+              人氣票數 <span id="modalVotes"></span>
+            </div>
+          </div>
+
+          <div class="detail-story">
+            <div class="detail-story-label">作品自述</div>
+            <div class="detail-description" id="modalDescription"></div>
+            <span class="description-toggle" id="descriptionToggle" hidden>展開全文</span>
+          </div>
+
+          <div class="detail-action-row detail-bottom-action">
+            <button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
-    (function () {
-      const questions = [
-        {
-          question: "Q1. 以下哪個工具或指標可以確診脂肪肝炎？",
-          options: [
-            "A. BMI身體質量指數",
-            "B. 抽血檢查血液脂肪濃度",
-            "C. 腹部超音波"
-          ],
-          answer: 2,
-          answerText: "C. 腹部超音波",
-          explanation:
-            "腹部超音波是目前篩檢與診斷脂肪肝的工具，依據肝臟亮度、血管清晰度與深部影像來判斷輕、中、重度；抽血通常用於評估是否已導致肝發炎，BMI則僅為風險指標。"
-        },
-        {
-          question: "Q2. 脂肪肝若長期不處理，會產生心肌梗塞、中風等心血管疾病與洗腎風險。",
-          options: [
-            "是",
-            "否"
-          ],
-          answer: 0,
-          answerText: "是",
-          explanation:
-            "由於脂肪肝初期幾乎沒有明顯症狀，若未及早控制，可能進一步演變為慢性肝病、肝硬化，甚至肝癌。脂肪肝、肥胖、三高、糖尿病與心血管疾病彼此互相影響、惡性循環，恐變為「心腎代謝症候群」（CKM）。"
-        },
-        {
-          question: "Q3. 想要逆轉脂肪肝，下列哪一項說法是正確的？",
-          options: [
-            "A. 目前台灣已有核准第一個用於治療脂肪肝炎的藥物，為減重藥物GLP-1受體促效劑 semaglutide（俗稱瘦瘦針），並搭配運動及飲食，減少脂肪堆積在肝臟。",
-            "B. 只要吃保肝保健食品，不必減重或運動。",
-            "C. 只要體重正常，不需要在意脂肪肝。"
-          ],
-          answer: 0,
-          answerText:
-            "A. 目前台灣已有核准用於治療脂肪肝炎，如減重藥物GLP-1受體促效劑 semaglutide，並搭配運動及飲食，減少脂肪堆積在肝臟。",
-          explanation:
-            "脂肪肝與肥胖、三高密切相關，需減重約一成並調整飲食、運動習慣。目前GLP-1受體促效劑 semaglutide 可提升代謝、降低食慾，幫助減重並減少肝臟脂肪堆積，已被國際心臟科與肝病治療指引建議用於合併代謝問題的脂肪肝患者。"
-        }
-      ];
+    const API_URL = "https://script.google.com/macros/s/AKfycbyjF8idieIUWms-JI-1sGyQe7tRzPdd5SEagG8fwZG9C-1IWQLY7wi1k6lLmVo8ftp1Xg/exec";
+    const INITIAL_VISIBLE_COUNT = 20;
+    const LOCAL_WORKS_CACHE_KEY = "photo_vote_local_works_cache_v4_cinematic";
+    const LOCAL_WORKS_CACHE_TTL = 5 * 60 * 1000;
+    const DAILY_VOTE_SNAPSHOT_KEY = "photo_vote_daily_snapshot_v1";
 
-      const root = document.getElementById("fattyLiverQuiz");
-      const progress = document.getElementById("flqProgress");
-      const questionText = document.getElementById("flqQuestion");
-      const optionsContainer = document.getElementById("flqOptions");
-      const submitBtn = document.getElementById("flqSubmit");
-      const message = document.getElementById("flqMessage");
+    let works = [];
+    let currentGroup = "social";
+    let currentKeyword = "";
+    let currentWorkId = null;
+    let visibleCount = INITIAL_VISIBLE_COUNT;
+    let currentModalSequence = [];
+    let currentModalIndex = -1;
+    let remoteWorksLoaded = false;
+    let dailyVoteRefreshInProgress = false;
+    let dailyVoteRefreshTimer = null;
 
-      let currentQuestionIndex = 0;
-      let selectedAnswer = null;
-      let score = 0;
-      let hasSubmitted = false;
-      let quizFinished = false;
+    const votedToday = new Set();
+    const pendingVotes = new Set();
+    const voterId = getOrCreateVoterId();
 
-      function loadQuestion() {
-        const currentQuestion = questions[currentQuestionIndex];
+    function getOrCreateVoterId() {
+      const storageKey = "photo_vote_voter_id";
+      let id = localStorage.getItem(storageKey);
 
-        selectedAnswer = null;
-        hasSubmitted = false;
-        quizFinished = false;
+      if (!id) {
+        id = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : "voter_" + Date.now() + "_" + Math.random().toString(36).slice(2, 12);
 
-        progress.textContent = `第 ${currentQuestionIndex + 1} 題 / 共 ${questions.length} 題`;
-        questionText.textContent = currentQuestion.question;
-        optionsContainer.innerHTML = "";
-        message.classList.remove("is-show");
-        message.innerHTML = "";
-        submitBtn.textContent = "送出答案";
-
-        currentQuestion.options.forEach(function (optionText, index) {
-          const option = document.createElement("button");
-          option.className = "flq-option";
-          option.type = "button";
-          option.textContent = optionText;
-          option.dataset.index = index;
-          option.setAttribute("aria-pressed", "false");
-
-          option.addEventListener("click", function () {
-            if (hasSubmitted || quizFinished) return;
-
-            const allOptions = optionsContainer.querySelectorAll(".flq-option");
-
-            allOptions.forEach(function (item) {
-              item.classList.remove("is-selected");
-              item.setAttribute("aria-pressed", "false");
-            });
-
-            option.classList.add("is-selected");
-            option.setAttribute("aria-pressed", "true");
-            selectedAnswer = index;
-            notifyHeightChange();
-          });
-
-          optionsContainer.appendChild(option);
-        });
-
-        notifyHeightChange();
+        localStorage.setItem(storageKey, id);
       }
 
-      function submitAnswer() {
-        const currentQuestion = questions[currentQuestionIndex];
+      return id;
+    }
 
-        if (selectedAnswer === null) {
-          message.classList.add("is-show");
-          message.innerHTML = "請先選擇一個答案。";
-          notifyHeightChange();
-          return;
-        }
+    async function loadWorks() {
+      const hasLocalWorks = restoreWorksFromLocalCache();
 
-        hasSubmitted = true;
-
-        const isCorrect = selectedAnswer === currentQuestion.answer;
-
-        if (isCorrect) {
-          score++;
-        }
-
-        const allOptions = optionsContainer.querySelectorAll(".flq-option");
-
-        allOptions.forEach(function (option) {
-          const optionIndex = Number(option.dataset.index);
-          option.disabled = true;
-
-          if (optionIndex === currentQuestion.answer) {
-            option.classList.add("is-correct");
-          }
-
-          if (optionIndex === selectedAnswer && !isCorrect) {
-            option.classList.add("is-wrong");
-          }
-        });
-
-        message.classList.add("is-show");
-        message.innerHTML = `
-          <div class="flq-answer-label">
-            ${isCorrect ? "答對了！" : "答錯了！"}正確答案：${currentQuestion.answerText}
-          </div>
-          <div>${currentQuestion.explanation}</div>
-        `;
-
-        submitBtn.textContent =
-          currentQuestionIndex === questions.length - 1 ? "查看結果" : "下一題";
-
-        notifyHeightChange();
+      if (hasLocalWorks) {
+        showGalleryImmediately();
+        renderGallery("快取資料");
       }
 
-      function goToNextQuestion() {
-        currentQuestionIndex++;
+      fetchVotedTodayInBackground();
 
-        if (currentQuestionIndex < questions.length) {
-          loadQuestion();
-        } else {
-          showResult();
-        }
+      try {
+        const url = `${API_URL}?action=getWorksFast&t=${Date.now()}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.ok) throw new Error(data.message || "作品資料載入失敗");
+
+        works = applyDailyVoteSnapshot(Array.isArray(data.works) ? data.works : []);
+        remoteWorksLoaded = true;
+        saveWorksToLocalCache(works);
+        showGalleryImmediately();
+        renderGallery();
+      } catch (error) {
+        if (!hasLocalWorks) showWorksLoadError(error.message || "請稍後再試");
+        else showToast("已先顯示作品，最新資料同步稍後再試");
       }
+    }
 
-      function showResult() {
-        quizFinished = true;
-        hasSubmitted = false;
+    async function fetchVotedTodayInBackground() {
+      try {
+        const url = `${API_URL}?action=getVotedToday&voter_id=${encodeURIComponent(voterId)}&t=${Date.now()}`;
+        const response = await fetch(url);
+        const data = await response.json();
 
-        progress.textContent = "測驗完成";
-        questionText.textContent = "";
+        if (!data.ok) return;
 
-        optionsContainer.innerHTML = `
-          <div class="flq-result">
-            <div class="flq-result-score">${score} / ${questions.length} 題答對</div>
-            <div class="flq-result-text">${getResultText(score)}</div>
-          </div>
-        `;
+        votedToday.clear();
+        (data.voted_today || []).forEach(workId => votedToday.add(workId));
 
-        message.classList.remove("is-show");
-        message.innerHTML = "";
-        submitBtn.textContent = "重新測驗";
+        renderGallery(remoteWorksLoaded ? "" : "快取資料");
 
-        notifyHeightChange();
+        if (currentWorkId) updateModalVoteButton(currentWorkId);
+      } catch (error) {}
+    }
+
+    function restoreWorksFromLocalCache() {
+      try {
+        const raw = localStorage.getItem(LOCAL_WORKS_CACHE_KEY);
+        if (!raw) return false;
+
+        const payload = JSON.parse(raw);
+
+        if (
+          Date.now() - Number(payload.saved_at || 0) > LOCAL_WORKS_CACHE_TTL ||
+          !Array.isArray(payload.works)
+        ) return false;
+
+        works = payload.works;
+        return works.length > 0;
+      } catch (error) {
+        return false;
       }
+    }
 
-      function restartQuiz() {
-        currentQuestionIndex = 0;
-        selectedAnswer = null;
-        score = 0;
-        hasSubmitted = false;
-        quizFinished = false;
-        loadQuestion();
+    function saveWorksToLocalCache(latestWorks) {
+      try {
+        localStorage.setItem(
+          LOCAL_WORKS_CACHE_KEY,
+          JSON.stringify({ saved_at: Date.now(), works: latestWorks })
+        );
+      } catch (error) {}
+    }
+
+    function getTaipeiDateKey(date = new Date()) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Taipei",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(date);
+
+      const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+      return `${values.year}-${values.month}-${values.day}`;
+    }
+
+    function restoreDailyVoteSnapshot() {
+      try {
+        const raw = localStorage.getItem(DAILY_VOTE_SNAPSHOT_KEY);
+        if (!raw) return null;
+
+        const snapshot = JSON.parse(raw);
+        if (!snapshot || typeof snapshot !== "object" || !snapshot.votes) return null;
+        return snapshot;
+      } catch (error) {
+        return null;
       }
+    }
 
-      function getResultText(score) {
-        if (score === questions.length) {
-          return "太厲害了！你對脂肪肝的風險與改善方式有很好的基本認識。";
-        }
+    function saveDailyVoteSnapshot(snapshot) {
+      try {
+        localStorage.setItem(DAILY_VOTE_SNAPSHOT_KEY, JSON.stringify(snapshot));
+      } catch (error) {}
+    }
 
-        if (score === 2) {
-          return "很不錯！已經掌握大部分重點，可以再複習一下答錯的題目。";
-        }
+    function createDailyVoteSnapshot(latestWorks, dateKey) {
+      const votes = Object.create(null);
 
-        if (score === 1) {
-          return "你已經開始認識脂肪肝了，建議再看一次解析，加深印象。";
-        }
-
-        return "別擔心，脂肪肝常常沒有明顯症狀，透過測驗開始了解就是第一步。";
-      }
-
-      function notifyHeightChange() {
-        window.requestAnimationFrame(function () {
-          const height = Math.ceil(document.documentElement.scrollHeight);
-
-          if (window.parent && window.parent !== window) {
-            window.parent.postMessage(
-              {
-                type: "fatty-liver-quiz-height",
-                height: height
-              },
-              "*"
-            );
-          }
-        });
-      }
-
-      submitBtn.addEventListener("click", function () {
-        if (quizFinished) {
-          restartQuiz();
-          return;
-        }
-
-        if (!hasSubmitted) {
-          submitAnswer();
-        } else {
-          goToNextQuestion();
-        }
+      latestWorks.forEach(work => {
+        votes[String(work.work_id ?? "")] = Number(work.votes || 0);
       });
 
-      if ("ResizeObserver" in window) {
-        const resizeObserver = new ResizeObserver(notifyHeightChange);
-        resizeObserver.observe(root);
+      return { date: dateKey, votes };
+    }
+
+    function applyDailyVoteSnapshot(latestWorks) {
+      const today = getTaipeiDateKey();
+      let snapshot = restoreDailyVoteSnapshot();
+      let snapshotChanged = false;
+
+      if (!snapshot || snapshot.date !== today) {
+        snapshot = createDailyVoteSnapshot(latestWorks, today);
+        snapshotChanged = true;
       }
 
-      window.addEventListener("load", notifyHeightChange);
-      window.addEventListener("resize", notifyHeightChange);
+      const snapshotWorks = latestWorks.map(work => {
+        const workId = String(work.work_id ?? "");
 
-      loadQuestion();
-    })();
+        if (!Object.prototype.hasOwnProperty.call(snapshot.votes, workId)) {
+          snapshot.votes[workId] = Number(work.votes || 0);
+          snapshotChanged = true;
+        }
+
+        return {
+          ...work,
+          votes: Number(snapshot.votes[workId] || 0)
+        };
+      });
+
+      if (snapshotChanged) saveDailyVoteSnapshot(snapshot);
+      return snapshotWorks;
+    }
+
+    async function refreshVotesAtMidnightIfNeeded() {
+      const snapshot = restoreDailyVoteSnapshot();
+      if (snapshot && snapshot.date === getTaipeiDateKey()) return true;
+      if (dailyVoteRefreshInProgress) return false;
+
+      dailyVoteRefreshInProgress = true;
+
+      try {
+        const url = `${API_URL}?action=getWorksFast&t=${Date.now()}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.ok) throw new Error(data.message || "票數更新失敗");
+
+        works = applyDailyVoteSnapshot(Array.isArray(data.works) ? data.works : []);
+        saveWorksToLocalCache(works);
+        showGalleryImmediately();
+        renderGallery();
+
+        if (currentWorkId) {
+          const currentWork = works.find(work => work.work_id === currentWorkId);
+          if (currentWork) renderModalByWork(currentWork);
+        }
+
+        showToast("今日票數已更新");
+        return true;
+      } catch (error) {
+        // 保留前一天票數，稍後自動重試。
+        return false;
+      } finally {
+        dailyVoteRefreshInProgress = false;
+      }
+    }
+
+    async function runScheduledDailyVoteRefresh() {
+      const updated = await refreshVotesAtMidnightIfNeeded();
+
+      if (updated) {
+        scheduleNextDailyVoteRefresh();
+      } else {
+        dailyVoteRefreshTimer = setTimeout(runScheduledDailyVoteRefresh, 60 * 1000);
+      }
+    }
+
+    function scheduleNextDailyVoteRefresh() {
+      clearTimeout(dailyVoteRefreshTimer);
+
+      const taipeiOffset = 8 * 60 * 60 * 1000;
+      const taipeiNow = Date.now() + taipeiOffset;
+      const nextMidnight = new Date(taipeiNow);
+      nextMidnight.setUTCHours(24, 0, 0, 0);
+      const delay = Math.max(1000, nextMidnight.getTime() - taipeiNow + 250);
+
+      dailyVoteRefreshTimer = setTimeout(runScheduledDailyVoteRefresh, delay);
+    }
+
+    function showGalleryImmediately() {
+      document.getElementById("skeletonGallery").style.display = "none";
+      document.getElementById("gallery").style.display = "grid";
+    }
+
+    function showWorksLoadError(message) {
+      document.getElementById("skeletonGallery").innerHTML =
+        `<div class="empty-state"><h3>作品載入失敗</h3><p>${escapeHtml(message)}</p></div>`;
+
+      showToast("作品載入失敗，請稍後再試");
+    }
+
+    function getFilteredSortedWorks() {
+      let result = works.filter(work => work.group_key === currentGroup);
+
+      if (currentKeyword.trim()) {
+        const keyword = currentKeyword.trim().toLowerCase();
+
+        result = result.filter(work =>
+          [
+            work.display_number,
+            work.work_name,
+            work.participant_name,
+            work.shooting_theme
+          ].join(" ").toLowerCase().includes(keyword)
+        );
+      }
+
+      result.sort((a, b) =>
+        String(a.display_number || "").localeCompare(
+          String(b.display_number || ""),
+          "zh-Hant",
+          { numeric: true }
+        )
+      );
+
+      return result;
+    }
+
+    function renderGallery(sourceLabel = "") {
+      const gallery = document.getElementById("gallery");
+      const loadMoreWrap = document.getElementById("loadMoreWrap");
+      const loadMoreBtn = document.getElementById("loadMoreBtn");
+      const filteredWorks = getFilteredSortedWorks();
+      const displayedWorks = filteredWorks.slice(0, visibleCount);
+
+      if (!filteredWorks.length) {
+        loadMoreWrap.hidden = true;
+        gallery.innerHTML =
+          `<div class="empty-state">
+            <h3>找不到符合條件的作品</h3>
+            <p>請換個關鍵字，或一鍵清除搜尋後重新瀏覽。</p>
+            <button class="empty-clear-btn" type="button" onclick="clearSearch()">清除搜尋，查看全部作品</button>
+          </div>`;
+        return;
+      }
+
+      gallery.innerHTML = displayedWorks.map(work => {
+        const isVoted = votedToday.has(work.work_id);
+        const isLoading = pendingVotes.has(work.work_id);
+
+        return `<article class="photo-card" data-work-id="${escapeHtml(work.work_id)}">
+          <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
+            <div class="photo-wrap">
+              <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async">
+              <div class="detail-hint">查看作品介紹</div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="work-number">${escapeHtml(work.display_number)}</div>
+
+            <div class="card-main">
+              <h3 class="card-title photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
+                ${escapeHtml(work.work_name)}
+              </h3>
+              <div class="card-author">參賽者｜${escapeHtml(work.participant_name)}</div>
+            </div>
+
+            <div class="card-actions">
+              <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')" ${isLoading ? "disabled" : ""}>
+                ${isLoading ? "投票送出中…" : isVoted ? "✓ 已投下這一票" : "投這個作品一票"}
+              </button>
+              <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+
+      const remaining = filteredWorks.length - displayedWorks.length;
+
+      if (remaining > 0) {
+        loadMoreWrap.hidden = false;
+        loadMoreBtn.textContent = `還有 ${remaining} 件作品等你發現`;
+      } else {
+        loadMoreWrap.hidden = true;
+      }
+    }
+
+    document.getElementById("loadMoreBtn").addEventListener("click", () => {
+      visibleCount += INITIAL_VISIBLE_COUNT;
+      renderGallery();
+    });
+
+    function openModal(workId) {
+      const work = works.find(item => item.work_id === workId);
+      if (!work) return;
+
+      currentModalSequence = getFilteredSortedWorks();
+      currentModalIndex = currentModalSequence.findIndex(item => item.work_id === workId);
+
+      renderModalByWork(work);
+      document.getElementById("detailModal").classList.add("show");
+      document.body.classList.add("modal-open");
+    }
+
+    function renderModalByWork(work) {
+      currentWorkId = work.work_id;
+
+      document.getElementById("modalImage").src = work.image_url;
+      document.getElementById("modalImage").alt = work.work_name;
+      document.getElementById("modalGroup").textContent = work.group_name;
+      document.getElementById("modalTheme").textContent = work.shooting_theme;
+      document.getElementById("modalTitle").textContent = work.work_name;
+      document.getElementById("modalBriefAuthor").textContent = work.participant_name;
+      document.getElementById("modalBriefNumber").textContent = work.display_number;
+      document.getElementById("modalVotes").textContent = Number(work.votes || 0);
+
+      renderDescription(work.description || "");
+      updateModalVoteButton(work.work_id);
+      updateModalNavigation();
+    }
+
+    function renderDescription(description) {
+      const descriptionEl = document.getElementById("modalDescription");
+      const toggleEl = document.getElementById("descriptionToggle");
+      const normalizedDescription = String(description || "").trim();
+
+      descriptionEl.textContent = normalizedDescription || "此作品尚未提供自述。";
+      descriptionEl.classList.remove("is-collapsible", "is-expanded");
+      toggleEl.hidden = true;
+      toggleEl.textContent = "展開全文";
+      toggleEl.setAttribute("aria-expanded", "false");
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          descriptionEl.classList.add("is-collapsible");
+          const isActuallyHidden = descriptionEl.scrollHeight > descriptionEl.clientHeight + 2;
+
+          if (isActuallyHidden) {
+            toggleEl.hidden = false;
+          } else {
+            descriptionEl.classList.remove("is-collapsible");
+            toggleEl.hidden = true;
+          }
+        });
+      });
+    }
+
+    function toggleDescription() {
+      const descriptionEl = document.getElementById("modalDescription");
+      const toggleEl = document.getElementById("descriptionToggle");
+      const isExpanded = descriptionEl.classList.contains("is-expanded");
+
+      if (isExpanded) {
+        descriptionEl.classList.remove("is-expanded");
+        descriptionEl.classList.add("is-collapsible");
+        toggleEl.textContent = "展開全文";
+        toggleEl.setAttribute("aria-expanded", "false");
+      } else {
+        descriptionEl.classList.remove("is-collapsible");
+        descriptionEl.classList.add("is-expanded");
+        toggleEl.textContent = "收合內容";
+        toggleEl.setAttribute("aria-expanded", "true");
+      }
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").classList.remove("show");
+      document.body.classList.remove("modal-open");
+      currentWorkId = null;
+      currentModalSequence = [];
+      currentModalIndex = -1;
+    }
+
+    function updateModalVoteButton(workId) {
+      const button = document.getElementById("modalVoteBtn");
+      const isVoted = votedToday.has(workId);
+      const isLoading = pendingVotes.has(workId);
+
+      button.classList.toggle("voted", isVoted);
+      button.classList.toggle("loading", isLoading);
+      button.disabled = isLoading;
+      button.textContent = isLoading
+        ? "投票送出中…"
+        : isVoted
+          ? "✓ 已投下這一票"
+          : "投這個作品一票";
+    }
+
+    function updateModalNavigation() {
+      document.getElementById("prevWorkBtn").disabled = currentModalIndex <= 0;
+      document.getElementById("nextWorkBtn").disabled = currentModalIndex >= currentModalSequence.length - 1;
+    }
+
+    function showPreviousWork() {
+      if (currentModalIndex > 0) {
+        renderModalByWork(currentModalSequence[--currentModalIndex]);
+      }
+    }
+
+    function showNextWork() {
+      if (currentModalIndex < currentModalSequence.length - 1) {
+        renderModalByWork(currentModalSequence[++currentModalIndex]);
+      }
+    }
+
+    document.getElementById("prevWorkBtn").addEventListener("click", showPreviousWork);
+    document.getElementById("nextWorkBtn").addEventListener("click", showNextWork);
+
+    async function voteWork(workId) {
+      if (votedToday.has(workId)) {
+        showToast("你今天已經投過這件作品囉！");
+        return;
+      }
+
+      if (pendingVotes.has(workId)) return;
+
+      const target = works.find(item => item.work_id === workId);
+
+      if (!target) {
+        showToast("找不到這件作品，請重新整理後再試。");
+        return;
+      }
+
+      pendingVotes.add(workId);
+      votedToday.add(workId);
+
+      renderGallery();
+
+      if (currentWorkId === workId) {
+        updateModalVoteButton(workId);
+      }
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "vote",
+            work_id: workId,
+            voter_id: voterId
+          })
+        });
+
+        const data = await response.json();
+
+        if (!data.ok) {
+          if (data.code === "DUPLICATE_TODAY") {
+            showToast("你今天已經投過這件作品囉！");
+          } else {
+            votedToday.delete(workId);
+            throw new Error(data.message || "投票失敗");
+          }
+        } else {
+          showToast("投票成功！票數將於每日 00:00 更新。");
+        }
+      } catch (error) {
+        votedToday.delete(workId);
+        showToast(error.message || "投票失敗，請稍後再試");
+      } finally {
+        pendingVotes.delete(workId);
+        renderGallery();
+
+        if (currentWorkId === workId) {
+          updateModalVoteButton(workId);
+        }
+      }
+    }
+
+    function setGroup(group) {
+      currentGroup = group;
+      currentKeyword = "";
+      visibleCount = INITIAL_VISIBLE_COUNT;
+
+      document.getElementById("searchInput").value = "";
+      updateSearchClearButton();
+
+      document.querySelectorAll(".group-btn").forEach(btn =>
+        btn.classList.toggle("active", btn.dataset.group === group)
+      );
+
+      renderGallery();
+    }
+
+    document.querySelectorAll(".group-btn").forEach(button =>
+      button.addEventListener("click", () => setGroup(button.dataset.group))
+    );
+
+    document.getElementById("searchInput").addEventListener("input", function() {
+      currentKeyword = this.value;
+      visibleCount = INITIAL_VISIBLE_COUNT;
+      updateSearchClearButton();
+      renderGallery();
+    });
+
+    document.getElementById("clearSearchBtn").addEventListener("click", clearSearch);
+
+    function clearSearch() {
+      currentKeyword = "";
+      visibleCount = INITIAL_VISIBLE_COUNT;
+      document.getElementById("searchInput").value = "";
+      updateSearchClearButton();
+      renderGallery();
+      openSearchToolbar();
+      document.getElementById("searchInput").focus();
+    }
+
+    function updateSearchClearButton() {
+      document.getElementById("clearSearchBtn").classList.toggle("show", !!currentKeyword.trim());
+    }
+
+    const searchToolbar = document.getElementById("searchToolbar");
+    const searchToggleBtn = document.getElementById("searchToggleBtn");
+
+    function openSearchToolbar() {
+      searchToolbar.classList.remove("collapsed");
+      searchToolbar.classList.add("expanded");
+      searchToggleBtn.setAttribute("aria-expanded", "true");
+      requestAnimationFrame(() => document.getElementById("searchInput").focus());
+    }
+
+    function closeSearchToolbar() {
+      if (currentKeyword.trim()) return;
+      searchToolbar.classList.remove("expanded");
+      searchToolbar.classList.add("collapsed");
+      searchToggleBtn.setAttribute("aria-expanded", "false");
+    }
+
+    searchToggleBtn.addEventListener("click", openSearchToolbar);
+
+    document.addEventListener("click", function(event) {
+      if (!searchToolbar.contains(event.target) && !currentKeyword.trim()) {
+        closeSearchToolbar();
+      }
+    });
+
+    document.addEventListener("keydown", function(event) {
+      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
+      if (!modalIsOpen && event.key === "Escape") closeSearchToolbar();
+    });
+
+    document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("modalCloseMobile").addEventListener("click", closeModal);
+
+    document.getElementById("detailModal").addEventListener("click", function(event) {
+      if (event.target === this) closeModal();
+    });
+
+    document.getElementById("modalVoteBtn").addEventListener("click", function() {
+      if (currentWorkId) voteWork(currentWorkId);
+    });
+
+    document.getElementById("descriptionToggle").addEventListener("click", toggleDescription);
+
+    document.addEventListener("keydown", function(event) {
+      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
+      if (!modalIsOpen) return;
+
+      if (event.key === "Escape") closeModal();
+      if (event.key === "ArrowLeft") showPreviousWork();
+      if (event.key === "ArrowRight") showNextWork();
+    });
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeJs(value) {
+      return String(value ?? "")
+        .replaceAll("\\", "\\\\")
+        .replaceAll("'", "\\'");
+    }
+
+    function cssEscape(value) {
+      return (window.CSS && CSS.escape)
+        ? CSS.escape(value)
+        : String(value).replace(/["\\]/g, "\\$&");
+    }
+
+    loadWorks();
+    scheduleNextDailyVoteRefresh();
   </script>
 </body>
 </html>
