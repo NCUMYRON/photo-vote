@@ -453,11 +453,14 @@
     }
 
     .toolbar {
-      position: fixed;
-      right: 24px;
-      bottom: max(18px, env(safe-area-inset-bottom));
-      z-index: 300;
-      transform: none;
+      position: relative;
+      z-index: 2;
+      width: min(620px, calc(100% - 48px));
+      min-height: 72px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
       transition:
         width .28s ease,
         padding .28s ease,
@@ -467,8 +470,7 @@
     }
 
     .toolbar.collapsed {
-      width: auto;
-      padding: 0;
+      padding: 10px;
       border: 0;
       background: transparent;
       backdrop-filter: none;
@@ -476,7 +478,6 @@
     }
 
     .toolbar.expanded {
-      width: min(620px, calc(100vw - 48px));
       padding: 10px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.68);
@@ -515,6 +516,7 @@
 
     .toolbar.expanded .search-panel {
       display: block;
+      width: 100%;
     }
 
     .search-box {
@@ -1184,12 +1186,8 @@
       }
 
       .toolbar {
-        right: 10px;
-        bottom: max(10px, env(safe-area-inset-bottom));
-      }
-
-      .toolbar.expanded {
-        width: calc(100vw - 20px);
+        width: calc(100% - 20px);
+        min-height: 68px;
       }
 
       .search-toggle-btn {
@@ -1420,6 +1418,17 @@
       <div class="works-header">
         <div class="works-title">參賽作品</div>
       </div>
+
+      <section class="toolbar collapsed" id="searchToolbar">
+        <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
+        <div class="search-panel" id="searchPanel">
+          <div class="search-box">
+            <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
+            <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
+            <div class="search-icon">⌕</div>
+          </div>
+        </div>
+      </section>
     </section>
 
     <section class="gallery skeleton-gallery" id="skeletonGallery">
@@ -1496,17 +1505,6 @@
     </div>
   </main>
 
-  <section class="toolbar collapsed" id="searchToolbar">
-    <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
-    <div class="search-panel" id="searchPanel">
-      <div class="search-box">
-        <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
-        <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
-        <div class="search-icon">⌕</div>
-      </div>
-    </div>
-  </section>
-
   <div class="modal" id="detailModal">
     <div class="modal-dialog">
       <button aria-label="關閉視窗" class="modal-close" id="modalClose">×</button>
@@ -1553,9 +1551,6 @@
           </div>
 
           <div class="detail-action-row detail-bottom-action">
-            <div class="detail-share-row">
-              <button class="share-btn" id="modalCopyBtn" type="button">🔗 複製作品連結</button>
-            </div>
             <button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button>
           </div>
         </div>
@@ -1887,9 +1882,6 @@
                 ${isLoading ? "投票送出中…" : isVoted ? "✓ 已投下這一票" : "投這個作品一票"}
               </button>
               <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
-            </div>
-            <div class="card-share-row">
-              <button class="share-btn" type="button" onclick="copyWorkLink('${escapeJs(work.work_id)}')">🔗 複製連結</button>
             </div>
           </div>
         </article>`;
@@ -2229,10 +2221,6 @@
 
     document.getElementById("modalVoteBtn").addEventListener("click", function() {
       if (currentWorkId) voteWork(currentWorkId);
-    });
-
-    document.getElementById("modalCopyBtn").addEventListener("click", function() {
-      if (currentWorkId) copyWorkLink(currentWorkId);
     });
 
     document.getElementById("descriptionToggle").addEventListener("click", toggleDescription);
