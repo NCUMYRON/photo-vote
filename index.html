@@ -453,14 +453,11 @@
     }
 
     .toolbar {
-      position: relative;
-      z-index: 2;
-      width: min(620px, calc(100% - 48px));
-      min-height: 72px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      position: fixed;
+      right: 24px;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      z-index: 300;
+      transform: none;
       transition:
         width .28s ease,
         padding .28s ease,
@@ -470,7 +467,8 @@
     }
 
     .toolbar.collapsed {
-      padding: 10px;
+      width: auto;
+      padding: 0;
       border: 0;
       background: transparent;
       backdrop-filter: none;
@@ -478,6 +476,7 @@
     }
 
     .toolbar.expanded {
+      width: min(620px, calc(100vw - 48px));
       padding: 10px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.68);
@@ -516,7 +515,6 @@
 
     .toolbar.expanded .search-panel {
       display: block;
-      width: 100%;
     }
 
     .search-box {
@@ -1186,8 +1184,12 @@
       }
 
       .toolbar {
-        width: calc(100% - 20px);
-        min-height: 68px;
+        right: 10px;
+        bottom: max(10px, env(safe-area-inset-bottom));
+      }
+
+      .toolbar.expanded {
+        width: calc(100vw - 20px);
       }
 
       .search-toggle-btn {
@@ -1418,17 +1420,6 @@
       <div class="works-header">
         <div class="works-title">參賽作品</div>
       </div>
-
-      <section class="toolbar collapsed" id="searchToolbar">
-        <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
-        <div class="search-panel" id="searchPanel">
-          <div class="search-box">
-            <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
-            <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
-            <div class="search-icon">⌕</div>
-          </div>
-        </div>
-      </section>
     </section>
 
     <section class="gallery skeleton-gallery" id="skeletonGallery">
@@ -1505,6 +1496,17 @@
     </div>
   </main>
 
+  <section class="toolbar collapsed" id="searchToolbar">
+    <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
+    <div class="search-panel" id="searchPanel">
+      <div class="search-box">
+        <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
+        <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
+        <div class="search-icon">⌕</div>
+      </div>
+    </div>
+  </section>
+
   <div class="modal" id="detailModal">
     <div class="modal-dialog">
       <button aria-label="關閉視窗" class="modal-close" id="modalClose">×</button>
@@ -1565,7 +1567,7 @@
     const INITIAL_VISIBLE_COUNT = 20;
     const LOCAL_WORKS_CACHE_KEY = "photo_vote_local_works_cache_v4_cinematic";
     const LOCAL_WORKS_CACHE_TTL = 5 * 60 * 1000;
-    const DAILY_VOTE_SNAPSHOT_KEY = "photo_vote_daily_snapshot_v1";
+    const LIVE_VOTE_REFRESH_INTERVAL = 10 * 1000;
 
     let works = [];
     let currentGroup = "social";
@@ -1575,8 +1577,8 @@
     let currentModalSequence = [];
     let currentModalIndex = -1;
     let remoteWorksLoaded = false;
-    let dailyVoteRefreshInProgress = false;
-    let dailyVoteRefreshTimer = null;
+    let liveVoteRefreshInProgress = false;
+    let liveVoteRefreshTimer = null;
     let initialDeepLinkOpened = false;
 
     const votedToday = new Set();
@@ -1616,7 +1618,7 @@
 
         if (!data.ok) throw new Error(data.message || "作品資料載入失敗");
 
-        works = applyDailyVoteSnapshot(Array.isArray(data.works) ? data.works : []);
+        works = Array.isArray(data.works) ? data.works : [];
         remoteWorksLoaded = true;
         saveWorksToLocalCache(works);
         showGalleryImmediately();
@@ -1673,130 +1675,67 @@
       } catch (error) {}
     }
 
-    function getTaipeiDateKey(date = new Date()) {
-      const parts = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "Asia/Taipei",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).formatToParts(date);
-
-      const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
-      return `${values.year}-${values.month}-${values.day}`;
-    }
-
-    function restoreDailyVoteSnapshot() {
-      try {
-        const raw = localStorage.getItem(DAILY_VOTE_SNAPSHOT_KEY);
-        if (!raw) return null;
-
-        const snapshot = JSON.parse(raw);
-        if (!snapshot || typeof snapshot !== "object" || !snapshot.votes) return null;
-        return snapshot;
-      } catch (error) {
-        return null;
-      }
-    }
-
-    function saveDailyVoteSnapshot(snapshot) {
-      try {
-        localStorage.setItem(DAILY_VOTE_SNAPSHOT_KEY, JSON.stringify(snapshot));
-      } catch (error) {}
-    }
-
-    function createDailyVoteSnapshot(latestWorks, dateKey) {
-      const votes = Object.create(null);
-
-      latestWorks.forEach(work => {
-        votes[String(work.work_id ?? "")] = Number(work.votes || 0);
-      });
-
-      return { date: dateKey, votes };
-    }
-
-    function applyDailyVoteSnapshot(latestWorks) {
-      const today = getTaipeiDateKey();
-      let snapshot = restoreDailyVoteSnapshot();
-      let snapshotChanged = false;
-
-      if (!snapshot || snapshot.date !== today) {
-        snapshot = createDailyVoteSnapshot(latestWorks, today);
-        snapshotChanged = true;
-      }
-
-      const snapshotWorks = latestWorks.map(work => {
-        const workId = String(work.work_id ?? "");
-
-        if (!Object.prototype.hasOwnProperty.call(snapshot.votes, workId)) {
-          snapshot.votes[workId] = Number(work.votes || 0);
-          snapshotChanged = true;
+    function updateVisibleVoteCounts() {
+      works.forEach(work => {
+        const card = document.querySelector(`.photo-card[data-work-id="${cssEscape(work.work_id)}"]`);
+        if (card) {
+          const voteCount = card.querySelector(".vote-count");
+          if (voteCount) voteCount.innerHTML = `${Number(work.votes || 0)}<small>票</small>`;
         }
-
-        return {
-          ...work,
-          votes: Number(snapshot.votes[workId] || 0)
-        };
       });
 
-      if (snapshotChanged) saveDailyVoteSnapshot(snapshot);
-      return snapshotWorks;
+      if (currentWorkId) {
+        const currentWork = works.find(work => String(work.work_id) === String(currentWorkId));
+        if (currentWork) {
+          document.getElementById("modalVotes").textContent = Number(currentWork.votes || 0);
+        }
+      }
     }
 
-    async function refreshVotesAtMidnightIfNeeded() {
-      const snapshot = restoreDailyVoteSnapshot();
-      if (snapshot && snapshot.date === getTaipeiDateKey()) return true;
-      if (dailyVoteRefreshInProgress) return false;
-
-      dailyVoteRefreshInProgress = true;
+    async function refreshLiveVotes({ forceRender = false } = {}) {
+      if (liveVoteRefreshInProgress) return false;
+      liveVoteRefreshInProgress = true;
 
       try {
         const url = `${API_URL}?action=getWorksFast&t=${Date.now()}`;
-        const response = await fetch(url);
+        const response = await fetch(url, { cache: "no-store" });
         const data = await response.json();
-
         if (!data.ok) throw new Error(data.message || "票數更新失敗");
 
-        works = applyDailyVoteSnapshot(Array.isArray(data.works) ? data.works : []);
-        saveWorksToLocalCache(works);
-        showGalleryImmediately();
-        renderGallery();
+        const latestWorks = Array.isArray(data.works) ? data.works : [];
+        const oldIds = works.map(work => String(work.work_id)).sort().join("|");
+        const newIds = latestWorks.map(work => String(work.work_id)).sort().join("|");
+        const workListChanged = oldIds !== newIds;
 
-        if (currentWorkId) {
-          const currentWork = works.find(work => work.work_id === currentWorkId);
-          if (currentWork) renderModalByWork(currentWork);
+        works = latestWorks;
+        remoteWorksLoaded = true;
+        saveWorksToLocalCache(works);
+
+        if (forceRender || workListChanged) {
+          showGalleryImmediately();
+          renderGallery();
+        } else {
+          updateVisibleVoteCounts();
         }
 
-        showToast("今日票數已更新");
         return true;
       } catch (error) {
-        // 保留前一天票數，稍後自動重試。
         return false;
       } finally {
-        dailyVoteRefreshInProgress = false;
+        liveVoteRefreshInProgress = false;
       }
     }
 
-    async function runScheduledDailyVoteRefresh() {
-      const updated = await refreshVotesAtMidnightIfNeeded();
-
-      if (updated) {
-        scheduleNextDailyVoteRefresh();
-      } else {
-        dailyVoteRefreshTimer = setTimeout(runScheduledDailyVoteRefresh, 60 * 1000);
-      }
+    function scheduleLiveVoteRefresh() {
+      clearInterval(liveVoteRefreshTimer);
+      liveVoteRefreshTimer = setInterval(() => {
+        if (!document.hidden) refreshLiveVotes();
+      }, LIVE_VOTE_REFRESH_INTERVAL);
     }
 
-    function scheduleNextDailyVoteRefresh() {
-      clearTimeout(dailyVoteRefreshTimer);
-
-      const taipeiOffset = 8 * 60 * 60 * 1000;
-      const taipeiNow = Date.now() + taipeiOffset;
-      const nextMidnight = new Date(taipeiNow);
-      nextMidnight.setUTCHours(24, 0, 0, 0);
-      const delay = Math.max(1000, nextMidnight.getTime() - taipeiNow + 250);
-
-      dailyVoteRefreshTimer = setTimeout(runScheduledDailyVoteRefresh, delay);
-    }
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refreshLiveVotes();
+    });
 
     function showGalleryImmediately() {
       document.getElementById("skeletonGallery").style.display = "none";
@@ -2125,7 +2064,8 @@
             throw new Error(data.message || "投票失敗");
           }
         } else {
-          showToast("投票成功！票數將於每日 00:00 更新。");
+          showToast("投票成功！票數更新中…");
+          await refreshLiveVotes();
         }
       } catch (error) {
         votedToday.delete(workId);
@@ -2276,8 +2216,9 @@
       }
     });
 
+    try { localStorage.removeItem("photo_vote_daily_snapshot_v1"); } catch (error) {}
     loadWorks();
-    scheduleNextDailyVoteRefresh();
+    scheduleLiveVoteRefresh();
   </script>
 </body>
 </html>
