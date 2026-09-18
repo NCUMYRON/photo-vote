@@ -1581,9 +1581,55 @@
     let liveVoteRefreshTimer = null;
     let initialDeepLinkOpened = false;
 
+    const VOTED_CACHE_KEY = "photo_vote_voted_today_cache_v1";
+
     const votedToday = new Set();
     const pendingVotes = new Set();
     const voterId = getOrCreateVoterId();
+
+    // 只是「前端 UX 快取」，用來讓重新整理頁面後、getVotedToday 網路回應
+    // 還沒回來之前，按鈕狀態能立刻正確顯示，縮小可被利用的競態空窗。
+    // 這不是安全機制：voter_id/localStorage 隨時可被清除或偽造，
+    // 真正防止重複投票必須由後端（Apps Script）在寫入前查核，見說明文件。
+    function getLocalDateString() {
+      const now = new Date();
+      return now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0");
+    }
+
+    function loadVotedCache() {
+      try {
+        const raw = localStorage.getItem(VOTED_CACHE_KEY);
+        if (!raw) return;
+
+        const payload = JSON.parse(raw);
+        if (payload.date !== getLocalDateString()) return; // 跨日快取不沿用
+
+        (payload.work_ids || []).forEach(id => votedToday.add(id));
+      } catch (error) {}
+    }
+
+    function saveVotedCache() {
+      try {
+        localStorage.setItem(VOTED_CACHE_KEY, JSON.stringify({
+          date: getLocalDateString(),
+          work_ids: Array.from(votedToday)
+        }));
+      } catch (error) {}
+    }
+
+    function markVotedLocally(workId) {
+      votedToday.add(workId);
+      saveVotedCache();
+    }
+
+    function unmarkVotedLocally(workId) {
+      votedToday.delete(workId);
+      saveVotedCache();
+    }
+
+    loadVotedCache(); // 頁面一載入就先用本機快取還原「今天投過誰」，不用等網路
 
     function getOrCreateVoterId() {
       const storageKey = "photo_vote_voter_id";
@@ -1640,6 +1686,7 @@
 
         votedToday.clear();
         (data.voted_today || []).forEach(workId => votedToday.add(workId));
+        saveVotedCache(); // 以後端回應為準，覆蓋/校正本機快取
 
         renderGallery(remoteWorksLoaded ? "" : "快取資料");
 
@@ -2035,7 +2082,7 @@
       }
 
       pendingVotes.add(workId);
-      votedToday.add(workId);
+      markVotedLocally(workId);
 
       renderGallery();
 
@@ -2060,7 +2107,7 @@
           if (data.code === "DUPLICATE_TODAY") {
             showToast("你今天已經投過這件作品囉！");
           } else {
-            votedToday.delete(workId);
+            unmarkVotedLocally(workId);
             throw new Error(data.message || "投票失敗");
           }
         } else {
@@ -2068,7 +2115,7 @@
           await refreshLiveVotes();
         }
       } catch (error) {
-        votedToday.delete(workId);
+        unmarkVotedLocally(workId);
         showToast(error.message || "投票失敗，請稍後再試");
       } finally {
         pendingVotes.delete(workId);
