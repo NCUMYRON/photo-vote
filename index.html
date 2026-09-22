@@ -216,6 +216,21 @@
       cursor: pointer;
     }
 
+    .photo-preview-button {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: inherit;
+    }
+
+    .photo-preview-button:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: -2px;
+    }
+
     .photo-wrap {
       position: relative;
       aspect-ratio: 4 / 3;
@@ -453,30 +468,10 @@
     }
 
     .toolbar {
-      position: fixed;
-      right: 24px;
-      bottom: max(18px, env(safe-area-inset-bottom));
-      z-index: 300;
-      transform: none;
-      transition:
-        width .28s ease,
-        padding .28s ease,
-        background .28s ease,
-        border-color .28s ease,
-        box-shadow .28s ease;
-    }
-
-    .toolbar.collapsed {
-      width: auto;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      backdrop-filter: none;
-      box-shadow: none;
-    }
-
-    .toolbar.expanded {
-      width: min(620px, calc(100vw - 48px));
+      position: relative;
+      z-index: 2;
+      width: min(760px, 100%);
+      margin: 0 auto;
       padding: 10px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.68);
@@ -484,36 +479,7 @@
       box-shadow: 0 16px 60px rgba(0,0,0,.56);
     }
 
-    .search-toggle-btn {
-      min-width: 172px;
-      height: 52px;
-      padding: 0 22px;
-      border: 1px solid rgba(244,223,154,.58);
-      border-radius: var(--btn-radius);
-      background: rgba(0,0,0,.82);
-      color: var(--gold);
-      font-size: 15px;
-      letter-spacing: .16em;
-      cursor: pointer;
-      box-shadow: 0 16px 48px rgba(0,0,0,.55);
-      transition: .22s ease;
-    }
-
-    .search-toggle-btn:hover {
-      background: var(--gold);
-      color: #111;
-      border-color: rgba(244,223,154,.9);
-    }
-
-    .toolbar.expanded .search-toggle-btn {
-      display: none;
-    }
-
     .search-panel {
-      display: none;
-    }
-
-    .toolbar.expanded .search-panel {
       display: block;
     }
 
@@ -760,6 +726,12 @@
       height: 100%;
       object-fit: contain;
       display: block;
+      cursor: zoom-in;
+    }
+
+    .detail-image img:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: -2px;
     }
 
     .modal-nav {
@@ -998,6 +970,62 @@
       padding-top: 16px;
     }
 
+    .image-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 72px 24px 42px;
+      background: rgba(0,0,0,.96);
+    }
+
+    .image-lightbox.show {
+      display: flex;
+    }
+
+    .image-lightbox img {
+      display: block;
+      max-width: 100%;
+      max-height: calc(100dvh - 130px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      box-shadow: 0 18px 80px rgba(0,0,0,.72);
+    }
+
+    .image-lightbox-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 50%;
+      background: rgba(0,0,0,.62);
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .image-lightbox-close:hover,
+    .image-lightbox-close:focus-visible {
+      background: var(--gold);
+      color: #111;
+    }
+
+    .image-lightbox-caption {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 14px;
+      color: rgba(255,255,255,.78);
+      font-size: 14px;
+      text-align: center;
+      letter-spacing: .08em;
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -1184,24 +1212,21 @@
       }
 
       .toolbar {
-        right: 10px;
-        bottom: max(10px, env(safe-area-inset-bottom));
-      }
-
-      .toolbar.expanded {
-        width: calc(100vw - 20px);
-      }
-
-      .search-toggle-btn {
-        min-width: 152px;
-        height: 48px;
-        padding: 0 18px;
-        font-size: 14px;
+        width: 100%;
+        padding: 8px;
       }
 
       .search-input {
         height: 46px;
         font-size: 13px;
+      }
+
+      .image-lightbox {
+        padding: 62px 10px 46px;
+      }
+
+      .image-lightbox img {
+        max-height: calc(100dvh - 112px);
       }
 
       .modal {
@@ -1420,6 +1445,16 @@
       <div class="works-header">
         <div class="works-title">參賽作品</div>
       </div>
+
+      <section class="toolbar" id="searchToolbar" aria-label="搜尋作品">
+        <div class="search-panel" id="searchPanel">
+          <div class="search-box">
+            <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="search" />
+            <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
+            <div class="search-icon" aria-hidden="true">⌕</div>
+          </div>
+        </div>
+      </section>
     </section>
 
     <section class="gallery skeleton-gallery" id="skeletonGallery">
@@ -1496,17 +1531,6 @@
     </div>
   </main>
 
-  <section class="toolbar collapsed" id="searchToolbar">
-    <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
-    <div class="search-panel" id="searchPanel">
-      <div class="search-box">
-        <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
-        <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
-        <div class="search-icon">⌕</div>
-      </div>
-    </div>
-  </section>
-
   <div class="modal" id="detailModal">
     <div class="modal-dialog">
       <button aria-label="關閉視窗" class="modal-close" id="modalClose">×</button>
@@ -1514,7 +1538,7 @@
       <div class="detail-panel">
         <div class="detail-media">
           <div class="detail-image">
-            <img alt="" id="modalImage" src="" />
+            <img alt="" id="modalImage" src="" tabindex="0" title="點擊查看完整圖片" />
           </div>
 
           <div class="modal-nav">
@@ -1558,6 +1582,12 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="image-lightbox" id="imageLightbox" role="dialog" aria-modal="true" aria-label="完整圖片預覽" aria-hidden="true">
+    <button class="image-lightbox-close" id="imageLightboxClose" type="button" aria-label="關閉完整圖片">×</button>
+    <img id="imageLightboxImage" src="" alt="" />
+    <div class="image-lightbox-caption" id="imageLightboxCaption"></div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -1846,12 +1876,12 @@
         const isLoading = pendingVotes.has(work.work_id);
 
         return `<article class="photo-card" data-work-id="${escapeHtml(work.work_id)}">
-          <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
+          <button class="photo-click-area photo-preview-button" type="button" onclick="openImageLightbox('${escapeJs(work.work_id)}')" aria-label="查看完整圖片：${escapeHtml(work.work_name)}">
             <div class="photo-wrap">
               <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async">
-              <div class="detail-hint">查看作品介紹</div>
+              <div class="detail-hint">點擊查看完整圖片</div>
             </div>
-          </div>
+          </button>
 
           <div class="card-body">
             <div class="work-number">${escapeHtml(work.display_number)}</div>
@@ -1976,6 +2006,37 @@
       renderDescription(work.description || "");
       updateModalVoteButton(work.work_id);
       updateModalNavigation();
+    }
+
+    function openImageLightbox(workId) {
+      const work = works.find(item => String(item.work_id) === String(workId));
+      if (!work) return;
+
+      const lightbox = document.getElementById("imageLightbox");
+      const lightboxImage = document.getElementById("imageLightboxImage");
+
+      lightboxImage.src = work.image_url;
+      lightboxImage.alt = work.work_name;
+      document.getElementById("imageLightboxCaption").textContent = work.work_name;
+      lightbox.classList.add("show");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      document.getElementById("imageLightboxClose").focus();
+    }
+
+    function openCurrentImageLightbox() {
+      if (currentWorkId) openImageLightbox(currentWorkId);
+    }
+
+    function closeImageLightbox() {
+      const lightbox = document.getElementById("imageLightbox");
+      lightbox.classList.remove("show");
+      lightbox.setAttribute("aria-hidden", "true");
+      document.getElementById("imageLightboxImage").src = "";
+
+      if (!document.getElementById("detailModal").classList.contains("show")) {
+        document.body.classList.remove("modal-open");
+      }
     }
 
     function renderDescription(description) {
@@ -2161,43 +2222,12 @@
       document.getElementById("searchInput").value = "";
       updateSearchClearButton();
       renderGallery();
-      openSearchToolbar();
       document.getElementById("searchInput").focus();
     }
 
     function updateSearchClearButton() {
       document.getElementById("clearSearchBtn").classList.toggle("show", !!currentKeyword.trim());
     }
-
-    const searchToolbar = document.getElementById("searchToolbar");
-    const searchToggleBtn = document.getElementById("searchToggleBtn");
-
-    function openSearchToolbar() {
-      searchToolbar.classList.remove("collapsed");
-      searchToolbar.classList.add("expanded");
-      searchToggleBtn.setAttribute("aria-expanded", "true");
-      requestAnimationFrame(() => document.getElementById("searchInput").focus());
-    }
-
-    function closeSearchToolbar() {
-      if (currentKeyword.trim()) return;
-      searchToolbar.classList.remove("expanded");
-      searchToolbar.classList.add("collapsed");
-      searchToggleBtn.setAttribute("aria-expanded", "false");
-    }
-
-    searchToggleBtn.addEventListener("click", openSearchToolbar);
-
-    document.addEventListener("click", function(event) {
-      if (!searchToolbar.contains(event.target) && !currentKeyword.trim()) {
-        closeSearchToolbar();
-      }
-    });
-
-    document.addEventListener("keydown", function(event) {
-      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
-      if (!modalIsOpen && event.key === "Escape") closeSearchToolbar();
-    });
 
     document.getElementById("modalClose").addEventListener("click", closeModal);
     document.getElementById("modalCloseMobile").addEventListener("click", closeModal);
@@ -2212,7 +2242,26 @@
 
     document.getElementById("descriptionToggle").addEventListener("click", toggleDescription);
 
+    document.getElementById("modalImage").addEventListener("click", openCurrentImageLightbox);
+    document.getElementById("modalImage").addEventListener("keydown", function(event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openCurrentImageLightbox();
+      }
+    });
+
+    document.getElementById("imageLightboxClose").addEventListener("click", closeImageLightbox);
+    document.getElementById("imageLightbox").addEventListener("click", function(event) {
+      if (event.target === this) closeImageLightbox();
+    });
+
     document.addEventListener("keydown", function(event) {
+      const imageLightboxIsOpen = document.getElementById("imageLightbox").classList.contains("show");
+      if (imageLightboxIsOpen) {
+        if (event.key === "Escape") closeImageLightbox();
+        return;
+      }
+
       const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
       if (!modalIsOpen) return;
 
