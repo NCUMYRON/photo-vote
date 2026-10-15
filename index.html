@@ -1,2295 +1,1501 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hant">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>照片人氣投票｜台灣新視代</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    @font-face {
-      font-family: "ChenYuluoyan";
-      src: url("./fonts/ChenYuluoyan-2.0-Thin.ttf") format("truetype");
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-    }
-
-    * { box-sizing: border-box; }
-
-    :root {
-      --bg: #030303;
-      --ink: #f7f1df;
-      --muted: rgba(247,241,223,.68);
-      --line: rgba(247,241,223,.22);
-      --gold: #f4df9a;
-      --gold-2: #caa95a;
-      --glass: rgba(10,10,10,.62);
-      --glass-2: rgba(255,255,255,.08);
-      --danger: #c84d3f;
-      --ok: #7f9f7a;
-      --blue: #638fa8;
-      --shadow: 0 24px 80px rgba(0,0,0,.58);
-      --btn-radius: 3px;
-      --body-font: "Noto Serif TC", "Songti TC", "Microsoft JhengHei", serif;
-      --hand-font: "ChenYuluoyan", "Noto Serif TC", "Songti TC", serif;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: #000;
-      font-family: var(--body-font);
-      letter-spacing: .03em;
-    }
-
-    body.modal-open { overflow: hidden; }
-
-    button, input { font-family: inherit; }
-
-    .card-title,
-    .detail-title {
-      font-family: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
-      font-weight: 500;
-    }
-
-    .works-title,
-    .group-btn,
-    .work-number,
-    .detail-story-label,
-    .search-toggle-btn,
-    .load-more-btn,
-    .modal-nav-btn,
-    .vote-btn {
-      font-family: var(--body-font);
-      font-weight: 500;
-    }
-
-    button { -webkit-tap-highlight-color: transparent; }
-
-    .page {
-      min-height: 100vh;
-      background: var(--bg);
-    }
-
-    .hero-group-tabs {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(18px);
-      border-top: 1px solid rgba(255,255,255,.12);
-      border-bottom: 1px solid rgba(255,255,255,.12);
-    }
-
-    .group-btn {
-      min-width: 180px;
-      height: 44px;
-      border: 1px solid rgba(244,223,154,.36);
-      border-radius: var(--btn-radius);
-      background: rgba(0,0,0,.28);
-      color: rgba(255,255,255,.72);
-      font-size: 15px;
-      letter-spacing: .16em;
-      cursor: pointer;
-      transition: .22s ease;
-      position: relative;
-    }
-
-    .group-btn::before {
-      content: "";
-      position: absolute;
-      inset: 4px;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 1px;
-      pointer-events: none;
-    }
-
-    .group-btn:hover {
-      color: var(--gold);
-      border-color: rgba(244,223,154,.7);
-      background: rgba(244,223,154,.08);
-    }
-
-    .group-btn.active {
-      color: #15110a;
-      background: linear-gradient(135deg, var(--gold), #fff3bd);
-      border-color: rgba(244,223,154,.9);
-      box-shadow: 0 0 28px rgba(244,223,154,.16);
-    }
-
-    .group-btn.active::before {
-      border-color: rgba(0,0,0,.18);
-    }
-
-    .works-area {
-      position: relative;
-      padding: 52px 24px 8px;
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px) 0 0 / 46px 46px,
-        radial-gradient(circle at 50% -10%, rgba(244,223,154,.13), transparent 34%),
-        linear-gradient(180deg, #050505 0%, #0e0c09 100%);
-      border-top: 1px solid rgba(244,223,154,.18);
-    }
-
-    .works-header {
-      width: min(1480px, 100%);
-      margin: 0 auto 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-
-    .works-title {
-      position: relative;
-      color: #fff;
-      font-size: clamp(25px, 3vw, 46px);
-      letter-spacing: .22em;
-      font-weight: 400;
-      text-shadow: 0 0 28px rgba(244,223,154,.16);
-    }
-
-    .works-title::before,
-    .works-title::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      width: min(18vw, 180px);
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(244,223,154,.48));
-    }
-
-    .works-title::before {
-      right: calc(100% + 20px);
-    }
-
-    .works-title::after {
-      left: calc(100% + 20px);
-      transform: rotate(180deg);
-    }
-
-    .gallery {
-      width: min(1480px, calc(100% - 48px));
-      margin: 0 auto;
-      padding: 16px 0 38px;
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 16px;
-      background: transparent;
-    }
-
-    .photo-card,
-    .skeleton-card {
-      position: relative;
-      min-height: 100%;
-      overflow: hidden;
-      border: 1px solid rgba(244,223,154,.16);
-      border-radius: 2px 5px 3px 4px;
-      background:
-        radial-gradient(circle at 14% 10%, rgba(244,223,154,.09), transparent 28%),
-        linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
-      box-shadow: 0 28px 90px rgba(0,0,0,.55);
-      transition: .28s ease;
-    }
-
-    .photo-card::before,
-    .photo-card::after {
-      display: none;
-    }
-
-    .photo-card:hover {
-      transform: translateY(-8px) scale(1.01);
-      border-color: rgba(244,223,154,.3);
-      background: rgba(255,255,255,.085);
-    }
-
-    .photo-click-area {
-      cursor: pointer;
-    }
-
-    .photo-wrap {
-      position: relative;
-      aspect-ratio: 4 / 3;
-      overflow: hidden;
-      background: #111;
-    }
-
-    .photo-wrap::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,.86) 100%);
-      pointer-events: none;
-    }
-
-    .photo-wrap img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      filter: saturate(.72) contrast(1.08);
-      transition: .5s ease;
-    }
-
-    .photo-card:hover .photo-wrap img {
-      transform: scale(1.06);
-      filter: saturate(.95) contrast(1.08);
-    }
-
-    .work-number {
-      align-self: flex-start;
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      padding: 4px 10px;
-      border: 1px solid rgba(244,223,154,.48);
-      background: rgba(244,223,154,.08);
-      color: var(--gold);
-      font-size: 12px;
-      line-height: 1;
-      letter-spacing: .08em;
-    }
-
-    .detail-hint {
-      position: absolute;
-      right: 12px;
-      bottom: 12px;
-      z-index: 2;
-      color: rgba(255,255,255,.62);
-      font-size: 12px;
-      letter-spacing: .12em;
-    }
-
-    .card-body {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 132px;
-      padding: 15px 14px 13px;
-      background:
-        linear-gradient(90deg, rgba(244,223,154,.12) 0 1px, transparent 1px),
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42));
-      background-position: 14px 0, 0 0;
-      background-size: calc(100% - 28px) 1px, 100% 100%;
-      background-repeat: no-repeat;
-    }
-
-    .card-body::before {
-      content: "";
-      position: absolute;
-      left: 14px;
-      top: 0;
-      width: min(76px, 42%);
-      height: 1px;
-      background: rgba(244,223,154,.55);
-      transform: rotate(-1.2deg);
-      transform-origin: left center;
-      box-shadow: 0 0 14px rgba(244,223,154,.16);
-      pointer-events: none;
-    }
-
-    .card-main {
-      display: grid;
-      gap: 5px;
-    }
-
-    .card-title {
-      position: relative;
-      margin: 0;
-      color: #fff;
-      font-size: 20px;
-      line-height: 1.35;
-      font-weight: 400;
-      letter-spacing: .06em;
-      min-height: 12px;
-      cursor: pointer;
-      transition: color .2s ease, transform .2s ease;
-    }
-
-    .card-title::after {
-      content: "";
-      display: block;
-      width: 42px;
-      height: 1px;
-      margin-top: 6px;
-      background: linear-gradient(90deg, rgba(244,223,154,.8), transparent);
-      opacity: .7;
-    }
-
-    .card-title:hover {
-      color: var(--gold);
-      transform: translateX(1px);
-    }
-
-    .card-author {
-      margin: 0;
-      color: rgba(255,255,255,.6);
-      font-size: 13px;
-      line-height: 1.5;
-      letter-spacing: .08em;
-    }
-
-    .card-actions {
-      margin-top: auto;
-      display: grid;
-      grid-template-columns: 1fr 72px;
-      gap: 10px;
-    }
-
-    .vote-btn {
-      border: 1px solid rgba(244,223,154,.48);
-      border-radius: var(--btn-radius);
-      background: linear-gradient(135deg, rgba(244,223,154,.18), rgba(244,223,154,.05));
-      color: var(--gold);
-      padding: 9px 9px;
-      font-size: 13px;
-      letter-spacing: .08em;
-      cursor: pointer;
-      transition:
-        background .22s ease,
-        border-color .22s ease,
-        color .22s ease,
-        transform .22s ease,
-        box-shadow .22s ease;
-    }
-
-    .vote-btn:hover {
-      background: linear-gradient(135deg, #f5e3a8, #e8cc80);
-      color: #171209;
-      border-color: rgba(244,223,154,.95);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.3),
-        0 10px 26px rgba(244,223,154,.14);
-      transform: translateY(-1px);
-    }
-
-    .vote-btn.voted {
-      background: rgba(127,159,122,.25);
-      color: #d8f1d2;
-      border-color: rgba(216,241,210,.42);
-      box-shadow: none;
-    }
-
-    .vote-btn.loading {
-      opacity: .65;
-      cursor: wait;
-    }
-
-    .vote-count {
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255,255,255,.16);
-      color: rgba(255,255,255,.88);
-      background: rgba(0,0,0,.22);
-      font-size: 16px;
-      line-height: 1.05;
-      text-align: center;
-    }
-
-    .vote-count small {
-      display: block;
-      color: rgba(255,255,255,.46);
-      font-size: 11px;
-    }
-
-    .vote-success-pop {
-      animation: voteButtonPop .52s ease;
-    }
-
-    .vote-pulse {
-      animation: voteCountPulse .72s ease;
-    }
-
-    @keyframes voteButtonPop {
-      45% { transform: scale(1.04); }
-    }
-
-    @keyframes voteCountPulse {
-      35% {
-        transform: scale(1.12);
-        color: var(--gold);
-      }
-    }
-
-    .share-btn {
-      border: 1px solid rgba(255,255,255,.20);
-      border-radius: var(--btn-radius);
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.82);
-      padding: 9px 9px;
-      font-size: 12px;
-      letter-spacing: .06em;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .share-btn:hover {
-      color: #111;
-      background: var(--gold);
-      border-color: rgba(244,223,154,.9);
-    }
-
-    .card-share-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    .detail-share-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .toolbar {
-      position: fixed;
-      right: 24px;
-      bottom: max(18px, env(safe-area-inset-bottom));
-      z-index: 300;
-      transform: none;
-      transition:
-        width .28s ease,
-        padding .28s ease,
-        background .28s ease,
-        border-color .28s ease,
-        box-shadow .28s ease;
-    }
-
-    .toolbar.collapsed {
-      width: auto;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      backdrop-filter: none;
-      box-shadow: none;
-    }
-
-    .toolbar.expanded {
-      width: min(620px, calc(100vw - 48px));
-      padding: 10px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.68);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 16px 60px rgba(0,0,0,.56);
-    }
-
-    .search-toggle-btn {
-      min-width: 172px;
-      height: 52px;
-      padding: 0 22px;
-      border: 1px solid rgba(244,223,154,.58);
-      border-radius: var(--btn-radius);
-      background: rgba(0,0,0,.82);
-      color: var(--gold);
-      font-size: 15px;
-      letter-spacing: .16em;
-      cursor: pointer;
-      box-shadow: 0 16px 48px rgba(0,0,0,.55);
-      transition: .22s ease;
-    }
-
-    .search-toggle-btn:hover {
-      background: var(--gold);
-      color: #111;
-      border-color: rgba(244,223,154,.9);
-    }
-
-    .toolbar.expanded .search-toggle-btn {
-      display: none;
-    }
-
-    .search-panel {
-      display: none;
-    }
-
-    .toolbar.expanded .search-panel {
-      display: block;
-    }
-
-    .search-box {
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      height: 50px;
-      padding: 0 90px 0 18px;
-      outline: none;
-      border: 1px solid rgba(244,223,154,.34);
-      border-radius: var(--btn-radius);
-      background: rgba(255,255,255,.05);
-      color: #fff;
-      font-size: 15px;
-      letter-spacing: .08em;
-    }
-
-    .search-input::placeholder {
-      color: rgba(255,255,255,.42);
-    }
-
-    .search-clear {
-      position: absolute;
-      right: 50px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 28px;
-      height: 28px;
-      display: none;
-      border: 1px solid rgba(255,255,255,.25);
-      border-radius: 50%;
-      background: transparent;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .search-clear.show {
-      display: grid;
-      place-items: center;
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(244,223,154,.72);
-      pointer-events: none;
-      font-size: 22px;
-    }
-
-    .load-more-wrap {
-      display: flex;
-      justify-content: center;
-      padding: 8px 24px 96px;
-      background: #0c0c0c;
-    }
-
-    .load-more-wrap[hidden] {
-      display: none;
-    }
-
-    .load-more-btn {
-      min-width: min(420px, 100%);
-      border: 1px solid rgba(244,223,154,.48);
-      border-radius: var(--btn-radius);
-      background: transparent;
-      color: var(--gold);
-      padding: 12px 22px;
-      font-size: 15px;
-      letter-spacing: .12em;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .load-more-btn:hover {
-      background: var(--gold);
-      color: #111;
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      padding: 48px 22px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.05);
-      text-align: center;
-    }
-
-    .empty-state h3 {
-      margin: 0 0 12px;
-      font-size: 28px;
-      font-weight: 500;
-    }
-
-    .empty-state p {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .empty-clear-btn {
-      border: 1px solid rgba(244,223,154,.48);
-      border-radius: var(--btn-radius);
-      background: transparent;
-      color: var(--gold);
-      padding: 12px 20px;
-      cursor: pointer;
-    }
-
-    .skeleton-gallery {
-      display: grid;
-    }
-
-    .skeleton-image,
-    .skeleton-line,
-    .skeleton-button,
-    .skeleton-count {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,.08);
-    }
-
-    .skeleton-image::after,
-    .skeleton-line::after,
-    .skeleton-button::after,
-    .skeleton-count::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      transform: translateX(-100%);
-      background: linear-gradient(90deg, transparent, rgba(244,223,154,.15), transparent);
-      animation: shimmer 1.35s infinite;
-    }
-
-    @keyframes shimmer {
-      100% {
-        transform: translateX(100%);
-      }
-    }
-
-    .skeleton-image {
-      aspect-ratio: 4 / 5;
-    }
-
-    .skeleton-body {
-      padding: 16px;
-    }
-
-    .skeleton-line {
-      height: 14px;
-      margin-bottom: 12px;
-    }
-
-    .skeleton-line.short { width: 36%; }
-    .skeleton-line.medium { width: 70%; }
-    .skeleton-line.long { width: 92%; }
-
-    .skeleton-actions {
-      display: grid;
-      grid-template-columns: 1fr 72px;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .skeleton-button,
-    .skeleton-count {
-      height: 46px;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: rgba(0,0,0,.82);
-      backdrop-filter: blur(12px);
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-dialog {
-      position: relative;
-      width: min(1180px, 100%);
-      max-height: min(92vh, 940px);
-      overflow-y: auto;
-      padding: 26px;
-      border: 1px solid rgba(244,223,154,.35);
-      background:
-        radial-gradient(circle at 78% 18%, rgba(244,223,154,.08), transparent 28%),
-        linear-gradient(180deg, #0a0a09 0%, #070707 100%);
-      box-shadow: 0 30px 120px rgba(0,0,0,.78);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      z-index: 8;
-      width: 46px;
-      height: 46px;
-      border: 1px solid rgba(255,255,255,.24);
-      border-radius: 50%;
-      background: rgba(0,0,0,.52);
-      color: #fff;
-      font-size: 23px;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: .22s ease;
-    }
-
-    .modal-close:hover {
-      color: #111;
-      background: var(--gold);
-      border-color: rgba(244,223,154,.85);
-    }
-
-    .detail-panel {
-      display: grid;
-      grid-template-columns: minmax(420px, 1.05fr) minmax(360px, .95fr);
-      gap: 30px;
-      align-items: stretch;
-    }
-
-    .detail-image {
-      min-height: 540px;
-      display: grid;
-      place-items: center;
-      background: #111;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-    }
-
-    .detail-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    .modal-nav {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .modal-nav-btn {
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: var(--btn-radius);
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.78);
-      padding: 12px;
-      cursor: pointer;
-    }
-
-    .modal-nav-btn:hover:not(:disabled) {
-      color: #111;
-      background: var(--gold);
-    }
-
-    .modal-nav-btn:disabled {
-      opacity: .35;
-      cursor: not-allowed;
-    }
-
-    .detail-info {
-      min-width: 0;
-      min-height: 0;
-      padding: 72px 0 4px;
-      display: flex;
-      flex-direction: column;
-      align-self: stretch;
-    }
-
-    .detail-top-row {
-      display: block;
-    }
-
-    .mobile-modal-close {
-      display: none;
-    }
-
-    .detail-top-labels {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 11px;
-    }
-
-    .detail-label {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      padding: 4px 10px;
-      border: 1px solid rgba(244,223,154,.28);
-      border-radius: 2px;
-      background: rgba(244,223,154,.035);
-      color: rgba(244,223,154,.9);
-      font-size: 12px;
-      line-height: 1.2;
-      letter-spacing: .1em;
-    }
-
-    .detail-title {
-      margin: 0 0 7px;
-      color: #fff;
-      font-size: clamp(30px, 3vw, 46px);
-      line-height: 1.28;
-      font-weight: 400;
-      letter-spacing: .055em;
-    }
-
-    .detail-meta-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      gap: 18px;
-      margin-bottom: 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(244,223,154,.2);
-    }
-
-    .detail-brief {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 18px;
-      min-width: 0;
-      margin: 0;
-      color: rgba(255,255,255,.62);
-      font-size: 14px;
-      line-height: 1.48;
-      letter-spacing: .08em;
-    }
-
-    .detail-brief span {
-      color: rgba(255,255,255,.95);
-    }
-
-    .detail-item {
-      min-width: 0;
-    }
-
-    .detail-vote-count {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: baseline;
-      justify-content: flex-end;
-      gap: 9px;
-      min-width: 118px;
-      margin: 0;
-      color: rgba(255,255,255,.52);
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1;
-      letter-spacing: .08em;
-      white-space: nowrap;
-      text-align: right;
-    }
-
-    .detail-vote-count span {
-      display: inline-block;
-      color: var(--gold);
-      font-size: 40px;
-      font-weight: 600;
-      line-height: .88;
-      letter-spacing: .035em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .detail-story {
-      position: relative;
-      margin-bottom: 16px;
-      padding: 14px 16px 13px;
-      border-left: 2px solid rgba(244,223,154,.48);
-      background: rgba(255,255,255,.025);
-    }
-
-    .detail-story-label {
-      margin-bottom: 8px;
-      color: rgba(244,223,154,.8);
-      font-size: 12px;
-      letter-spacing: .22em;
-    }
-
-    .detail-description {
-      margin-bottom: 0;
-      padding: 0;
-      border-left: 0;
-      background: transparent;
-      color: rgba(255,255,255,.78);
-      font-size: 15px;
-      line-height: 1.72;
-      letter-spacing: .055em;
-      white-space: pre-line;
-      text-align: justify;
-      text-justify: inter-ideograph;
-      transition: max-height .35s ease;
-    }
-
-    .detail-description.is-collapsible {
-      position: relative;
-      max-height: 6.95em;
-      overflow: hidden;
-    }
-
-    .detail-description.is-collapsible::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 2.2em;
-      background: linear-gradient(180deg, rgba(11,11,10,0), rgba(11,11,10,.98));
-      pointer-events: none;
-    }
-
-    .detail-description.is-expanded {
-      max-height: none;
-      overflow: visible;
-    }
-
-    .detail-description.is-expanded::after {
-      display: none;
-    }
-
-    .description-toggle {
-      display: inline-block;
-      margin-top: 8px;
-      padding-bottom: 1px;
-      border-bottom: 1px solid rgba(244,223,154,.34);
-      color: rgba(244,223,154,.8);
-      font-size: 12px;
-      letter-spacing: .18em;
-      cursor: pointer;
-      transition: color .2s ease, border-color .2s ease;
-    }
-
-    .description-toggle:hover {
-      color: var(--gold);
-      border-color: rgba(244,223,154,.8);
-    }
-
-    .detail-action-row {
-      display: grid;
-    }
-
-    .detail-action-row .vote-btn {
-      width: 100%;
-      min-height: 48px;
-      padding-inline: 18px;
-      border-color: rgba(244,223,154,.54);
-      background:
-        linear-gradient(135deg, rgba(244,223,154,.2), rgba(244,223,154,.065));
-      color: var(--gold);
-      font-size: 14px;
-      letter-spacing: .12em;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.08),
-        0 10px 28px rgba(0,0,0,.28);
-    }
-
-    .detail-action-row .vote-btn:hover {
-      background: linear-gradient(135deg, #f6e4aa, #e8cb7f);
-      color: #171209;
-      border-color: rgba(244,223,154,.96);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.35),
-        0 14px 34px rgba(244,223,154,.16);
-    }
-
-    .detail-bottom-action {
-      margin-top: auto;
-      padding-top: 16px;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 104px;
-      z-index: 10000;
-      max-width: calc(100% - 32px);
-      transform: translateX(-50%) translateY(18px);
-      opacity: 0;
-      pointer-events: none;
-      padding: 13px 20px;
-      border: 1px solid rgba(244,223,154,.42);
-      background: rgba(0,0,0,.8);
-      color: #fff;
-      text-align: center;
-      letter-spacing: .08em;
-      transition: .25s ease;
-      backdrop-filter: blur(14px);
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    @media (max-width: 1180px) {
-      .gallery {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 860px) {
-      .hero-group-tabs {
-        gap: 8px;
-        padding: 8px 10px;
-      }
-
-      .group-btn {
-        min-width: 0;
-        flex: 1;
-        height: 40px;
-        font-size: 14px;
-      }
-
-      .gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        width: calc(100% - 28px);
-        gap: 12px;
-        padding: 14px 0 30px;
-      }
-
-      .works-area {
-        padding-top: 38px;
-      }
-
-      .modal-dialog {
-        padding: 18px;
-      }
-
-      .detail-panel {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        align-items: start;
-      }
-
-      .detail-image {
-        min-height: auto;
-        aspect-ratio: 4 / 3;
-      }
-
-      .detail-info {
-        min-height: 0;
-        padding-top: 0;
-      }
-
-      .detail-bottom-action {
-        margin-top: 18px;
-        padding-top: 0;
-      }
-
-      .detail-action-row .vote-btn {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        width: calc(100% - 20px);
-        gap: 10px;
-        padding-bottom: 26px;
-      }
-
-      .photo-wrap {
-        aspect-ratio: 1 / 1;
-      }
-
-      .detail-hint {
-        display: none;
-      }
-
-      .work-number {
-        padding: 4px 8px;
-        font-size: 10px;
-      }
-
-      .card-body {
-        min-height: auto;
-        padding: 11px 9px 10px;
-        gap: 8px;
-        background-position: 9px 0, 0 0;
-        background-size: calc(100% - 18px) 1px, 100% 100%;
-      }
-
-      .card-body::before {
-        left: 9px;
-        width: min(54px, 48%);
-      }
-
-      .card-main {
-        gap: 4px;
-      }
-
-      .card-title {
-        min-height: 38px;
-        font-size: 18px;
-        line-height: 1.32;
-        letter-spacing: .045em;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .card-title::after {
-        width: 30px;
-        margin-top: 4px;
-      }
-
-      .card-author {
-        font-size: 11px;
-        line-height: 1.4;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .card-actions {
-        grid-template-columns: 1fr;
-        gap: 6px;
-      }
-
-      .card-actions .vote-count {
-        order: 1;
-      }
-
-      .card-actions .vote-btn {
-        order: 2;
-      }
-
-      .vote-btn {
-        padding: 8px 5px;
-        font-size: 11px;
-        letter-spacing: .04em;
-      }
-
-      .card-share-row { gap: 6px; }
-
-      .share-btn {
-        padding: 8px 4px;
-        font-size: 10px;
-      }
-
-      .vote-count {
-        min-height: 32px;
-        display: flex;
-        justify-content: center;
-        gap: 4px;
-        font-size: 13px;
-      }
-
-      .vote-count small {
-        display: inline;
-        font-size: 10px;
-      }
-
-      .toolbar {
-        right: 10px;
-        bottom: max(10px, env(safe-area-inset-bottom));
-      }
-
-      .toolbar.expanded {
-        width: calc(100vw - 20px);
-      }
-
-      .search-toggle-btn {
-        min-width: 152px;
-        height: 48px;
-        padding: 0 18px;
-        font-size: 14px;
-      }
-
-      .search-input {
-        height: 46px;
-        font-size: 13px;
-      }
-
-      .modal {
-        padding: 8px;
-      }
-
-      .modal-dialog {
-        height: calc(100dvh - 16px);
-        max-height: none;
-        overflow: hidden;
-        padding: 10px;
-      }
-
-      /* 手機版：隱藏原本照片右上角關閉鈕 */
-      .modal-close {
-        display: none;
-      }
-
-      .detail-panel {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        gap: 12px;
-      }
-
-      .detail-media {
-        flex: 0 0 auto;
-      }
-
-      .detail-image {
-        height: clamp(178px, 31vh, 242px);
-        aspect-ratio: auto;
-      }
-
-      .modal-nav {
-        gap: 10px;
-        margin-top: 10px;
-      }
-
-      .modal-nav-btn {
-        padding: 11px 8px;
-        font-size: 13px;
-      }
-
-      .detail-info {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow-y: auto;
-        padding: 0 2px 2px;
-      }
-
-      .detail-bottom-action {
-        margin-top: 14px;
-        padding-top: 0;
-      }
-
-      /* 手機版：標籤與關閉按鈕同列 */
-      .detail-top-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 9px;
-      }
-
-      .detail-top-labels {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 7px;
-        margin-bottom: 0;
-        min-width: 0;
-      }
-
-      .detail-label {
-        min-height: 25px;
-        padding: 4px 9px;
-        font-size: 11px;
-        letter-spacing: .08em;
-      }
-
-      .mobile-modal-close {
-        flex: 0 0 auto;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border: 1px solid rgba(244,223,154,.34);
-        border-radius: 3px;
-        background: rgba(255,255,255,.035);
-        color: rgba(255,255,255,.82);
-        font-size: 21px;
-        line-height: 1;
-        cursor: pointer;
-        transition: .2s ease;
-      }
-
-      .mobile-modal-close:hover {
-        color: #171209;
-        background: var(--gold);
-        border-color: rgba(244,223,154,.9);
-      }
-
-      .detail-title {
-        margin-bottom: 6px;
-        padding-right: 0;
-        font-size: 24px;
-        line-height: 1.28;
-      }
-
-      /* 手機版：資訊列同列，票數四位數也盡量穩定 */
-      .detail-meta-row {
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: end;
-        gap: 8px;
-        margin-bottom: 11px;
-        padding-bottom: 7px;
-      }
-
-      /* 手機版：參賽者＋作品編號貼在一起 */
-      .detail-brief {
-        display: flex;
-        align-items: flex-end;
-        flex-wrap: nowrap;
-        gap: 6px;
-        min-width: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        font-size: 10.5px;
-        line-height: 1.4;
-        letter-spacing: .045em;
-      }
-
-      .detail-author-item {
-        flex: 0 1 auto;
-        min-width: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-
-      .detail-number-item {
-        flex: 0 0 auto;
-        white-space: nowrap;
-      }
-
-      .detail-vote-count {
-        min-width: 92px;
-        gap: 5px;
-        font-size: 10.5px;
-        letter-spacing: .045em;
-      }
-
-      .detail-vote-count span {
-        font-size: clamp(24px, 7vw, 30px);
-        line-height: .88;
-        letter-spacing: .02em;
-      }
-
-      .detail-story {
-        margin-bottom: 8px;
-        padding: 12px 13px 11px;
-        background: rgba(255,255,255,.022);
-      }
-
-      .detail-story-label {
-        margin-bottom: 7px;
-        font-size: 11px;
-      }
-
-      .detail-description {
-        font-size: 13px;
-        line-height: 1.68;
-        letter-spacing: .04em;
-        text-align: justify;
-        text-justify: inter-ideograph;
-      }
-
-      .detail-description.is-collapsible {
-        max-height: 6.8em;
-      }
-
-      .description-toggle {
-        margin-top: 7px;
-        font-size: 11px;
-        letter-spacing: .15em;
-      }
-
-      .detail-action-row .vote-btn {
-        width: 100%;
-        min-height: 40px;
-        font-size: 12px;
-      }
-
-      .load-more-wrap {
-        padding: 8px 18px 86px;
-      }
-
-      .toast {
-        bottom: 82px;
-      }
-    }
-  </style>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>健康永續講者</title>
+
+
+
+<style>
+
+:root {
+
+  --bg:#15803d;
+
+  --white:#fff;
+
+  --dark:#222;
+
+  --gray:#666;
+
+  --shadow:0 8px 30px rgba(0,0,0,.28);
+
+}
+
+
+
+* {
+
+  box-sizing:border-box;
+
+  margin:0;
+
+  padding:0;
+
+}
+
+
+
+body {
+
+  background:var(--bg);
+
+  color:#fff;
+
+  font-family:"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;
+
+  font-size:16px;
+
+  font-weight:700;
+
+  line-height:1.5;
+
+  -webkit-text-size-adjust:100%;
+
+}
+
+
+
+body.modal-open {
+
+  overflow:hidden;
+
+}
+
+
+
+.section {
+
+  max-width:1500px;
+
+  margin:auto;
+
+  padding:0 20px 40px;
+
+}
+
+
+
+.speaker-group {
+
+  margin-top:42px;
+
+}
+
+
+
+.speaker-group:first-child {
+
+  margin-top:0;
+
+}
+
+
+
+/* 講者分類標題 */
+
+.group-title {
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:12px;
+
+  margin:18px 0 6px;
+
+  font-size:clamp(24px,3vw,34px);
+
+  font-weight:900;
+
+}
+
+
+
+.group-title:before,
+
+.group-title:after {
+
+  content:"";
+
+  width:44px;
+
+  height:2px;
+
+  background:rgba(255,255,255,.55);
+
+  border-radius:20px;
+
+}
+
+
+
+/* 新增：排列順序說明 */
+
+.sort-note {
+
+  margin:0 0 24px;
+
+  color:rgba(255,255,255,.85);
+
+  font-size:16px;
+
+  font-weight:400;
+
+  text-align:center;
+
+  letter-spacing:1px;
+
+}
+
+
+
+.speaker-group:not(.has-sort-note) .group-title { margin-bottom:24px; }
+
+/* 講者列表 */
+
+.grid {
+
+  display:grid;
+
+  gap:20px;
+
+  grid-template-columns:repeat(auto-fit,250px);
+
+  justify-content:center;
+
+}
+
+
+
+.speakers_item {
+
+  width:250px;
+
+  max-width:100%;
+
+  justify-self:center;
+
+  padding:16px;
+
+  border:0;
+
+  background:none;
+
+  color:#fff;
+
+  text-align:center;
+
+  border-radius:14px;
+
+  font:inherit;
+
+}
+
+
+
+button.speakers_item {
+
+  cursor:pointer;
+
+}
+
+
+
+.pic {
+
+  width:200px;
+
+  height:200px;
+
+  margin:0 auto 12px;
+
+  border-radius:50%;
+
+  overflow:hidden;
+
+  background:#fff;
+
+  border:5px solid #fff;
+
+  transition:transform .25s ease;
+
+}
+
+
+
+.pic img {
+
+  width:100%;
+
+  height:100%;
+
+  display:block;
+
+  object-fit:cover;
+
+}
+
+
+
+.speakers_item.no-photo {
+
+  padding-top:36px;
+
+}
+
+
+
+.speakers_item h3 {
+
+  margin-bottom:8px;
+
+  font-size:21px;
+
+  font-weight:800;
+
+}
+
+
+
+.speakers_item h4 {
+
+  font-size:16px;
+
+  line-height:1.5;
+
+  font-weight:700;
+
+  opacity:.92;
+
+}
+
+
+
+button.speakers_item:focus-visible {
+
+  outline:3px solid #fff;
+
+  outline-offset:2px;
+
+}
+
+
+
+@media(hover:hover) and (pointer:fine) {
+
+  button.speakers_item:hover .pic {
+
+    transform:scale(1.08);
+
+  }
+
+}
+
+
+
+/* 載入錯誤提示 */
+
+.message {
+
+  margin:28px auto;
+
+  padding:16px;
+
+  max-width:720px;
+
+  text-align:center;
+
+  border:1px solid rgba(255,255,255,.5);
+
+  border-radius:12px;
+
+}
+
+
+
+.message button {
+
+  margin-left:8px;
+
+  padding:7px 12px;
+
+  border:0;
+
+  border-radius:999px;
+
+  color:var(--bg);
+
+  font-size:16px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+}
+
+
+
+/* 講者介紹彈窗 */
+
+.modal {
+
+  position:fixed;
+
+  inset:0;
+
+  z-index:99999;
+
+  display:none;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:20px;
+
+}
+
+
+
+.modal[aria-hidden="false"] {
+
+  display:flex;
+
+}
+
+
+
+.overlay {
+
+  position:absolute;
+
+  inset:0;
+
+  background:rgba(0,0,0,.6);
+
+}
+
+
+
+.modal-content {
+
+  position:relative;
+
+  z-index:1;
+
+  width:min(520px,92vw);
+
+  max-height:88vh;
+
+  overflow:auto;
+
+  padding:24px;
+
+  background:rgba(255,255,255,.98);
+
+  color:var(--dark);
+
+  border-radius:16px;
+
+  box-shadow:var(--shadow);
+
+  text-align:center;
+
+}
+
+
+
+.modal-close {
+
+  position:absolute;
+
+  right:12px;
+
+  top:8px;
+
+  width:40px;
+
+  height:40px;
+
+  border:0;
+
+  background:none;
+
+  color:#555;
+
+  font-size:30px;
+
+  line-height:1;
+
+  cursor:pointer;
+
+}
+
+
+
+.modal-photo {
+
+  width:150px;
+
+  height:150px;
+
+  margin:8px auto 18px;
+
+  border-radius:50%;
+
+  overflow:hidden;
+
+  background:#eee;
+
+}
+
+
+
+.modal-photo img {
+
+  width:100%;
+
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
+
+}
+
+
+
+.modal-content h3 {
+
+  font-size:26px;
+
+  line-height:1.35;
+
+  margin-bottom:7px;
+
+  font-weight:900;
+
+}
+
+
+
+.modal-content h4 {
+
+  color:#555;
+
+  font-size:17px;
+
+  line-height:1.55;
+
+  margin-bottom:18px;
+
+}
+
+
+
+.modal-content p {
+
+  padding-top:18px;
+
+  border-top:1px solid #e5e5e5;
+
+  color:#444;
+
+  font-size:16px;
+
+  line-height:1.8;
+
+  font-weight:500;
+
+  text-align:left;
+
+  white-space:pre-line;
+
+}
+
+
+
+/* 手機版 */
+
+@media(max-width:768px) {
+
+  .section {
+
+    padding:0 12px 30px;
+
+  }
+
+
+
+  .speaker-group {
+
+    margin-top:32px;
+
+  }
+
+
+
+  .group-title {
+
+    font-size:25px;
+
+    margin-bottom:6px;
+
+  }
+
+
+
+  .group-title:before,
+
+  .group-title:after {
+
+    width:28px;
+
+  }
+
+
+
+  .sort-note {
+
+    font-size:16px;
+
+    margin-bottom:20px;
+
+    letter-spacing:.5px;
+
+  }
+
+
+
+  .grid {
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+
+    justify-content:center;
+
+    gap:16px 6px;
+
+  }
+
+
+
+  .speakers_item {
+
+    width:100%;
+
+    padding:10px 4px;
+
+  }
+
+
+
+  .speakers_item.no-photo {
+
+    padding-top:26px;
+
+  }
+
+
+
+  .pic {
+
+    width:min(40vw,150px);
+
+    height:min(40vw,150px);
+
+    border-width:3px;
+
+  }
+
+
+
+  .speakers_item h3 {
+
+    font-size:18px;
+
+  }
+
+
+
+  .speakers_item h4 {
+
+    font-size:16px;
+
+  }
+
+
+
+  .modal {
+
+    padding:14px;
+
+  }
+
+
+
+  .modal-content {
+
+    padding:22px 18px;
+
+  }
+
+
+
+  .modal-photo {
+
+    width:130px;
+
+    height:130px;
+
+  }
+
+
+
+  .modal-content h3 {
+
+    font-size:23px;
+
+  }
+
+
+
+  .modal-content h4,
+
+  .modal-content p {
+
+    font-size:16px;
+
+  }
+
+}
+
+</style>
+
 </head>
 
+
+
 <body>
-  <main class="page">
-    <div class="hero-group-tabs">
-      <button class="group-btn active" data-group="social">社會組</button>
-      <button class="group-btn" data-group="college">大專組</button>
+
+
+
+<section class="section" id="speakerGroups"></section>
+
+
+
+<div class="message" id="errorState" hidden>
+
+  演講者資料暫時無法載入。
+
+  <button id="retryButton" type="button">重新載入</button>
+
+</div>
+
+
+
+<!-- 講者介紹彈窗 -->
+
+<div class="modal" id="speakerModal"
+
+     aria-hidden="true"
+
+     role="dialog"
+
+     aria-modal="true">
+
+
+
+  <div class="overlay" data-close></div>
+
+
+
+  <div class="modal-content">
+
+
+
+    <button class="modal-close"
+
+            data-close
+
+            aria-label="關閉">&times;</button>
+
+
+
+    <div class="modal-photo" id="modalPhotoWrap">
+
+      <img id="modalImg" src="" alt="">
+
     </div>
 
-    <section class="works-area" id="works">
-      <div class="works-header">
-        <div class="works-title">參賽作品</div>
-      </div>
-    </section>
 
-    <section class="gallery skeleton-gallery" id="skeletonGallery">
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
 
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
+    <h3 id="modalName"></h3>
 
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
+    <h4 id="modalTitle"></h4>
 
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
+    <p id="modalExp"></p>
 
-      <article class="skeleton-card">
-        <div class="skeleton-image"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line short"></div>
-          <div class="skeleton-line long"></div>
-          <div class="skeleton-line medium"></div>
-          <div class="skeleton-actions">
-            <div class="skeleton-button"></div>
-            <div class="skeleton-count"></div>
-          </div>
-        </div>
-      </article>
-    </section>
 
-    <section class="gallery" id="gallery" style="display:none;"></section>
 
-    <div class="load-more-wrap" hidden id="loadMoreWrap">
-      <button class="load-more-btn" id="loadMoreBtn" type="button"></button>
-    </div>
-  </main>
-
-  <section class="toolbar collapsed" id="searchToolbar">
-    <button class="search-toggle-btn" id="searchToggleBtn" type="button" aria-expanded="false" aria-controls="searchPanel">⌕ 搜尋作品</button>
-    <div class="search-panel" id="searchPanel">
-      <div class="search-box">
-        <input class="search-input" id="searchInput" placeholder="搜尋作品編號、作品名稱、參賽者或拍攝主題" type="text" />
-        <button aria-label="清除搜尋" class="search-clear" id="clearSearchBtn" type="button">×</button>
-        <div class="search-icon">⌕</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="modal" id="detailModal">
-    <div class="modal-dialog">
-      <button aria-label="關閉視窗" class="modal-close" id="modalClose">×</button>
-
-      <div class="detail-panel">
-        <div class="detail-media">
-          <div class="detail-image">
-            <img alt="" id="modalImage" src="" />
-          </div>
-
-          <div class="modal-nav">
-            <button class="modal-nav-btn" id="prevWorkBtn" type="button">← 上一件作品</button>
-            <button class="modal-nav-btn" id="nextWorkBtn" type="button">下一件作品 →</button>
-          </div>
-        </div>
-
-        <div class="detail-info">
-          <div class="detail-top-row">
-            <div class="detail-top-labels">
-              <div class="detail-label group" id="modalGroup"></div>
-              <div class="detail-label theme" id="modalTheme"></div>
-            </div>
-
-            <button aria-label="關閉視窗" class="mobile-modal-close" id="modalCloseMobile" type="button">×</button>
-          </div>
-
-          <h2 class="detail-title" id="modalTitle"></h2>
-
-          <div class="detail-meta-row">
-            <div class="detail-brief">
-              <div class="detail-item detail-author-item">參賽者｜<span id="modalBriefAuthor"></span></div>
-              <div class="detail-item detail-number-item">作品編號｜<span id="modalBriefNumber"></span></div>
-            </div>
-
-            <div class="detail-vote-count">
-              人氣票數 <span id="modalVotes"></span>
-            </div>
-          </div>
-
-          <div class="detail-story">
-            <div class="detail-story-label">作品自述</div>
-            <div class="detail-description" id="modalDescription"></div>
-            <span class="description-toggle" id="descriptionToggle" hidden>展開全文</span>
-          </div>
-
-          <div class="detail-action-row detail-bottom-action">
-            <button class="vote-btn" id="modalVoteBtn">❤ 投這個作品一票</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+</div>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyjF8idieIUWms-JI-1sGyQe7tRzPdd5SEagG8fwZG9C-1IWQLY7wi1k6lLmVo8ftp1Xg/exec";
-    const INITIAL_VISIBLE_COUNT = 20;
-    const LOCAL_WORKS_CACHE_KEY = "photo_vote_local_works_cache_v4_cinematic";
-    const LOCAL_WORKS_CACHE_TTL = 5 * 60 * 1000;
-    const LIVE_VOTE_REFRESH_INTERVAL = 10 * 1000;
 
-    let works = [];
-    let currentGroup = "social";
-    let currentKeyword = "";
-    let currentWorkId = null;
-    let visibleCount = INITIAL_VISIBLE_COUNT;
-    let currentModalSequence = [];
-    let currentModalIndex = -1;
-    let remoteWorksLoaded = false;
-    let liveVoteRefreshInProgress = false;
-    let liveVoteRefreshTimer = null;
-    let initialDeepLinkOpened = false;
 
-    const VOTED_CACHE_KEY = "photo_vote_voted_today_cache_v1";
+<script>
 
-    const votedToday = new Set();
-    const pendingVotes = new Set();
-    const voterId = getOrCreateVoterId();
+const SHEET_ID='1QLOjgWoZ4_qE9QUyNPAjT_8KkqTDt1asy1_9ZyKlvTc';
 
-    // 瀏覽器裝置指紋（防無痕重複投票用）：
-    // voter_id 存在 localStorage，開無痕視窗或清除資料就會換一組新的，
-    // 很容易繞過每日每作品限投一次的限制。裝置指紋（FingerprintJS 開源版）
-    // 是根據瀏覽器/系統/硬體特徵算出來的號碼，不依賴 localStorage，
-    // 無痕視窗通常還是會算出同一組，可以提高「開無痕重複投票」的門檻。
-    // 這只是提高難度、不是完全擋死——換瀏覽器、換裝置，或刻意偽造
-    // 指紋的人還是繞得過去，後端會同時用 voter_id 與 device_id 比對，
-    // 兩者有一個今天投過這件作品就視為投過。算不出指紋時（例如被瀏覽器
-    // 隱私設定擋下）device_id 會是空字串，後端仍可用 voter_id 正常運作。
-    let deviceId = "";
-    const deviceIdReady = (async () => {
-      try {
-        const FingerprintJS = await import("https://openfpcdn.io/fingerprintjs/v4");
-        const fp = await FingerprintJS.load();
-        const result = await fp.get();
-        deviceId = result.visitorId || "";
-      } catch (error) {
-        deviceId = "";
-      }
-    })();
+const SHEET_GID='1348455198';
 
-    // 只是「前端 UX 快取」，用來讓重新整理頁面後、getVotedToday 網路回應
-    // 還沒回來之前，按鈕狀態能立刻正確顯示，縮小可被利用的競態空窗。
-    // 這不是安全機制：voter_id/localStorage 隨時可被清除或偽造，
-    // 真正防止重複投票必須由後端（Apps Script）在寫入前查核，見說明文件。
-    function getLocalDateString() {
-      const now = new Date();
-      return now.getFullYear() + "-" +
-        String(now.getMonth() + 1).padStart(2, "0") + "-" +
-        String(now.getDate()).padStart(2, "0");
-    }
 
-    function loadVotedCache() {
-      try {
-        const raw = localStorage.getItem(VOTED_CACHE_KEY);
-        if (!raw) return;
 
-        const payload = JSON.parse(raw);
-        if (payload.date !== getLocalDateString()) return; // 跨日快取不沿用
+const QUERY='select AB, AC, AE, AF, AG, AH where AC is not null and AE is not null';
 
-        (payload.work_ids || []).forEach(id => votedToday.add(id));
-      } catch (error) {}
-    }
 
-    function saveVotedCache() {
-      try {
-        localStorage.setItem(VOTED_CACHE_KEY, JSON.stringify({
-          date: getLocalDateString(),
-          work_ids: Array.from(votedToday)
-        }));
-      } catch (error) {}
-    }
 
-    function markVotedLocally(workId) {
-      votedToday.add(workId);
-      saveVotedCache();
-    }
+const CALLBACK='__receiveSpeakerSheet';
 
-    function unmarkVotedLocally(workId) {
-      votedToday.delete(workId);
-      saveVotedCache();
-    }
+const REFRESH_MS=5*60*1000;
 
-    loadVotedCache(); // 頁面一載入就先用本機快取還原「今天投過誰」，不用等網路
 
-    function getOrCreateVoterId() {
-      const storageKey = "photo_vote_voter_id";
-      let id = localStorage.getItem(storageKey);
 
-      if (!id) {
-        id = (window.crypto && crypto.randomUUID)
-          ? crypto.randomUUID()
-          : "voter_" + Date.now() + "_" + Math.random().toString(36).slice(2, 12);
+/* 講者照片手動維護 */
 
-        localStorage.setItem(storageKey, id);
-      }
+const PHOTOS={
 
-      return id;
-    }
+  '林名男':'',
 
-    async function loadWorks() {
-      const hasLocalWorks = restoreWorksFromLocalCache();
 
-      if (hasLocalWorks) {
-        showGalleryImmediately();
-        renderGallery("快取資料");
-        openWorkFromUrl();
-      }
 
-      fetchVotedTodayInBackground();
+  '吳貞瑩':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F3c3da0ad9ed2b4e53658f5fc.png',
 
-      try {
-        const url = `${API_URL}?action=getWorksFast&t=${Date.now()}`;
-        const response = await fetch(url);
-        const data = await response.json();
 
-        if (!data.ok) throw new Error(data.message || "作品資料載入失敗");
 
-        works = Array.isArray(data.works) ? data.works : [];
-        remoteWorksLoaded = true;
-        saveWorksToLocalCache(works);
-        showGalleryImmediately();
-        renderGallery();
-        openWorkFromUrl();
-      } catch (error) {
-        if (!hasLocalWorks) showWorksLoadError(error.message || "請稍後再試");
-        else showToast("已先顯示作品，最新資料同步稍後再試");
-      }
-    }
+  '周志鴻':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F7d1789e428c6f5df6715fa29.png',
 
-    async function fetchVotedTodayInBackground() {
-      try {
-        await deviceIdReady;
-        const url = `${API_URL}?action=getVotedToday&voter_id=${encodeURIComponent(voterId)}&device_id=${encodeURIComponent(deviceId)}&t=${Date.now()}`;
-        const response = await fetch(url);
-        const data = await response.json();
 
-        if (!data.ok) return;
 
-        votedToday.clear();
-        (data.voted_today || []).forEach(workId => votedToday.add(workId));
-        saveVotedCache(); // 以後端回應為準，覆蓋/校正本機快取
+  '劉越萍':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F971f523c849ab30b1872d95a.png',
 
-        renderGallery(remoteWorksLoaded ? "" : "快取資料");
 
-        if (currentWorkId) updateModalVoteButton(currentWorkId);
-      } catch (error) {}
-    }
 
-    function restoreWorksFromLocalCache() {
-      try {
-        const raw = localStorage.getItem(LOCAL_WORKS_CACHE_KEY);
-        if (!raw) return false;
+  '楊博宇':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F5e54be1573caf52972b7189b.png',
 
-        const payload = JSON.parse(raw);
 
-        if (
-          Date.now() - Number(payload.saved_at || 0) > LOCAL_WORKS_CACHE_TTL ||
-          !Array.isArray(payload.works)
-        ) return false;
 
-        works = payload.works;
-        return works.length > 0;
-      } catch (error) {
-        return false;
-      }
-    }
+  '高聖倫':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F3da337c29cce2a44711cd271.png',
 
-    function saveWorksToLocalCache(latestWorks) {
-      try {
-        localStorage.setItem(
-          LOCAL_WORKS_CACHE_KEY,
-          JSON.stringify({ saved_at: Date.now(), works: latestWorks })
+
+
+  '韓柏檉':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F0514351ed6532824c5088805.png',
+
+
+
+  '張智翔':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2Fc9b2b473c74ea90fac74ddae.png',
+
+
+
+  '姜冠宇':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F052b07db2800f148e5b411a9.png',
+
+
+
+  '吳淑娟':'https://image.fevercdn.com?bucket=picture-original.fevercdn.com&filepath=udn%2F2%2F219%2F2639be5844b5b40371ef2f10.png',
+
+};
+
+
+
+/* 照片取景位置 */
+
+const PHOTO_POSITIONS={
+
+  '韓柏檉':'50% 25%'
+
+};
+
+
+
+let pendingScript=null;
+
+let loadTimer=null;
+
+let SPEAKERS=[];
+
+
+
+const groups=document.getElementById('speakerGroups');
+
+const errorState=document.getElementById('errorState');
+
+
+
+const modal=document.getElementById('speakerModal');
+
+const img=document.getElementById('modalImg');
+
+const photoWrap=document.getElementById('modalPhotoWrap');
+
+const nameEl=document.getElementById('modalName');
+
+const titleEl=document.getElementById('modalTitle');
+
+const expEl=document.getElementById('modalExp');
+
+
+
+document.getElementById('retryButton')
+
+  .addEventListener('click',loadSpeakers);
+
+
+
+window.addEventListener('online',loadSpeakers);
+
+window.addEventListener('beforeunload',cleanup);
+
+
+
+loadSpeakers();
+
+setInterval(loadSpeakers,REFRESH_MS);
+
+
+
+/* 讀取 Google Sheets */
+
+function loadSpeakers(){
+
+  cleanup();
+
+  errorState.hidden=true;
+
+
+
+  window[CALLBACK]=response=>{
+
+    cleanup(false);
+
+    clearTimeout(loadTimer);
+
+
+
+    try {
+
+      if(
+
+        !response ||
+
+        response.status==='error' ||
+
+        !response.table
+
+      ){
+
+        throw new Error(
+
+          response?.errors?.[0]?.message ||
+
+          'Google Sheets 回傳格式不正確'
+
         );
-      } catch (error) {}
-    }
 
-    function updateVisibleVoteCounts() {
-      works.forEach(work => {
-        const card = document.querySelector(`.photo-card[data-work-id="${cssEscape(work.work_id)}"]`);
-        if (card) {
-          const voteCount = card.querySelector(".vote-count");
-          if (voteCount) voteCount.innerHTML = `${Number(work.votes || 0)}<small>票</small>`;
-        }
-      });
-
-      if (currentWorkId) {
-        const currentWork = works.find(work => String(work.work_id) === String(currentWorkId));
-        if (currentWork) {
-          document.getElementById("modalVotes").textContent = Number(currentWork.votes || 0);
-        }
-      }
-    }
-
-    async function refreshLiveVotes({ forceRender = false } = {}) {
-      if (liveVoteRefreshInProgress) return false;
-      liveVoteRefreshInProgress = true;
-
-      try {
-        const url = `${API_URL}?action=getWorksFast&t=${Date.now()}`;
-        const response = await fetch(url, { cache: "no-store" });
-        const data = await response.json();
-        if (!data.ok) throw new Error(data.message || "票數更新失敗");
-
-        const latestWorks = Array.isArray(data.works) ? data.works : [];
-        const oldIds = works.map(work => String(work.work_id)).sort().join("|");
-        const newIds = latestWorks.map(work => String(work.work_id)).sort().join("|");
-        const workListChanged = oldIds !== newIds;
-
-        works = latestWorks;
-        remoteWorksLoaded = true;
-        saveWorksToLocalCache(works);
-
-        if (forceRender || workListChanged) {
-          showGalleryImmediately();
-          renderGallery();
-        } else {
-          updateVisibleVoteCounts();
-        }
-
-        return true;
-      } catch (error) {
-        return false;
-      } finally {
-        liveVoteRefreshInProgress = false;
-      }
-    }
-
-    function scheduleLiveVoteRefresh() {
-      clearInterval(liveVoteRefreshTimer);
-      liveVoteRefreshTimer = setInterval(() => {
-        if (!document.hidden) refreshLiveVotes();
-      }, LIVE_VOTE_REFRESH_INTERVAL);
-    }
-
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) refreshLiveVotes();
-    });
-
-    function showGalleryImmediately() {
-      document.getElementById("skeletonGallery").style.display = "none";
-      document.getElementById("gallery").style.display = "grid";
-    }
-
-    function showWorksLoadError(message) {
-      document.getElementById("skeletonGallery").innerHTML =
-        `<div class="empty-state"><h3>作品載入失敗</h3><p>${escapeHtml(message)}</p></div>`;
-
-      showToast("作品載入失敗，請稍後再試");
-    }
-
-    function getFilteredSortedWorks() {
-      let result = works.filter(work => work.group_key === currentGroup);
-
-      if (currentKeyword.trim()) {
-        const keyword = currentKeyword.trim().toLowerCase();
-
-        result = result.filter(work =>
-          [
-            work.display_number,
-            work.work_name,
-            work.participant_name,
-            work.shooting_theme
-          ].join(" ").toLowerCase().includes(keyword)
-        );
       }
 
-      result.sort((a, b) =>
-        String(a.display_number || "").localeCompare(
-          String(b.display_number || ""),
-          "zh-Hant",
-          { numeric: true }
-        )
+
+
+      const rows=response.table.rows.map((row,index)=>({
+
+        cells:Array.from(
+
+          {length:6},
+
+          (_,i)=>readCell(row.c?.[i])
+
+        ),
+
+        index
+
+      }));
+
+
+
+      SPEAKERS=rows
+
+        .map(({cells,index})=>toSpeaker(cells,index))
+
+        .filter(Boolean)
+
+        .sort(sortSpeakers);
+
+
+
+      if(!SPEAKERS.length){
+
+        throw new Error('找不到可顯示的演講者資料');
+
+      }
+
+
+
+      render();
+
+
+
+      console.info(
+
+        '[speakers] Google Sheets sync complete',
+
+        {
+
+          speakers:SPEAKERS.length,
+
+          time:new Date().toISOString()
+
+        }
+
       );
 
-      return result;
+
+
+    }catch(error){
+
+      showError(error);
+
     }
 
-    function renderGallery(sourceLabel = "") {
-      const gallery = document.getElementById("gallery");
-      const loadMoreWrap = document.getElementById("loadMoreWrap");
-      const loadMoreBtn = document.getElementById("loadMoreBtn");
-      const filteredWorks = getFilteredSortedWorks();
-      const displayedWorks = filteredWorks.slice(0, visibleCount);
+  };
 
-      if (!filteredWorks.length) {
-        loadMoreWrap.hidden = true;
-        gallery.innerHTML =
-          `<div class="empty-state">
-            <h3>找不到符合條件的作品</h3>
-            <p>請換個關鍵字，或一鍵清除搜尋後重新瀏覽。</p>
-            <button class="empty-clear-btn" type="button" onclick="clearSearch()">清除搜尋，查看全部作品</button>
-          </div>`;
-        return;
-      }
 
-      gallery.innerHTML = displayedWorks.map(work => {
-        const isVoted = votedToday.has(work.work_id);
-        const isLoading = pendingVotes.has(work.work_id);
 
-        return `<article class="photo-card" data-work-id="${escapeHtml(work.work_id)}">
-          <div class="photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
-            <div class="photo-wrap">
-              <img src="${escapeHtml(work.image_url)}" alt="${escapeHtml(work.work_name)}" loading="lazy" decoding="async">
-              <div class="detail-hint">查看作品介紹</div>
-            </div>
-          </div>
+  const params=new URLSearchParams({
 
-          <div class="card-body">
-            <div class="work-number">${escapeHtml(work.display_number)}</div>
+    gid:SHEET_GID,
 
-            <div class="card-main">
-              <h3 class="card-title photo-click-area" onclick="openModal('${escapeJs(work.work_id)}')">
-                ${escapeHtml(work.work_name)}
-              </h3>
-              <div class="card-author">參賽者｜${escapeHtml(work.participant_name)}</div>
-            </div>
+    headers:'2',
 
-            <div class="card-actions">
-              <button class="vote-btn ${isVoted ? "voted" : ""} ${isLoading ? "loading" : ""}" onclick="voteWork('${escapeJs(work.work_id)}')" ${isLoading ? "disabled" : ""}>
-                ${isLoading ? "投票送出中…" : isVoted ? "✓ 已投下這一票" : "投這個作品一票"}
-              </button>
-              <div class="vote-count">${Number(work.votes || 0)}<small>票</small></div>
-            </div>
-          </div>
-        </article>`;
-      }).join("");
+    tq:QUERY,
 
-      const remaining = filteredWorks.length - displayedWorks.length;
+    tqx:`responseHandler:${CALLBACK}`,
 
-      if (remaining > 0) {
-        loadMoreWrap.hidden = false;
-        loadMoreBtn.textContent = `還有 ${remaining} 件作品等你發現`;
-      } else {
-        loadMoreWrap.hidden = true;
-      }
+    _:String(Date.now())
+
+  });
+
+
+
+  pendingScript=document.createElement('script');
+
+
+
+  pendingScript.src=
+
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?${params}`;
+
+
+
+  pendingScript.async=true;
+
+
+
+  pendingScript.onerror=()=>{
+
+    showError(new Error('演講者資料連線失敗'));
+
+  };
+
+
+
+  document.head.appendChild(pendingScript);
+
+
+
+  loadTimer=setTimeout(()=>{
+
+    showError(new Error('演講者資料連線逾時'));
+
+  },15000);
+
+}
+
+
+
+function cleanup(removeCallback=true){
+
+  if(pendingScript){
+
+    pendingScript.remove();
+
+    pendingScript=null;
+
+  }
+
+
+
+  clearTimeout(loadTimer);
+
+
+
+  if(removeCallback){
+
+    delete window[CALLBACK];
+
+  }
+
+}
+
+
+
+function readCell(cell){
+
+  if(!cell)return '';
+
+
+
+  if(cell.f!=null){
+
+    return String(cell.f).trim();
+
+  }
+
+
+
+  return cell.v==null?'':String(cell.v).trim();
+
+}
+
+
+
+/* 整理講者資料 */
+
+function toSpeaker(row,index){
+
+  const [
+
+    rawOrder,
+
+    group,
+
+    name,
+
+    title1,
+
+    title2,
+
+    bio
+
+  ]=row;
+
+
+
+  if(!group||!name)return null;
+
+
+
+  return {
+
+    order:
+
+      Number.isFinite(Number(rawOrder))&&rawOrder!==''
+
+      ?Number(rawOrder)
+
+      :9999,
+
+    group,
+
+    name,
+
+    title1,
+
+    title2,
+
+    bio,
+
+    index,
+
+    photo:safeImage(PHOTOS[name]||''),
+
+    photoPosition:PHOTO_POSITIONS[name]||'50% 50%'
+
+  };
+
+}
+
+
+
+/* 保留原本 AB 欄排序設定 */
+
+function sortSpeakers(a,b){
+
+  const rank={
+
+    '永續領航員':0,
+
+    '永續演講者':1
+
+  };
+
+
+
+  return (
+
+    (rank[a.group]??9)-(rank[b.group]??9) ||
+
+    a.order-b.order ||
+
+    a.index-b.index
+
+  );
+
+}
+
+
+
+/*
+
+  顯示講者資料
+
+  新增：每個分類標題下方顯示筆畫排序說明
+
+*/
+
+function render(){
+
+  const titles=[
+
+    ...new Set(SPEAKERS.map(s=>s.group))
+
+  ];
+
+
+
+  groups.innerHTML=titles.map(group=>`
+
+    <div class="speaker-group${group==='永續演講者' ? ' has-sort-note' : ''}">
+
+
+
+      <h2 class="group-title">
+
+        ${escapeHTML(group)}
+
+      </h2>
+
+
+
+      ${group==='永續演講者' ? `<p class="sort-note">※ 排列順序依照筆畫安排</p>` : ''}
+
+
+
+      <div class="grid">
+
+        ${SPEAKERS
+
+          .filter(s=>s.group===group)
+
+          .map(renderCard)
+
+          .join('')}
+
+      </div>
+
+
+
+    </div>
+
+  `).join('');
+
+}
+
+
+
+/* 講者卡片 */
+
+function renderCard(s){
+
+  const shownName=
+
+    s.name==='(待確認)'?'邀約中':s.name;
+
+
+
+  const interactive=Boolean(s.photo||s.bio);
+
+
+
+  const tag=interactive?'button':'div';
+
+
+
+  const type=interactive?' type="button"':'';
+
+
+
+  const photo=s.photo
+
+    ?`<div class="pic">
+
+        <img
+
+          src="${escapeHTML(s.photo)}"
+
+          alt="${escapeHTML(shownName)}"
+
+          loading="lazy"
+
+          referrerpolicy="no-referrer"
+
+          style="object-position:${escapeHTML(s.photoPosition)}"
+
+        >
+
+      </div>`
+
+    :'';
+
+
+
+  const roles=[s.title1,s.title2]
+
+    .filter(Boolean)
+
+    .map(escapeHTML)
+
+    .join('<br>');
+
+
+
+  const data=interactive
+
+    ?` data-name="${escapeHTML(shownName)}"
+
+        data-title="${escapeHTML(
+
+          [s.title1,s.title2].filter(Boolean).join('｜')
+
+        )}"
+
+        data-exp="${escapeHTML(s.bio)}"
+
+        data-img="${escapeHTML(s.photo)}"`
+
+    :'';
+
+
+
+  return `
+
+    <${tag}
+
+      class="speakers_item${s.photo?'':' no-photo'}"
+
+      ${type}
+
+      ${data}
+
+    >
+
+      ${photo}
+
+
+
+      <h3>${escapeHTML(shownName)}</h3>
+
+
+
+      <h4>${roles}</h4>
+
+
+
+    </${tag}>
+
+  `;
+
+}
+
+
+
+/* 開啟講者介紹 */
+
+document.addEventListener('click',event=>{
+
+  const card=event.target.closest(
+
+    'button.speakers_item'
+
+  );
+
+
+
+  if(card){
+
+    nameEl.textContent=card.dataset.name||'';
+
+    titleEl.textContent=card.dataset.title||'';
+
+    expEl.textContent=card.dataset.exp||'';
+
+
+
+    expEl.hidden=!expEl.textContent;
+
+
+
+    const image=card.dataset.img||'';
+
+
+
+    if(image){
+
+      img.src=image;
+
+      img.alt=nameEl.textContent;
+
+      photoWrap.hidden=false;
+
+    }else{
+
+      img.removeAttribute('src');
+
+      img.alt='';
+
+      photoWrap.hidden=true;
+
     }
 
-    document.getElementById("loadMoreBtn").addEventListener("click", () => {
-      visibleCount += INITIAL_VISIBLE_COUNT;
-      renderGallery();
-    });
 
-    function getWorkShareUrl(workId) {
-      const url = new URL(window.location.href);
-      url.search = "";
-      url.hash = "";
-      url.searchParams.set("work", String(workId));
-      return url.toString();
-    }
 
-    function syncWorkUrl(workId, replace = false) {
-      const url = new URL(window.location.href);
-      if (workId) url.searchParams.set("work", String(workId));
-      else url.searchParams.delete("work");
-      const method = replace ? "replaceState" : "pushState";
-      history[method]({ workId: workId || null }, "", url);
-    }
+    modal.setAttribute('aria-hidden','false');
 
-    async function copyText(text) {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
-        return;
-      }
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-    }
+    document.body.classList.add('modal-open');
 
-    async function copyWorkLink(workId) {
-      try {
-        await copyText(getWorkShareUrl(workId));
-        showToast("作品連結已複製！");
-      } catch (error) {
-        showToast("無法自動複製，請複製瀏覽器網址列。 ");
-      }
-    }
+  }
 
-    function openWorkFromUrl() {
-      const workId = new URLSearchParams(window.location.search).get("work");
-      if (!workId || initialDeepLinkOpened || !works.length) return;
-      const work = works.find(item => String(item.work_id) === String(workId));
-      if (!work) return;
-      initialDeepLinkOpened = true;
-      if (work.group) {
-        currentGroup = work.group;
-        document.querySelectorAll(".group-btn").forEach(btn =>
-          btn.classList.toggle("active", btn.dataset.group === currentGroup)
-        );
-        renderGallery();
-      }
-      openModal(work.work_id, { syncUrl: false });
-    }
 
-    function openModal(workId, options = {}) {
-      const work = works.find(item => String(item.work_id) === String(workId));
-      if (!work) return;
 
-      currentModalSequence = getFilteredSortedWorks();
-      currentModalIndex = currentModalSequence.findIndex(item => item.work_id === workId);
+  if(event.target.closest('[data-close]')){
 
-      renderModalByWork(work);
-      document.getElementById("detailModal").classList.add("show");
-      document.body.classList.add("modal-open");
-      if (options.syncUrl !== false) syncWorkUrl(work.work_id);
-    }
+    closeModal();
 
-    function renderModalByWork(work) {
-      currentWorkId = work.work_id;
-      if (document.getElementById("detailModal").classList.contains("show")) {
-        syncWorkUrl(work.work_id, true);
-      }
+  }
 
-      document.getElementById("modalImage").src = work.image_url;
-      document.getElementById("modalImage").alt = work.work_name;
-      document.getElementById("modalGroup").textContent = work.group_name;
-      document.getElementById("modalTheme").textContent = work.shooting_theme;
-      document.getElementById("modalTitle").textContent = work.work_name;
-      document.getElementById("modalBriefAuthor").textContent = work.participant_name;
-      document.getElementById("modalBriefNumber").textContent = work.display_number;
-      document.getElementById("modalVotes").textContent = Number(work.votes || 0);
+});
 
-      renderDescription(work.description || "");
-      updateModalVoteButton(work.work_id);
-      updateModalNavigation();
-    }
 
-    function renderDescription(description) {
-      const descriptionEl = document.getElementById("modalDescription");
-      const toggleEl = document.getElementById("descriptionToggle");
-      const normalizedDescription = String(description || "").trim();
 
-      descriptionEl.textContent = normalizedDescription || "此作品尚未提供自述。";
-      descriptionEl.classList.remove("is-collapsible", "is-expanded");
-      toggleEl.hidden = true;
-      toggleEl.textContent = "展開全文";
-      toggleEl.setAttribute("aria-expanded", "false");
+/* 關閉彈窗 */
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          descriptionEl.classList.add("is-collapsible");
-          const isActuallyHidden = descriptionEl.scrollHeight > descriptionEl.clientHeight + 2;
+function closeModal(){
 
-          if (isActuallyHidden) {
-            toggleEl.hidden = false;
-          } else {
-            descriptionEl.classList.remove("is-collapsible");
-            toggleEl.hidden = true;
-          }
-        });
-      });
-    }
+  modal.setAttribute('aria-hidden','true');
 
-    function toggleDescription() {
-      const descriptionEl = document.getElementById("modalDescription");
-      const toggleEl = document.getElementById("descriptionToggle");
-      const isExpanded = descriptionEl.classList.contains("is-expanded");
+  document.body.classList.remove('modal-open');
 
-      if (isExpanded) {
-        descriptionEl.classList.remove("is-expanded");
-        descriptionEl.classList.add("is-collapsible");
-        toggleEl.textContent = "展開全文";
-        toggleEl.setAttribute("aria-expanded", "false");
-      } else {
-        descriptionEl.classList.remove("is-collapsible");
-        descriptionEl.classList.add("is-expanded");
-        toggleEl.textContent = "收合內容";
-        toggleEl.setAttribute("aria-expanded", "true");
-      }
-    }
+}
 
-    function closeModal() {
-      document.getElementById("detailModal").classList.remove("show");
-      document.body.classList.remove("modal-open");
-      currentWorkId = null;
-      currentModalSequence = [];
-      currentModalIndex = -1;
-      syncWorkUrl(null, true);
-    }
 
-    function updateModalVoteButton(workId) {
-      const button = document.getElementById("modalVoteBtn");
-      const isVoted = votedToday.has(workId);
-      const isLoading = pendingVotes.has(workId);
 
-      button.classList.toggle("voted", isVoted);
-      button.classList.toggle("loading", isLoading);
-      button.disabled = isLoading;
-      button.textContent = isLoading
-        ? "投票送出中…"
-        : isVoted
-          ? "✓ 已投下這一票"
-          : "投這個作品一票";
-    }
+document.addEventListener('keydown',event=>{
 
-    function updateModalNavigation() {
-      document.getElementById("prevWorkBtn").disabled = currentModalIndex <= 0;
-      document.getElementById("nextWorkBtn").disabled = currentModalIndex >= currentModalSequence.length - 1;
-    }
+  if(event.key==='Escape'){
 
-    function showPreviousWork() {
-      if (currentModalIndex > 0) {
-        renderModalByWork(currentModalSequence[--currentModalIndex]);
-      }
-    }
+    closeModal();
 
-    function showNextWork() {
-      if (currentModalIndex < currentModalSequence.length - 1) {
-        renderModalByWork(currentModalSequence[++currentModalIndex]);
-      }
-    }
+  }
 
-    document.getElementById("prevWorkBtn").addEventListener("click", showPreviousWork);
-    document.getElementById("nextWorkBtn").addEventListener("click", showNextWork);
+});
 
-    async function voteWork(workId) {
-      if (votedToday.has(workId)) {
-        showToast("你今天已經投過這件作品囉！");
-        return;
-      }
 
-      if (pendingVotes.has(workId)) return;
 
-      const target = works.find(item => item.work_id === workId);
+/* 安全處理圖片網址 */
 
-      if (!target) {
-        showToast("找不到這件作品，請重新整理後再試。");
-        return;
-      }
+function safeImage(value){
 
-      pendingVotes.add(workId);
-      markVotedLocally(workId);
+  try{
 
-      renderGallery();
+    const url=new URL(value,document.baseURI);
 
-      if (currentWorkId === workId) {
-        updateModalVoteButton(workId);
-      }
 
-      try {
-        await deviceIdReady;
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "vote",
-            work_id: workId,
-            voter_id: voterId,
-            device_id: deviceId
-          })
-        });
 
-        const data = await response.json();
+    return ['https:','http:','file:'].includes(url.protocol)
 
-        if (!data.ok) {
-          if (data.code === "DUPLICATE_TODAY") {
-            showToast("你今天已經投過這件作品囉！");
-          } else {
-            unmarkVotedLocally(workId);
-            throw new Error(data.message || "投票失敗");
-          }
-        } else {
-          showToast("投票成功！票數更新中…");
-          await refreshLiveVotes();
-        }
-      } catch (error) {
-        unmarkVotedLocally(workId);
-        showToast(error.message || "投票失敗，請稍後再試");
-      } finally {
-        pendingVotes.delete(workId);
-        renderGallery();
+      ?url.href
 
-        if (currentWorkId === workId) {
-          updateModalVoteButton(workId);
-        }
-      }
-    }
+      :'';
 
-    function setGroup(group) {
-      currentGroup = group;
-      currentKeyword = "";
-      visibleCount = INITIAL_VISIBLE_COUNT;
+  }catch{
 
-      document.getElementById("searchInput").value = "";
-      updateSearchClearButton();
+    return '';
 
-      document.querySelectorAll(".group-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.dataset.group === group)
-      );
+  }
 
-      renderGallery();
-    }
+}
 
-    document.querySelectorAll(".group-btn").forEach(button =>
-      button.addEventListener("click", () => setGroup(button.dataset.group))
-    );
 
-    document.getElementById("searchInput").addEventListener("input", function() {
-      currentKeyword = this.value;
-      visibleCount = INITIAL_VISIBLE_COUNT;
-      updateSearchClearButton();
-      renderGallery();
-    });
 
-    document.getElementById("clearSearchBtn").addEventListener("click", clearSearch);
+/* 避免 HTML 注入 */
 
-    function clearSearch() {
-      currentKeyword = "";
-      visibleCount = INITIAL_VISIBLE_COUNT;
-      document.getElementById("searchInput").value = "";
-      updateSearchClearButton();
-      renderGallery();
-      openSearchToolbar();
-      document.getElementById("searchInput").focus();
-    }
+function escapeHTML(value){
 
-    function updateSearchClearButton() {
-      document.getElementById("clearSearchBtn").classList.toggle("show", !!currentKeyword.trim());
-    }
+  return String(value).replace(
 
-    const searchToolbar = document.getElementById("searchToolbar");
-    const searchToggleBtn = document.getElementById("searchToggleBtn");
+    /[&<>'"]/g,
 
-    function openSearchToolbar() {
-      searchToolbar.classList.remove("collapsed");
-      searchToolbar.classList.add("expanded");
-      searchToggleBtn.setAttribute("aria-expanded", "true");
-      requestAnimationFrame(() => document.getElementById("searchInput").focus());
-    }
+    c=>({
 
-    function closeSearchToolbar() {
-      if (currentKeyword.trim()) return;
-      searchToolbar.classList.remove("expanded");
-      searchToolbar.classList.add("collapsed");
-      searchToggleBtn.setAttribute("aria-expanded", "false");
-    }
+      '&':'&amp;',
 
-    searchToggleBtn.addEventListener("click", openSearchToolbar);
+      '<':'&lt;',
 
-    document.addEventListener("click", function(event) {
-      if (!searchToolbar.contains(event.target) && !currentKeyword.trim()) {
-        closeSearchToolbar();
-      }
-    });
+      '>':'&gt;',
 
-    document.addEventListener("keydown", function(event) {
-      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
-      if (!modalIsOpen && event.key === "Escape") closeSearchToolbar();
-    });
+      "'":'&#39;',
 
-    document.getElementById("modalClose").addEventListener("click", closeModal);
-    document.getElementById("modalCloseMobile").addEventListener("click", closeModal);
+      '"':'&quot;'
 
-    document.getElementById("detailModal").addEventListener("click", function(event) {
-      if (event.target === this) closeModal();
-    });
+    }[c])
 
-    document.getElementById("modalVoteBtn").addEventListener("click", function() {
-      if (currentWorkId) voteWork(currentWorkId);
-    });
+  );
 
-    document.getElementById("descriptionToggle").addEventListener("click", toggleDescription);
+}
 
-    document.addEventListener("keydown", function(event) {
-      const modalIsOpen = document.getElementById("detailModal").classList.contains("show");
-      if (!modalIsOpen) return;
 
-      if (event.key === "Escape") closeModal();
-      if (event.key === "ArrowLeft") showPreviousWork();
-      if (event.key === "ArrowRight") showNextWork();
-    });
 
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.classList.add("show");
+/* 錯誤處理 */
 
-      clearTimeout(window.toastTimer);
-      window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
-    }
+function showError(error){
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+  cleanup();
 
-    function escapeJs(value) {
-      return String(value ?? "")
-        .replaceAll("\\", "\\\\")
-        .replaceAll("'", "\\'");
-    }
+  errorState.hidden=false;
 
-    function cssEscape(value) {
-      return (window.CSS && CSS.escape)
-        ? CSS.escape(value)
-        : String(value).replace(/["\\]/g, "\\$&");
-    }
 
-    window.addEventListener("popstate", function() {
-      const workId = new URLSearchParams(window.location.search).get("work");
-      if (workId) {
-        const work = works.find(item => String(item.work_id) === String(workId));
-        if (work) openModal(work.work_id, { syncUrl: false });
-      } else if (document.getElementById("detailModal").classList.contains("show")) {
-        document.getElementById("detailModal").classList.remove("show");
-        document.body.classList.remove("modal-open");
-        currentWorkId = null;
-      }
-    });
 
-    try { localStorage.removeItem("photo_vote_daily_snapshot_v1"); } catch (error) {}
-    loadWorks();
-    scheduleLiveVoteRefresh();
-  </script>
+  console.error(
+
+    '[speakers] Google Sheets sync failed',
+
+    error
+
+  );
+
+}
+
+</script>
+
+
+
 </body>
+
 </html>
